@@ -1,0 +1,37 @@
+package com.redhat.demos.rules;
+
+import java.time.LocalDate;
+
+rule "Hello"
+when
+   //
+then
+  System.out.println("Rule " + drools.getRule().getName() + " fired!");
+  System.out.println("Hello from rules engine!");
+end
+
+rule "Int value"
+no-loop true
+when
+   $n: Integer(intValue == 50)
+then
+  System.out.println("Rule " + drools.getRule().getName() + " fired!");
+  System.out.println("\t received " + $n);
+end
+
+rule "Free Text"
+when
+   $s: String( this == "go" )
+then
+  System.out.println("Rule " + drools.getRule().getName() + " fired!");
+  System.out.println("\t Lets Go!");
+end
+
+rule "Local Date"
+when
+   $d: LocalDate()
+then
+  System.out.println("Rule " + drools.getRule().getName() + " fired!");
+  System.out.println("received " + $d);
+  System.out.println("changed (plus 5ys)" + $d.plusYears(5));
+end
