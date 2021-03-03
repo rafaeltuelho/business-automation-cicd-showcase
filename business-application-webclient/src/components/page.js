@@ -52,19 +52,19 @@ class AppPagelayout extends React.Component {
     const PageNav = (
       <Nav onSelect={this.onNavSelect} aria-label="Nav" theme="dark">
         <NavList>
-          <NavExpandable title="Insurance Application" groupId="grp-1" isActive={activeGroup === 'grp-1'} isExpanded>
+          <NavExpandable title="Decision Use Cases" groupId="grp-1" isActive={activeGroup === 'grp-1'} isExpanded>
             <NavItem groupId="grp-1" itemId="grp-1_itm-1" 
               isActive={activeItem === 'grp-1_itm-1'}
               onClick={this.handleItemOnclick}
               >
-              <Link to="/form">Apply</Link>
+              <Link to="/form">Car Policy Insurance</Link>
             </NavItem>
-            <NavItem groupId="grp-1" itemId="grp-1_itm-2" 
+            {/* <NavItem groupId="grp-1" itemId="grp-1_itm-2" 
               isActive={activeItem === 'grp-1_itm-2'}
               onClick={this.handleItemOnclick}
               >
               <Link to="/settings">Settings</Link>
-            </NavItem>
+            </NavItem> */}
           </NavExpandable>
         </NavList>
       </Nav>

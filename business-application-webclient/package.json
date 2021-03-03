@@ -1,5 +1,5 @@
 {
-  "name": "decision-web-client",
+  "name": "business-application-webclient",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

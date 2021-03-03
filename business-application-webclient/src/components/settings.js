@@ -1,6 +1,7 @@
 import "@patternfly/react-core/dist/styles/base.css";
 import isEmpty from 'validator/lib/isEmpty';
 import KieClient from './kieClient';
+import { formValidate } from './formValidation';
 import './fonts.css';
 
 import React from 'react';
@@ -18,14 +19,6 @@ import {
   Divider,
   Alert, 
   AlertActionCloseButton,
-  Modal,
-  TextContent,
-  Text,
-  TextVariants,
-  TextList,
-  TextListVariants,
-  TextListItem,
-  TextListItemVariants,
 } from '@patternfly/react-core';
 import { BorderNoneIcon } from '@patternfly/react-icons';
 import { loadFromLocalStorage } from './util'
@@ -42,16 +35,13 @@ class SettingsForm extends React.Component {
         kieServerPassword: kieSettings?.common ? kieSettings.common.kieServerPassword : '',
       },
       jbpm: {
-        // serviceContext: '',
         containerId: kieSettings?.jbpm ? kieSettings.jbpm.containerId : '',
         processId: kieSettings?.jbpm ? kieSettings.jbpm.processId : '',
       },
       drools: {
-        // serviceContext: '',
         containerId: kieSettings?.drools ? kieSettings.drools.containerId : '',
       },
       dmn: {
-        // serviceContext: '',
         containerId: kieSettings?.dmn ? kieSettings.dmn.containerId : '',
         modelNamespace: kieSettings?.dmn ? kieSettings.dmn.modelNamespace : '',
         modelName: kieSettings?.dmn ? kieSettings.dmn.modelName : '',
@@ -104,8 +94,6 @@ class SettingsForm extends React.Component {
         msg: '',
       },
     };
-
-    // this.onTestConnection = this.onTestConnection.bind(this);
   }
 
   onSettingsSave = evt => {
@@ -195,24 +183,6 @@ class SettingsForm extends React.Component {
     this.onInputChange({ name: id, value });
   };
 
-  // Form level validation
-  formValidate = () => {
-    const fieldsValidation = this.state.fieldsValidation;
-    let invalidFields = null;
-    let valid = true;
-    Object.getOwnPropertyNames(fieldsValidation).forEach(p => {
-      // console.debug('formValidate() \n\t traverssing obj property [' + p + '] is obj type: ' + (fieldsValidation[p] instanceof Object));
-      invalidFields = Object.keys(fieldsValidation[p]).filter(k => !fieldsValidation[p][k].valid());
-
-      if (invalidFields.length > 0) { 
-        // console.debug('formValidate() \n\t obj [' + p + '] contains ' + invalidFields.length + ' invalid field(s)');
-        valid = false;
-        return;
-      }
-    });
-    return valid;
-  };
-
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.debug('SettingsForm ->>> componentDidUpdate...');
   }
@@ -252,7 +222,7 @@ class SettingsForm extends React.Component {
     return (
       <Form isHorizontal>
         <React.Fragment>
-          {/**/
+          {
           this.state._alert.visible && (
             <Alert
               variant={this.state._alert.variant}
@@ -261,11 +231,10 @@ class SettingsForm extends React.Component {
               action={<AlertActionCloseButton onClose={this.closeResponseAlert} />}
             />
           )
-          /**/}
+          }
 
         </React.Fragment>
         {/** Common fields */}
-        {/**  **/}
         <FormSection>
           <FormGroup
             label="Kie Server Base URL"
@@ -328,9 +297,9 @@ class SettingsForm extends React.Component {
         </FormSection>
 
         <ActionGroup>
-          <Button variant="primary" onClick={this.onSettingsSave} isDisabled={!this.formValidate()}>Save</Button>
+          <Button variant="primary" onClick={this.onSettingsSave} isDisabled={!formValidate(this.state.fieldsValidation)}>Save</Button>
           <Button variant="secondary" type="reset">Reset</Button>
-          <Button variant="secondary" onClick={this.onTestConnection} isDisabled={!this.formValidate()}>Test Connection</Button>
+          <Button variant="secondary" onClick={this.onTestConnection} isDisabled={!formValidate(this.state.fieldsValidation)}>Test Connection</Button>
         </ActionGroup>
       </Form>
     );

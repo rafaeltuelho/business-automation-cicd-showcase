@@ -2,7 +2,7 @@ import "@patternfly/react-core/dist/styles/base.css";
 import isEmpty from 'validator/lib/isEmpty';
 
 import KieClient from './kieClient';
-import formValidator from './formValidation';
+import { formValidate } from './formValidation';
 import { loadFromLocalStorage } from './util'
 import './fonts.css';
 
@@ -35,7 +35,6 @@ import {
 import { BorderNoneIcon } from "@patternfly/react-icons";
 import ReactJson from 'react-json-view'
 
-// const RULES_KIE_CONTAINER_NAME='decisions-showcase-1.0.0-SNAPSHOT';
 const RULES_KIE_SESSION_NAME='stateless-session';
 const DRIVER_FACT_FQDN='com.redhat.demos.decisiontable.Driver';
 const POLICY_FACT_FQDN='com.redhat.demos.decisiontable.Policy';
@@ -112,7 +111,8 @@ class CarInsuranceForm extends React.Component {
       _canValidate: true,
     });
 
-    if (!this.formValidate()) return;
+    // if (!this.formValidate()) return;
+    if (!formValidate(this.state.fieldsValidation)) return;
 
     const driverFact = this.kieClient.newInsertCommand({ [DRIVER_FACT_FQDN]: this.state.driver }, 'driver', true);
     const policyFact = this.kieClient.newInsertCommand({ [POLICY_FACT_FQDN]: this.state.policy }, 'policy', true);
@@ -162,22 +162,6 @@ class CarInsuranceForm extends React.Component {
 
   };
 
-  // common generic field Input Change Handler
-  // onInputChange = ({name, value}) => {
-  //   const driver = Object.assign({}, this.state.driver);
-  //   const policy = Object.assign({}, this.state.policy);
-  //   //console.log('handleTextInputChange Handling: ' + name + ' value = ' + value);
-
-  //   if ( Object.keys(driver).find( (k, i, o) => k === name) )
-  //     driver[name] = value;
-    
-  //   if ( Object.keys(policy).find( (k, i, o) => k === name) )
-  //     policy[name] = value;
-
-  //   this.setState( {driver, policy} );
-  //   console.debug(this.state.driver);
-  // };
-
   onInputChange = ({name, value}) => {
     const fieldObjectName = name.split('.')[0];
     const fieldPropertyName = name.split('.')[1];
@@ -187,15 +171,6 @@ class CarInsuranceForm extends React.Component {
     // console.debug('handleTextInputChange Handling: ' + name + ' value = ' + value);
     if (Object.keys(objectState).find( (k, i, o) => k === fieldPropertyName )) {
       objectState[fieldPropertyName] = value;
-
-      //field level validation
-      //Doesn't work as at this point the state is not updated yet
-      // if (!fieldsValidation[fieldObjectName][fieldPropertyName].valid()) {
-      //   fieldsValidation[fieldObjectName][fieldPropertyName].validationMarker = ValidatedOptions.error;
-      // }
-      // else {
-      //   fieldsValidation[fieldObjectName][fieldPropertyName].validationMarker = ValidatedOptions.default;
-      // }
     }
 
     this.setState({ 
@@ -222,37 +197,6 @@ class CarInsuranceForm extends React.Component {
     const { id } = event.currentTarget;
     this.onInputChange({ name: id, value });
   };
-
-  // // Form level validation
-  // formValidate = () => {
-  //   const fieldsValidation = this.state.fieldsValidation;
-  //   const invalidFields = Object.keys(fieldsValidation.driver).filter(k => !fieldsValidation.driver[k].valid()).concat(
-  //     Object.keys(fieldsValidation.policy).filter(k => !fieldsValidation.policy[k].valid())
-  //   );
-  //   const _formValid = invalidFields.length == 0;
-  //   console.debug('formValid? ' + _formValid);
-  //   return _formValid;
-  // };
-
-  // Form level validation
-  formValidate = () => {
-    const fieldsValidation = this.state.fieldsValidation;
-    let invalidFields = null;
-    let valid = true;
-
-    // for each Object in the Form's fieldsValidation 
-    Object.getOwnPropertyNames(fieldsValidation).forEach(p => {
-      // console.debug('formValidate() \n\t traverssing obj property [' + p + '] is obj type: ' + (fieldsValidation[p] instanceof Object));
-      invalidFields = Object.keys(fieldsValidation[p]).filter(k => !fieldsValidation[p][k].valid());
-
-      if (invalidFields.length > 0) { 
-        // console.debug('formValidate() \n\t obj [' + p + '] contains ' + invalidFields.length + ' invalid field(s)');
-        valid = false;
-        return;
-      }
-    });
-    return valid;
-  };  
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.debug('CarInsuranceForm ->>> componentDidUpdate...');
@@ -368,11 +312,9 @@ class CarInsuranceForm extends React.Component {
                 <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.policyFact.basePrice}</TextListItem>
               </TextList>
             </TextContent>
-
-        </Modal>        
+          </Modal>        
         </React.Fragment>
         {/** Driver fields */}
-        {/**  **/}
         <FormGroup
           label="Driver Name"
           isRequired
@@ -471,13 +413,11 @@ class CarInsuranceForm extends React.Component {
         </FormSection>
 
         <ActionGroup>
-          <Button variant="primary" type="submit" onClick={this.onFormSubmit} isDisabled={!this.formValidate()}>Submit</Button>
+          {/* <Button variant="primary" type="submit" onClick={this.onFormSubmit} isDisabled={!this.formValidate()}>Submit</Button> */}
+          <Button variant="primary" type="submit" onClick={this.onFormSubmit} isDisabled={!formValidate(this.state.fieldsValidation)}>Submit</Button>
           <Button variant="secondary" type="reset">Cancel</Button>
         </ActionGroup>
 
-        {/* <Expandable toggleText={isExpanded ? 'Show Less' : 'Show More'} onToggle={this.onDebugViewToggle} isExpanded={isExpanded}>
-          This content is visible only when the component is expanded.
-        </Expandable>     */}
         <ExpandableSection toggleText="Debug View">
           <Grid hasGutter>
             <GridItem span={6}>
