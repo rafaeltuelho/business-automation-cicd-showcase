@@ -4,8 +4,6 @@
 
 ## Building the kjar artifact
 
-execute
-
 ```
 mvn clean install
 ```

@@ -1,4 +1,3 @@
-<?xml version='1.0' encoding='UTF-8'?>
 <dmn:definitions xmlns:dmn="http://www.omg.org/spec/DMN/20180521/MODEL/" xmlns="https://kiegroup.org/dmn/_4502BB15-E55D-4302-91EA-CFD7E2EA470C" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:kie="http://www.drools.org/kie/dmn/1.2" xmlns:feel="http://www.omg.org/spec/DMN/20180521/FEEL/" xmlns:dmndi="http://www.omg.org/spec/DMN/20180521/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" id="_586D3DE3-664B-4C9B-AA7E-3FC252254B16" name="Loan Approval" expressionLanguage="http://www.omg.org/spec/DMN/20180521/FEEL/" typeLanguage="http://www.omg.org/spec/DMN/20180521/FEEL/" namespace="https://kiegroup.org/dmn/_4502BB15-E55D-4302-91EA-CFD7E2EA470C">
   <dmn:extensionElements/>
   <dmn:itemDefinition id="_2F411CCD-BC1C-499B-931D-569D627DBF7C" name="Loan Approved" isCollection="false">
@@ -53,7 +52,7 @@
           <dmn:text>"Declined"</dmn:text>
         </dmn:outputEntry>
         <dmn:annotationEntry>
-          <dmn:text></dmn:text>
+          <dmn:text/>
         </dmn:annotationEntry>
       </dmn:rule>
       <dmn:rule id="_EE8E2F91-D576-4551-8941-CF7821554964">
@@ -67,7 +66,7 @@
           <dmn:text>"Declined"</dmn:text>
         </dmn:outputEntry>
         <dmn:annotationEntry>
-          <dmn:text></dmn:text>
+          <dmn:text/>
         </dmn:annotationEntry>
       </dmn:rule>
       <dmn:rule id="_26A1DB8C-4194-4224-81E0-280FF42C9E0C">
@@ -81,7 +80,7 @@
           <dmn:text>"Declined"</dmn:text>
         </dmn:outputEntry>
         <dmn:annotationEntry>
-          <dmn:text></dmn:text>
+          <dmn:text/>
         </dmn:annotationEntry>
       </dmn:rule>
       <dmn:rule id="_9AB386D7-81BB-4FD2-9B6E-B2A190D071EC">
@@ -95,7 +94,7 @@
           <dmn:text>"Approved"</dmn:text>
         </dmn:outputEntry>
         <dmn:annotationEntry>
-          <dmn:text></dmn:text>
+          <dmn:text/>
         </dmn:annotationEntry>
       </dmn:rule>
       <dmn:rule id="_A9E48CE4-37A4-4C28-B429-2ABA19312DAC">
@@ -109,7 +108,7 @@
           <dmn:text>"Approved"</dmn:text>
         </dmn:outputEntry>
         <dmn:annotationEntry>
-          <dmn:text></dmn:text>
+          <dmn:text/>
         </dmn:annotationEntry>
       </dmn:rule>
     </dmn:decisionTable>
@@ -119,19 +118,19 @@
     <dmn:variable id="_34A2A7BF-50FE-4460-821A-23624B7E0243" name="DTI"/>
   </dmn:inputData>
   <dmndi:DMNDI>
-    <dmndi:DMNDiagram>
+    <dmndi:DMNDiagram id="_CDD0E5E5-B3EA-4446-B595-5F8FE615D064" name="DRG">
       <di:extension>
         <kie:ComponentsWidthsExtension>
           <kie:ComponentWidths dmnElementRef="_5C9B425E-46FE-419C-B1D7-17023E679A4C">
-            <kie:width>50.0</kie:width>
-            <kie:width>100.0</kie:width>
-            <kie:width>100.0</kie:width>
-            <kie:width>100.0</kie:width>
-            <kie:width>100.0</kie:width>
+            <kie:width>50</kie:width>
+            <kie:width>100</kie:width>
+            <kie:width>100</kie:width>
+            <kie:width>100</kie:width>
+            <kie:width>100</kie:width>
           </kie:ComponentWidths>
         </kie:ComponentsWidthsExtension>
       </di:extension>
-      <dmndi:DMNShape id="dmnshape-_891BFB62-4CFD-46DB-8495-A4CB381A9F8D" dmnElementRef="_891BFB62-4CFD-46DB-8495-A4CB381A9F8D" isCollapsed="false">
+      <dmndi:DMNShape id="dmnshape-drg-_891BFB62-4CFD-46DB-8495-A4CB381A9F8D" dmnElementRef="_891BFB62-4CFD-46DB-8495-A4CB381A9F8D" isCollapsed="false">
         <dmndi:DMNStyle>
           <dmndi:FillColor red="255" green="255" blue="255"/>
           <dmndi:StrokeColor red="0" green="0" blue="0"/>
@@ -140,7 +139,7 @@
         <dc:Bounds x="166" y="172" width="100" height="50"/>
         <dmndi:DMNLabel/>
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="dmnshape-_C970A1A1-83F1-4590-BE74-EF1E46558069" dmnElementRef="_C970A1A1-83F1-4590-BE74-EF1E46558069" isCollapsed="false">
+      <dmndi:DMNShape id="dmnshape-drg-_C970A1A1-83F1-4590-BE74-EF1E46558069" dmnElementRef="_C970A1A1-83F1-4590-BE74-EF1E46558069" isCollapsed="false">
         <dmndi:DMNStyle>
           <dmndi:FillColor red="255" green="255" blue="255"/>
           <dmndi:StrokeColor red="0" green="0" blue="0"/>
@@ -149,7 +148,7 @@
         <dc:Bounds x="231" y="49" width="100" height="50"/>
         <dmndi:DMNLabel/>
       </dmndi:DMNShape>
-      <dmndi:DMNShape id="dmnshape-_C4EA4AAD-E677-49E4-94A3-0AF40926F1B3" dmnElementRef="_C4EA4AAD-E677-49E4-94A3-0AF40926F1B3" isCollapsed="false">
+      <dmndi:DMNShape id="dmnshape-drg-_C4EA4AAD-E677-49E4-94A3-0AF40926F1B3" dmnElementRef="_C4EA4AAD-E677-49E4-94A3-0AF40926F1B3" isCollapsed="false">
         <dmndi:DMNStyle>
           <dmndi:FillColor red="255" green="255" blue="255"/>
           <dmndi:StrokeColor red="0" green="0" blue="0"/>
@@ -158,11 +157,11 @@
         <dc:Bounds x="307" y="172" width="100" height="50"/>
         <dmndi:DMNLabel/>
       </dmndi:DMNShape>
-      <dmndi:DMNEdge id="dmnedge-_68E7C077-0807-4A92-9619-544A0FB31C26" dmnElementRef="_68E7C077-0807-4A92-9619-544A0FB31C26">
+      <dmndi:DMNEdge id="dmnedge-drg-_68E7C077-0807-4A92-9619-544A0FB31C26" dmnElementRef="_68E7C077-0807-4A92-9619-544A0FB31C26">
         <di:waypoint x="216" y="197"/>
         <di:waypoint x="281" y="99"/>
       </dmndi:DMNEdge>
-      <dmndi:DMNEdge id="dmnedge-_97FBADB9-33B1-45E6-AFF3-A9EB583B32EC" dmnElementRef="_97FBADB9-33B1-45E6-AFF3-A9EB583B32EC">
+      <dmndi:DMNEdge id="dmnedge-drg-_97FBADB9-33B1-45E6-AFF3-A9EB583B32EC" dmnElementRef="_97FBADB9-33B1-45E6-AFF3-A9EB583B32EC">
         <di:waypoint x="357" y="197"/>
         <di:waypoint x="281" y="99"/>
       </dmndi:DMNEdge>
