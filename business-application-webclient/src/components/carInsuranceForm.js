@@ -35,7 +35,7 @@ import {
 import { BorderNoneIcon } from "@patternfly/react-icons";
 import ReactJson from 'react-json-view'
 
-// const RULES_KIE_CONTAINER_NAME='kie-rules-templates-1.0.0-SNAPSHOT';
+// const RULES_KIE_CONTAINER_NAME='decisions-showcase-1.0.0-SNAPSHOT';
 const RULES_KIE_SESSION_NAME='stateless-session';
 const DRIVER_FACT_FQDN='com.redhat.demos.decisiontable.Driver';
 const POLICY_FACT_FQDN='com.redhat.demos.decisiontable.Policy';

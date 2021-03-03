@@ -1,4 +1,4 @@
-package com.company.service;
+package com.redhat.demos.service;
 
 import java.util.Arrays;
 

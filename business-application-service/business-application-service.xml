@@ -21,10 +21,10 @@
   </configuration>
   <containers>
     <container>
-      <containerId>kie-rules-templates-1.0.0-SNAPSHOT</containerId>
+      <containerId>decisions-showcase-1.0.0-SNAPSHOT</containerId>
       <releaseId>
         <groupId>com.redhat.demos</groupId>
-        <artifactId>kie-rules-templates</artifactId>
+        <artifactId>decisions-showcase</artifactId>
         <version>1.0.0-SNAPSHOT</version>
       </releaseId>
       <status>STARTED</status>
@@ -55,7 +55,7 @@
         </config-item>
       </configItems>
       <messages/>
-      <containerAlias>kie-rules-templates</containerAlias>
+      <containerAlias>decisions-showcase</containerAlias>
     </container>
   </containers>
 </kie-server-state>

@@ -105,13 +105,13 @@ To access the swagger ui: http://localhost:8090/rest/api-docs?url=http://localho
 after building and deploying your kjar into a kie-server you can test the API using the following payload samples:
 
 ### DMN Decision
-`GET`  http://localhost:8080/kie-server/services/rest/server/containers/kie-rules-templates-1.0.0-SNAPSHOT/dmn 
-> if running on Spring Boot use this url: http://localhost:8090/rest/server/server/containers/kie-rules-templates-1.0.0-SNAPSHOT/dmn
+`GET`  http://localhost:8080/kie-server/services/rest/server/containers/decisions-showcase-1.0.0-SNAPSHOT/dmn 
+> if running on Spring Boot use this url: http://localhost:8090/rest/server/server/containers/decisions-showcase-1.0.0-SNAPSHOT/dmn
 
 copy the `model-namespace` and the `model-name`
 
-`POST` http://localhost:8080/kie-server/services/rest/server/containers/kie-rules-templates-1.0.0-SNAPSHOT/dmn 
-> if running on Spring Boot use this url: http://localhost:8090/rest/server/server/containers/kie-rules-templates-1.0.0-SNAPSHOT/dmn
+`POST` http://localhost:8080/kie-server/services/rest/server/containers/decisions-showcase-1.0.0-SNAPSHOT/dmn 
+> if running on Spring Boot use this url: http://localhost:8090/rest/server/server/containers/decisions-showcase-1.0.0-SNAPSHOT/dmn
 
 Payload:
 ```json
@@ -160,8 +160,8 @@ Response:
 
 ### XLS decision Table rule base
 
-`POST` http://localhost:8080/kie-server/services/rest/server/containers/instances/kie-rules-templates-1.0.0-SNAPSHOT
-> if running on Spring Boot use this url: http://localhost:8090/rest/server/server/containers/instances/kie-rules-templates-1.0.0-SNAPSHOT
+`POST` http://localhost:8080/kie-server/services/rest/server/containers/instances/decisions-showcase-1.0.0-SNAPSHOT
+> if running on Spring Boot use this url: http://localhost:8090/rest/server/server/containers/instances/decisions-showcase-1.0.0-SNAPSHOT
 
 Payload:
 ```json

@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.redhat.demos</groupId>
-  <artifactId>kie-rules-templates</artifactId>
+  <artifactId>decisions-showcase</artifactId>
   <version>1.0.0-SNAPSHOT</version>
 
   <properties>
