@@ -38,7 +38,7 @@ const RULES_KIE_SESSION_NAME='stateless-session';
 const DRIVER_FACT_FQDN='com.redhat.demos.decisiontable.Driver';
 const POLICY_FACT_FQDN='com.redhat.demos.decisiontable.Policy';
 
-class CarInsuranceForm extends React.Component {
+class TrafficViolationForm extends React.Component {
   constructor(props) {
     super(props);
 
@@ -49,14 +49,16 @@ class CarInsuranceForm extends React.Component {
       driver: {
         name: '',
         age: 0,
-        priorClaims: 0,
-        locationRiskProfile: 'NONE',
+        state: '',
+        city: '',
+        points: 0,
       },
-      policy: {
+      violation: {
+        code: '',
+        date: null,
         type: 'NONE',
-        approved: false,
-        discountPercent: 0,
-        basePrice: 0.0,
+        speedLimit: 0,
+        actualSpeed: 0,
       },
       fieldsValidation: {
         driver: {
@@ -66,17 +68,32 @@ class CarInsuranceForm extends React.Component {
           age: {
             valid: () => this.state.driver.age > 0,
           },
-          priorClaims: {
-            valid: () => this.state.driver.priorClaims >= 0 && this.state.driver.priorClaims <= 100,
+          state: {
+            valid: () => this.state.driver.state,
           },
-          locationRiskProfile: {
-            valid: () => this.state.driver.locationRiskProfile !== 'NONE',
+          city: {
+            valid: () => this.state.driver.city,
+          },
+          points: {
+            valid: () => this.state.driver.points,
           },
         },
-        policy: {
+        violation: {
+          code: {
+            valid: () => this.state.violation.code,
+          },
+          date: {
+            valid: () => this.state.violation.date,
+          },
           type: {
-            valid: () => this.state.policy.type !== 'NONE',
-          }
+            valid: () => this.state.violation.type,
+          },
+          speedLimit: {
+            valid: () => this.state.violation.speedLimit,
+          },
+          actualSpeed: {
+            valid: () => this.state.violation.actualSpeed,
+          },
         }
       },
       _saveStatus: 'NONE',
@@ -108,25 +125,35 @@ class CarInsuranceForm extends React.Component {
     // if (!this.formValidate()) return;
     if (!formValidate(this.state.fieldsValidation)) return;
 
-    const driverFact = this.kieClient.newInsertCommand({ [DRIVER_FACT_FQDN]: this.state.driver }, 'driver', true);
-    const policyFact = this.kieClient.newInsertCommand({ [POLICY_FACT_FQDN]: this.state.policy }, 'policy', true);
-    const facts = [driverFact, policyFact];
+    const driverFact = {};
+    const violationFact = {};
+    const context = {driverFact, violationFact};
     // build server request payload just for debug purposes
-    const rawServerRequest = this.kieClient.buildDroolsRequestBody(facts, RULES_KIE_SESSION_NAME);
+    const rawServerRequest = this.kieClient.buildDmnRequestBody(context);
 
     this.kieClient
-      .fireRules(facts)
+      .executeDecision(facts)
       .then((response) => {
 
-        const driverFact = this.kieClient.extractFactFromKieResponse(response, 'driver');
-        const policyFact = this.kieClient.extractFactFromKieResponse(response, 'policy');
+        //TODO: parse DMN Results...
+        let finalResult = null;
+        let fine = null;
+        const dmnResults = response.result['dmn-evaluation-result']['decision-results'];
+        Object.getOwnPropertyNames(dmnResults).forEach(p => {
+          if (Object.keys(p).find( (k, i, o) => k['decision-name'] === 'Should the driver be suspended?' )) {
+            finalResult = k['result'];
+          }
+          if (Object.keys(p).find( (k, i, o) => k['decision-name'] === 'Fine' )) {
+            fine = k['result'];
+          }
+        } );
 
         this.setState({
           _saveStatus: 'NONE',
           _rawServerResponse: response,
           _serverResponse: {
-            driverFact,
-            policyFact,
+            finalResult,
+            fine,
           },
           _responseModalOpen: true,
         });
@@ -272,7 +299,7 @@ class CarInsuranceForm extends React.Component {
 
           <Modal
             variant="small"
-            title="Application submitted!"
+            title="Violation submitted!"
             isOpen={this.state._responseModalOpen}
             onClose={this.handleModalToggle}
             actions={[
@@ -429,4 +456,4 @@ class CarInsuranceForm extends React.Component {
   }
 }
 
-export default CarInsuranceForm;
+export default TrafficViolationForm;

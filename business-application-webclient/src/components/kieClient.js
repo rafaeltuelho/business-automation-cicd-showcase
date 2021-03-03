@@ -23,14 +23,17 @@ export default class KieClient {
         kieServerAuthBase64: btoa(props.common.kieServerUser + ':' + props.common.kieServerPassword),
       },
       jbpm: {
-
+        containerId: props.jbpm?.containerId,
+        processId: props.jbpm?.processId,
       },
       drools: {
         containerId: props.drools?.containerId,
         kieSessionName: props.drools?.kiesessionName ? props.drools.kieSessionName : KIE_SESSION_NAME,
       },
       dmn: {
-
+        containerId: props.dmn?.containerId,
+        modelNamespace: props.dmn?.modelNamespace,
+        modelName: props.dmn?.modelName,
       }
     };
 
@@ -56,7 +59,7 @@ export default class KieClient {
 
   buildDroolsRequestBody(facts, kieSessionName) {
     const requestBody = {
-      "lookup": kieSessionName, //this.settings.kieSessionName,
+      "lookup": kieSessionName,
       "commands": [
           ...facts,
           {
@@ -66,39 +69,61 @@ export default class KieClient {
               }
           }
       ]
-    }// fact obj end
+    }
+
+    return requestBody;
+  }
+
+  buildDmnRequestBody(context) {
+    const requestBody = {
+      "model-namespace": this.settings.dmn.modelNamespace,
+      "model-name": this.settings.dmn.modelName,
+      // "decision-name":[],
+      // "decision-id": [],
+      "dmn-context" : context,      
+    }
 
     return requestBody;
   }
 
   // kie API call functions
   fireRules(facts) {
-    console.log('\n\n--------------------------------');
-    console.log('calling kie server to fire rules...');
-
-    //POST http://localhost:8080/kie-server/services/rest/server/containers/instances/loan-rules_1.0.0-SNAPSHOT
-    const url = (
+    const endpoint = (
         this.settings.common.kieServerBaseUrl + '/containers/instances/' + this.settings.drools.containerId
     );
+    const payload = this.buildDroolsRequestBody(facts);
+    return this.callKieServer(endpoint, payload); 
+  }
 
-    const requestBody = this.buildDroolsRequestBody(facts);
-    console.debug('body payload:\n', JSON.stringify(requestBody, null, '\t'));
+  executeDecision(context) {
+    const endpoint = (
+        this.settings.common.kieServerBaseUrl + '/containers/' + this.settings.drools.containerId + '/dmn'
+    );
+    const payload = this.buildDmnRequestBody(context);
+    return this.callKieServer(endpoint, payload); 
+  }
+
+  // helper functions
+  callKieServer(endpoint, payload) {
+    console.log('\n\n--------------------------------');
+    console.log('calling kie server endpoint: ' + endpoint);
+
+    console.debug('body payload:\n', JSON.stringify(payload, null, '  '));
     console.log('--------------------------------\n\n')
 
-    return fetch(url, {
+    return fetch(endpoint, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
           'Authorization':'Basic ' + this.settings.common.kieServerAuthBase64,
         },
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify(payload),
       }).then(this.checkHttpStatus)
             .then(this.parseJson)
             .then(this.checkKieResponse) 
   }
 
-  // helper functions
   newInsertCommand(fact, factId, shouldReturn) {
     const obj = {
         "insert": {

@@ -17,6 +17,8 @@ import {
   Button,
   Radio,
   Divider,
+  ExpandableSection,
+  Title,
   Alert, 
   AlertActionCloseButton,
 } from '@patternfly/react-core';
@@ -98,7 +100,7 @@ class SettingsForm extends React.Component {
 
   onSettingsSave = evt => {
     // evt.preventDefault();
-    if (!this.formValidate()) return;
+    if (!formValidate(this.state.fieldsValidation)) return;
 
     const kieSettings = {
       common: this.state.common,
@@ -279,22 +281,102 @@ class SettingsForm extends React.Component {
               onChange={ this.handleTextInputChange } />
           </FormGroup>
         </FormSection>
-        <FormSection>
-        <FormGroup
-            label="Decision Kie Continer Id"
-            isRequired
-            fieldId="drools.containerId"
-            helperText="Enter the Container Id"
-            helperTextInvalid="ContainerId must not be empty">
-            <TextInput
-              isRequired
-              type="text"
-              id="drools.containerId"
-              validated={this.state.fieldsValidation.drools['containerId'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
-              value={this.state.drools.containerId}
-              onChange={ this.handleTextInputChange } />
-          </FormGroup>          
-        </FormSection>
+        <ExpandableSection toggleText="Drools">
+          <FormSection>
+            <FormGroup
+                label="Decision Kie Container Id"
+                isRequired
+                fieldId="drools.containerId"
+                helperText="Enter the Container Id"
+                helperTextInvalid="ContainerId must not be empty">
+                <TextInput
+                  isRequired
+                  type="text"
+                  id="drools.containerId"
+                  validated={this.state.fieldsValidation.drools['containerId'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
+                  value={this.state.drools.containerId}
+                  onChange={ this.handleTextInputChange } />
+            </FormGroup>          
+          </FormSection>
+        </ExpandableSection>
+        <ExpandableSection toggleText="DMN">
+          <FormSection>
+            <FormGroup
+                label="Decision Kie Container Id"
+                // isRequired
+                fieldId="dmn.containerId"
+                helperText="Enter the Container Id"
+                helperTextInvalid="ContainerId must not be empty">
+                <TextInput
+                  isRequired
+                  type="text"
+                  id="dmn.containerId"
+                  validated={this.state.fieldsValidation.dmn['containerId'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
+                  value={this.state.dmn.containerId}
+                  onChange={ this.handleTextInputChange } />
+            </FormGroup>          
+            <FormGroup
+                label="Model Namespace"
+                // isRequired
+                fieldId="dmn.modelNamespace"
+                helperText="Enter the Model Namespace"
+                helperTextInvalid="Namespace must not be empty">
+                <TextInput
+                  isRequired
+                  type="text"
+                  id="dmn.modelNamespace"
+                  validated={this.state.fieldsValidation.dmn['modelNamespace'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
+                  value={this.state.dmn.modelNamespace}
+                  onChange={ this.handleTextInputChange } />
+            </FormGroup>          
+            <FormGroup
+                label="Model Name"
+                // isRequired
+                fieldId="dmn.modelName"
+                helperText="Enter the Model Name"
+                helperTextInvalid="Model Name must not be empty">
+                <TextInput
+                  isRequired
+                  type="text"
+                  id="dmn.modelName"
+                  validated={this.state.fieldsValidation.dmn['modelName'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
+                  value={this.state.dmn.modelName}
+                  onChange={ this.handleTextInputChange } />
+            </FormGroup>          
+          </FormSection>
+        </ExpandableSection>
+        <ExpandableSection toggleText="jBPM">
+          <FormSection>
+            <FormGroup
+                label="Process Kie Continer Id"
+                // isRequired
+                fieldId="jbpm.containerId"
+                helperText="Enter the Container Id"
+                helperTextInvalid="ContainerId must not be empty">
+                <TextInput
+                  isRequired
+                  type="text"
+                  id="jbpm.containerId"
+                  validated={this.state.fieldsValidation.jbpm['containerId'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
+                  value={this.state.jbpm.containerId}
+                  onChange={ this.handleTextInputChange } />
+            </FormGroup>          
+            <FormGroup
+                label="Process Id"
+                // isRequired
+                fieldId="jbpm.processId"
+                helperText="Enter the Process Id"
+                helperTextInvalid="Process must not be empty">
+                <TextInput
+                  isRequired
+                  type="text"
+                  id="jbpm.processId"
+                  validated={this.state.fieldsValidation.jbpm['processId'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
+                  value={this.state.jbpm.processId}
+                  onChange={ this.handleTextInputChange } />
+            </FormGroup>          
+          </FormSection>
+        </ExpandableSection>
 
         <ActionGroup>
           <Button variant="primary" onClick={this.onSettingsSave} isDisabled={!formValidate(this.state.fieldsValidation)}>Save</Button>
