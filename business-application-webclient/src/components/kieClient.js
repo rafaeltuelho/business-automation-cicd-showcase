@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch';
+import { getReasonPhrase } from 'http-status-codes' 
 
 // EAP runtime
 //const KIE_SERVER_API_BASE_URL='http://localhost:8080/kie-server/services/rest/server';
@@ -17,23 +18,23 @@ export default class KieClient {
     
     this.settings = {
       common: {
-        kieServerBaseUrl: props.common?.kieServerBaseUrl ? props.common.kieServerBaseUrl : KIE_SERVER_API_BASE_URL,
-        kieServerUser: props.common?.kieServerUser ? props.common.kieServerUser : KIE_SERVER_CLIENT_USER,
-        kieServerPassword: props.common?.kieServerPassword ? props.common.kieServerPassword : KIE_SERVER_CLIENT_PWD,
-        kieServerAuthBase64: btoa(props.common.kieServerUser + ':' + props.common.kieServerPassword),
+        kieServerBaseUrl: props?.common?.kieServerBaseUrl ? props.common.kieServerBaseUrl : KIE_SERVER_API_BASE_URL,
+        kieServerUser: props?.common?.kieServerUser ? props.common.kieServerUser : KIE_SERVER_CLIENT_USER,
+        kieServerPassword: props?.common?.kieServerPassword ? props.common.kieServerPassword : KIE_SERVER_CLIENT_PWD,
+        kieServerAuthBase64: btoa(props?.common?.kieServerUser + ':' + props?.common?.kieServerPassword),
       },
       jbpm: {
-        containerId: props.jbpm?.containerId,
-        processId: props.jbpm?.processId,
+        containerId: props?.jbpm?.containerId,
+        processId: props?.jbpm?.processId,
       },
       drools: {
-        containerId: props.drools?.containerId,
-        kieSessionName: props.drools?.kiesessionName ? props.drools.kieSessionName : KIE_SESSION_NAME,
+        containerId: props?.drools?.containerId,
+        kieSessionName: props?.drools?.kiesessionName ? props.drools.kieSessionName : KIE_SESSION_NAME,
       },
       dmn: {
-        containerId: props.dmn?.containerId,
-        modelNamespace: props.dmn?.modelNamespace,
-        modelName: props.dmn?.modelName,
+        containerId: props?.dmn?.containerId,
+        modelNamespace: props?.dmn?.modelNamespace,
+        modelName: props?.dmn?.modelName,
       }
     };
 
@@ -164,7 +165,7 @@ export default class KieClient {
         return response;
     } else {
       const error = new Error(`HTTP Error ${response.status}:${response.statusText}`);
-      error.status = response.status + ':' + response.statusText;
+      error.status = response.status + '(' +  getReasonPhrase(response.status) + '):' + response.statusText;
       error.response = response;
       console.debug(error);
       console.log(error);

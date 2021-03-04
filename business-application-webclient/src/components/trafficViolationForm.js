@@ -30,13 +30,9 @@ import {
   ExpandableSection,
   Grid,
   GridItem,
+  Spinner,
 } from '@patternfly/react-core';
-import { BorderNoneIcon } from "@patternfly/react-icons";
 import ReactJson from 'react-json-view'
-
-const RULES_KIE_SESSION_NAME='stateless-session';
-const DRIVER_FACT_FQDN='com.redhat.demos.decisiontable.Driver';
-const POLICY_FACT_FQDN='com.redhat.demos.decisiontable.Policy';
 
 class TrafficViolationForm extends React.Component {
   constructor(props) {
@@ -47,56 +43,56 @@ class TrafficViolationForm extends React.Component {
 
     this.state = {
       driver: {
-        name: '',
-        age: 0,
-        state: '',
-        city: '',
-        points: 0,
+        'name': '',
+        'age': 0,
+        'state': '',
+        'city': '',
+        'Points': 0,
       },
       violation: {
-        code: '',
-        date: null,
-        type: 'NONE',
-        speedLimit: 0,
-        actualSpeed: 0,
+        'code': '',
+        'date': null,
+        'Type': 'NONE',
+        'Speed Limit': 0,
+        'Actual Speed': 0,
       },
       fieldsValidation: {
         driver: {
-          name: {
-            valid: () => !isEmpty(this.state.driver.name),
+          'name': {
+            valid: () => true, //!isEmpty(this.state.driver.name),
           },
-          age: {
-            valid: () => this.state.driver.age > 0,
+          'age': {
+            valid: () => true, //this.state.driver.age > 0,
           },
-          state: {
-            valid: () => this.state.driver.state,
+          'state': {
+            valid: () => true, //this.state.driver.state,
           },
-          city: {
-            valid: () => this.state.driver.city,
+          'city': {
+            valid: () => true, //this.state.driver.city,
           },
-          points: {
-            valid: () => this.state.driver.points,
+          'Points': {
+            valid: () => true, //this.state.driver['Points'],
           },
         },
         violation: {
-          code: {
-            valid: () => this.state.violation.code,
+          'code': {
+            valid: () => true, //this.state.violation.code,
           },
-          date: {
-            valid: () => this.state.violation.date,
+          'date': {
+            valid: () => true, //this.state.violation.date,
           },
-          type: {
-            valid: () => this.state.violation.type,
+          'Type': {
+            valid: () => this.state.violation['Type'],
           },
-          speedLimit: {
-            valid: () => this.state.violation.speedLimit,
+          'Speed Limit': {
+            valid: () => this.state.violation['Speed Limit'],
           },
-          actualSpeed: {
-            valid: () => this.state.violation.actualSpeed,
+          'Actual Speed': {
+            valid: () => this.state.violation['Actual Speed'],
           },
         }
       },
-      _saveStatus: 'NONE',
+      _apiCallStatus: 'NONE',
       _rawServerRequest: {},
       _rawServerResponse: {},
       _serverResponse: {
@@ -118,44 +114,45 @@ class TrafficViolationForm extends React.Component {
     evt.preventDefault();
 
     this.setState({
-      _saveStatus: 'Processing...',
-      _canValidate: true,
+      _apiCallStatus: 'WAITING',
+      _responseModalOpen: true,      
     });
 
     // if (!this.formValidate()) return;
     if (!formValidate(this.state.fieldsValidation)) return;
 
-    const driverFact = {};
-    const violationFact = {};
-    const context = {driverFact, violationFact};
+    const driverFact = this.state.driver;
+    const violationFact = this.state.violation;
+    const context = {'Driver': driverFact, 'Violation': violationFact};
     // build server request payload just for debug purposes
     const rawServerRequest = this.kieClient.buildDmnRequestBody(context);
 
     this.kieClient
-      .executeDecision(facts)
+      .executeDecision(context)
       .then((response) => {
 
-        //TODO: parse DMN Results...
+        //parse DMN Results...
         let finalResult = null;
         let fine = null;
+        //TODO: instead of iterating over 'decision-results' try to get the results from 'dmn-context' using decision node name directly...
         const dmnResults = response.result['dmn-evaluation-result']['decision-results'];
         Object.getOwnPropertyNames(dmnResults).forEach(p => {
-          if (Object.keys(p).find( (k, i, o) => k['decision-name'] === 'Should the driver be suspended?' )) {
-            finalResult = k['result'];
+          const result = dmnResults[p];
+          if (result['decision-name'] === 'Should the driver be suspended?') {
+            finalResult = result['result']; 
           }
-          if (Object.keys(p).find( (k, i, o) => k['decision-name'] === 'Fine' )) {
-            fine = k['result'];
+          else if (result['decision-name'] === 'Fine') {
+            fine = result['result'];
           }
-        } );
+        });
 
         this.setState({
-          _saveStatus: 'NONE',
+          _apiCallStatus: 'COMPLETE',
           _rawServerResponse: response,
           _serverResponse: {
-            finalResult,
-            fine,
+            finalResult: finalResult,
+            fine: fine,
           },
-          _responseModalOpen: true,
         });
 
         // scroll the page to make alert visible
@@ -164,7 +161,7 @@ class TrafficViolationForm extends React.Component {
       .catch(err => {
         console.error(err);
         this.setState({
-          _saveStatus: 'ERROR',
+          _apiCallStatus: 'ERROR',
           _rawServerResponse: err.response,
           _alert: {
             visible: true,
@@ -220,15 +217,15 @@ class TrafficViolationForm extends React.Component {
   };
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    console.debug('CarInsuranceForm ->>> componentDidUpdate...');
+    console.debug('TrafficViolationForm ->>> componentDidUpdate...');
   }
 
   componentDidMount() {
-    console.debug('CarInsuranceForm ->>> componentDidMount...');
+    console.debug('TrafficViolationForm ->>> componentDidMount...');
   }
 
   componentWillUnmount() {
-    console.debug('CarInsuranceForm ->>> componentWillMount...');
+    console.debug('TrafficViolationForm ->>> componentWillMount...');
   }
 
   closeResponseAlert = () => {
@@ -262,23 +259,11 @@ class TrafficViolationForm extends React.Component {
 
   render() {
     const isExpanded = this.state._isDebugExpanded;
-    const insuranceTypes = [
-      { value: 'NONE', label: 'Select an Insurance Type', disabled: false },
-      { value: 'COMPREHENSIVE', label: 'Comprehensive', disabled: false },
-      { value: 'FIRE_THEFT', label: 'Fire and Theft', disabled: false },
-      { value: 'THIRD_PARTY', label: '3rd Party', disabled: false },
-    ];
-    const pricingBracket = [
-      { value: 'NONE', label: 'Select Pricing Bracket', disabled: false },
-      { value: 'LOW', label: 'Low', disabled: false },
-      { value: 'MED', label: 'Medium', disabled: false },
-      { value: 'HIGH', label: 'High', disabled: false },
-    ];
-    const locationRisk = [
-      { value: 'NONE', label: 'Select Location Risk', disabled: false },
-      { value: 'LOW', label: 'Low', disabled: false },
-      { value: 'MED', label: 'Medium', disabled: false },
-      { value: 'HIGH', label: 'High', disabled: false },
+    const violationTypes = [
+      { value: 'NONE', label: 'Select a Violation Type', disabled: false },
+      { value: 'speed', label: 'speed', disabled: false },
+      { value: 'parking', label: 'parking', disabled: false },
+      { value: 'driving under the influence', label: 'driving under the influence', disabled: false },
     ];
 
     const dateRegex = /(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])/;
@@ -286,7 +271,7 @@ class TrafficViolationForm extends React.Component {
     return (
       <Form isHorizontal>
         <React.Fragment>
-          {/**/
+          {
           this.state._alert.visible && (
             <Alert
               variant={this.state._alert.variant}
@@ -295,7 +280,7 @@ class TrafficViolationForm extends React.Component {
               action={<AlertActionCloseButton onClose={this.closeResponseAlert} />}
             />
           )
-          /**/}
+          }
 
           <Modal
             variant="small"
@@ -311,116 +296,56 @@ class TrafficViolationForm extends React.Component {
               </Button>
             ]}
           >
-            <TextContent>
-              <TextList component={TextListVariants.dl}>
-                <TextListItem component={TextListItemVariants.dt}>Name</TextListItem>
-                <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.driverFact.name}</TextListItem>
-                <TextListItem component={TextListItemVariants.dt}>Age</TextListItem>
-                <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.driverFact.age}</TextListItem>
-                <TextListItem component={TextListItemVariants.dt}>Prior Claims</TextListItem>
-                <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.driverFact.priorClaims}</TextListItem>
-                <TextListItem component={TextListItemVariants.dt}>Location Risk Profile</TextListItem>
-                <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.driverFact.locationRiskProfile}</TextListItem>
-              </TextList>
-              <TextList component={TextListVariants.dl}>
-                <TextListItem component={TextListItemVariants.dt}>Policy Type</TextListItem>
-                <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.policyFact.type}</TextListItem>
-                <TextListItem component={TextListItemVariants.dt}>Approved?</TextListItem>
-                <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.policyFact.approved ? 'yes' : 'no'}</TextListItem>
-                <TextListItem component={TextListItemVariants.dt}>Discount</TextListItem>
-                <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.policyFact.discountPercent}</TextListItem>
-                <TextListItem component={TextListItemVariants.dt}>Base Price</TextListItem>
-                <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.policyFact.basePrice}</TextListItem>
-              </TextList>
-            </TextContent>
+
+            {this.state._apiCallStatus === 'WAITING' && (<Spinner isSVG />)}
+            {this.state._apiCallStatus === 'COMPLETE' && (
+              <TextContent>
+                <TextList component={TextListVariants.dl}>
+                  <TextListItem component={TextListItemVariants.dt}>Should the driver be suspended?</TextListItem>
+                  <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.finalResult}</TextListItem>
+                </TextList>
+                <TextList component={TextListVariants.dl}>
+                  <TextListItem component={TextListItemVariants.dt}>Fine Points</TextListItem>
+                  <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.fine?.Points}</TextListItem>
+                  <TextListItem component={TextListItemVariants.dt}>Fine Amount</TextListItem>
+                  <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.fine?.Amount}</TextListItem>
+                </TextList>
+              </TextContent>
+            )}
           </Modal>        
         </React.Fragment>
         {/** Driver fields */}
         <FormGroup
-          label="Driver Name"
+          label="Driver Points"
           isRequired
-          fieldId="driver.name"
-          helperText="Enter your Name"
-          helperTextInvalid="Name must not be empty">
+          fieldId="driver.Points"
+          helperText="Enter driver Points"
+          helperTextInvalid="Points must not be empty">
           <TextInput
             isRequired
-            type="text"
-            id="driver.name"
-            validated={this.state.fieldsValidation.driver['name'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
-            value={this.state.driver.name}
+            type="number"
+            id="driver.Points"
+            validated={this.state.fieldsValidation.driver['Points'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
+            value={this.state.driver['Points']}
             onChange={ this.handleTextInputChange } />
         </FormGroup>        
-        <FormGroup 
-          label="Age" 
-          isRequired 
-          fieldId="driver.age"
-          helperText="Enter your Age "
-          helperTextInvalid="Age must be a valid number '1-120'">
-          <TextInput
-            isRequired
-            type="number"
-            id="driver.age"
-            placeholder="0-120"
-            validated={this.state.fieldsValidation.driver['age'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
-            value={this.state.driver.age}
-            onChange={ this.handleTextInputChange }
-          />
-        </FormGroup>
-        <FormGroup 
-          label="Prior Claims" 
-          isRequired 
-          fieldId="driver.priorClaims"
-          helperText="Enter # of prior claims "
-          helperTextInvalid="must be a valid number '1-100'">
-          <TextInput
-            isRequired
-            type="number"
-            id="driver.priorClaims"
-            placeholder="0-100"
-            validated={this.state.fieldsValidation.driver['priorClaims'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
-            value={this.state.driver.priorClaims}
-            onChange={ this.handleTextInputChange }
-          />
-        </FormGroup>
-        <FormGroup
-          label="Location Risk Profile"
-          isRequired
-          fieldId="driver.locationRiskProfile">
-          <FormSelect
-            id="driver.locationRiskProfile" 
-            value={this.state.driver.locationRiskProfile} 
-            onChange={this.handleSelectInputChange}
-            validated={this.state.fieldsValidation.driver['locationRiskProfile'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
-            >
-            {
-            locationRisk.map((option, index) => (
-                <FormSelectOption 
-                  isDisabled={option.disabled} 
-                  key={index} 
-                  value={option.value} 
-                  label={option.label} 
-                />
-              ))
-            }
-          </FormSelect>
-        </FormGroup>
 
         <Divider />
 
-        {/** Policy fields */}
+        {/** Violation fields */}
         <FormSection>
           <FormGroup
-            label="Policy Type"
+            label="Violation Type"
             isRequired
-            fieldId="policy.type">
+            fieldId="violation.Type">
             <FormSelect
-              id="policy.type" 
-              value={this.state.policy.type} 
+              id="violation.Type" 
+              value={this.state.violation['Type']} 
               onChange={this.handleSelectInputChange}
-              validated={this.state.fieldsValidation.policy['type'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
+              validated={this.state.fieldsValidation.violation['Type'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
               >
               {
-              insuranceTypes.map((option, index) => (
+              violationTypes.map((option, index) => (
                   <FormSelectOption 
                     isDisabled={option.disabled} 
                     key={index} 
@@ -430,6 +355,38 @@ class TrafficViolationForm extends React.Component {
                 ))
               }
             </FormSelect>
+          </FormGroup>
+          <FormGroup 
+            label="Speed Limit" 
+            isRequired 
+            fieldId="violation.Speed Limit"
+            helperText="Enter the speed limit "
+            helperTextInvalid="Speed must be a valid number '1-220'">
+            <TextInput
+              isRequired
+              type="number"
+              id="violation.Speed Limit"
+              placeholder="0-120"
+              validated={this.state.fieldsValidation.violation['Speed Limit'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
+              value={this.state.violation['Speed Limit']}
+              onChange={ this.handleTextInputChange }
+            />
+          </FormGroup>
+          <FormGroup 
+            label="Actual Speed" 
+            isRequired 
+            fieldId="violation.Actual Speed"
+            helperText="Enter your actual Speed "
+            helperTextInvalid="Speed must be a valid number '1-220'">
+            <TextInput
+              isRequired
+              type="number"
+              id="violation.Actual Speed"
+              placeholder="0-120"
+              validated={this.state.fieldsValidation.violation['Actual Speed'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
+              value={this.state.violation['Actual Speed']}
+              onChange={ this.handleTextInputChange }
+            />
           </FormGroup>
         </FormSection>
 
@@ -441,11 +398,12 @@ class TrafficViolationForm extends React.Component {
 
         <ExpandableSection toggleText="Debug View">
           <Grid hasGutter>
+          {/* <GridItem span={12}>{this.state.kieClient.settings.common.kieServerBaseUrl}</GridItem> */}
             <GridItem span={6}>
             <Title headingLevel="h6" size="md">Request Payload</Title>
               <ReactJson name={false} src={this.state._rawServerRequest} />
             </GridItem>
-            <GridItem span={4}>
+            <GridItem span={6}>
               <Title headingLevel="h6" size="md">Response Payload</Title>
               <ReactJson name={false} src={this.state._rawServerResponse.result} />
             </GridItem>

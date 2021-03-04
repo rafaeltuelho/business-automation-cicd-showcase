@@ -115,7 +115,7 @@ class SettingsForm extends React.Component {
 
   onTestConnection = evt => {
     // evt.preventDefault();
-    if (!this.formValidate()) return;
+    if (!formValidate(this.state.fieldsValidation)) return;
 
     console.debug('testing kieserver connection');
     const kieSettings = {

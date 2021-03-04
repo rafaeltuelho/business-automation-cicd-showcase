@@ -22,6 +22,7 @@ import {
 } from '@patternfly/react-core';
 // make sure you've installed @patternfly/patternfly
 import CarInsuranceForm from './carInsuranceForm'
+import TrafficViolationForm from './trafficViolationForm'
 import SettingsForm from './settings'
 import AppHeader from "./header";
 import KieClient from './kieClient';
@@ -56,14 +57,14 @@ class AppPagelayout extends React.Component {
               isActive={activeItem === 'grp-1_itm-1'}
               onClick={this.handleItemOnclick}
               >
-              <Link to="/form">Car Policy Insurance</Link>
+              <Link to="/carInsurance">Car Policy Insurance</Link>
             </NavItem>
-            {/* <NavItem groupId="grp-1" itemId="grp-1_itm-2" 
+            <NavItem groupId="grp-1" itemId="grp-1_itm-2" 
               isActive={activeItem === 'grp-1_itm-2'}
               onClick={this.handleItemOnclick}
               >
-              <Link to="/settings">Settings</Link>
-            </NavItem> */}
+              <Link to="/trafficViolation">Traffic Violation</Link>
+            </NavItem>
           </NavExpandable>
         </NavList>
       </Nav>
@@ -83,7 +84,7 @@ class AppPagelayout extends React.Component {
               {/* A <Switch> looks through its children <Route>s and
                   renders the first one that matches the current URL. */}
               <Switch>
-                <Route path="/form">
+                <Route path="/carInsurance">
                   <PageSection variant={PageSectionVariants.light}>
                     <TextContent>
                       <Text component="h1">Insurance Application Form</Text>
@@ -93,6 +94,16 @@ class AppPagelayout extends React.Component {
                     <CarInsuranceForm />
                   </PageSection>
                 </Route>
+                <Route path="/trafficViolation">
+                  <PageSection variant={PageSectionVariants.light}>
+                    <TextContent>
+                      <Text component="h1">Traffic Violation</Text>
+                    </TextContent>
+                  </PageSection>
+                  <PageSection variant={PageSectionVariants.light}>
+                    <TrafficViolationForm />
+                  </PageSection>
+                </Route>                
                 <Route path="/settings">
                   <PageSection variant={PageSectionVariants.light}>
                     <TextContent>

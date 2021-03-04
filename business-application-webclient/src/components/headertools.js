@@ -61,7 +61,7 @@ class HeaderTools extends React.Component {
         <DropdownItem>
           <BellIcon /> Notifications
         </DropdownItem>,
-        <DropdownItem>
+        <DropdownItem onClick={this.onSettingsClick}>
           <CogIcon /> Settings
         </DropdownItem>
       ];

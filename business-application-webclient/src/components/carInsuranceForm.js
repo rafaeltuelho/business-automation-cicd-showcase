@@ -30,8 +30,8 @@ import {
   ExpandableSection,
   Grid,
   GridItem,
+  Spinner,
 } from '@patternfly/react-core';
-import { BorderNoneIcon } from "@patternfly/react-icons";
 import ReactJson from 'react-json-view'
 
 const RULES_KIE_SESSION_NAME='stateless-session';
@@ -79,7 +79,7 @@ class CarInsuranceForm extends React.Component {
           }
         }
       },
-      _saveStatus: 'NONE',
+      _apiCallStatus: 'NONE',
       _rawServerRequest: {},
       _rawServerResponse: {},
       _serverResponse: {
@@ -101,8 +101,8 @@ class CarInsuranceForm extends React.Component {
     evt.preventDefault();
 
     this.setState({
-      _saveStatus: 'Processing...',
-      _canValidate: true,
+      _apiCallStatus: 'WAITING',
+      _responseModalOpen: true,      
     });
 
     // if (!this.formValidate()) return;
@@ -122,7 +122,7 @@ class CarInsuranceForm extends React.Component {
         const policyFact = this.kieClient.extractFactFromKieResponse(response, 'policy');
 
         this.setState({
-          _saveStatus: 'NONE',
+          _apiCallStatus: 'COMPLETE',
           _rawServerResponse: response,
           _serverResponse: {
             driverFact,
@@ -137,7 +137,7 @@ class CarInsuranceForm extends React.Component {
       .catch(err => {
         console.error(err);
         this.setState({
-          _saveStatus: 'ERROR',
+          _apiCallStatus: 'ERROR',
           _rawServerResponse: err.response,
           _alert: {
             visible: true,
@@ -284,28 +284,31 @@ class CarInsuranceForm extends React.Component {
               </Button>
             ]}
           >
-            <TextContent>
-              <TextList component={TextListVariants.dl}>
-                <TextListItem component={TextListItemVariants.dt}>Name</TextListItem>
-                <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.driverFact.name}</TextListItem>
-                <TextListItem component={TextListItemVariants.dt}>Age</TextListItem>
-                <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.driverFact.age}</TextListItem>
-                <TextListItem component={TextListItemVariants.dt}>Prior Claims</TextListItem>
-                <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.driverFact.priorClaims}</TextListItem>
-                <TextListItem component={TextListItemVariants.dt}>Location Risk Profile</TextListItem>
-                <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.driverFact.locationRiskProfile}</TextListItem>
-              </TextList>
-              <TextList component={TextListVariants.dl}>
-                <TextListItem component={TextListItemVariants.dt}>Policy Type</TextListItem>
-                <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.policyFact.type}</TextListItem>
-                <TextListItem component={TextListItemVariants.dt}>Approved?</TextListItem>
-                <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.policyFact.approved ? 'yes' : 'no'}</TextListItem>
-                <TextListItem component={TextListItemVariants.dt}>Discount</TextListItem>
-                <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.policyFact.discountPercent}</TextListItem>
-                <TextListItem component={TextListItemVariants.dt}>Base Price</TextListItem>
-                <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.policyFact.basePrice}</TextListItem>
-              </TextList>
-            </TextContent>
+            {this.state._apiCallStatus === 'WAITING' && (<Spinner isSVG />)}
+            {this.state._apiCallStatus === 'COMPLETE' && (            
+              <TextContent>
+                <TextList component={TextListVariants.dl}>
+                  <TextListItem component={TextListItemVariants.dt}>Name</TextListItem>
+                  <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.driverFact.name}</TextListItem>
+                  <TextListItem component={TextListItemVariants.dt}>Age</TextListItem>
+                  <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.driverFact.age}</TextListItem>
+                  <TextListItem component={TextListItemVariants.dt}>Prior Claims</TextListItem>
+                  <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.driverFact.priorClaims}</TextListItem>
+                  <TextListItem component={TextListItemVariants.dt}>Location Risk Profile</TextListItem>
+                  <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.driverFact.locationRiskProfile}</TextListItem>
+                </TextList>
+                <TextList component={TextListVariants.dl}>
+                  <TextListItem component={TextListItemVariants.dt}>Policy Type</TextListItem>
+                  <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.policyFact.type}</TextListItem>
+                  <TextListItem component={TextListItemVariants.dt}>Approved?</TextListItem>
+                  <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.policyFact.approved ? 'yes' : 'no'}</TextListItem>
+                  <TextListItem component={TextListItemVariants.dt}>Discount</TextListItem>
+                  <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.policyFact.discountPercent}</TextListItem>
+                  <TextListItem component={TextListItemVariants.dt}>Base Price</TextListItem>
+                  <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.policyFact.basePrice}</TextListItem>
+                </TextList>
+              </TextContent>
+            )}
           </Modal>        
         </React.Fragment>
         {/** Driver fields */}
