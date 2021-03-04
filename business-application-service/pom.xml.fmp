@@ -1,4 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.company</groupId>
   <artifactId>business-application-service</artifactId>
@@ -19,8 +22,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <narayana.version>5.9.0.Final</narayana.version>
-    <!-- fabric8.version>4.4.1</fabric8.version -->
-    <jkube.version>1.1.1</jkube.version>
+    <!-- fabric8.version>3.5.40</fabric8.version -->
+    <fabric8.version>4.4.1</fabric8.version>
   </properties>
 
   <dependencies>
@@ -166,17 +169,16 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.eclipse.jkube</groupId>
-            <artifactId>kubernetes-maven-plugin</artifactId>
-            <version>${jkube.version}</version>
+            <groupId>io.fabric8</groupId>
+            <artifactId>fabric8-maven-plugin</artifactId>
+            <version>${fabric8.version}</version>
             <configuration>
               <verbose>false</verbose>
               <images>
                 <image>
                   <name>apps/${project.artifactId}:${project.version}</name>
                   <build>
-                    <!-- <from>fabric8/java-jboss-openjdk8-jdk</from> -->
-                    <from>fabric8/java-ubi-openjdk11-jdk</from>
+                    <from>fabric8/java-jboss-openjdk8-jdk</from>
                     <assembly>
                       <targetDir>/</targetDir>
                       <inline>
@@ -192,22 +194,19 @@
                             <destName>${project.artifactId}.xml</destName>
                           </file>
                         </files>
-                        <fileSets>
-                          <fileSet>
-                            <directory>src/main/docker</directory>
-                            <outputDirectory>opt/jboss/.m2</outputDirectory>
-                            <includes>
-                              <include>settings.xml</include>
-                            </includes>
-                          </fileSet>
-                          <!-- <fileSet>
-                            <directory>../fifth-business-central-kjar/target/local-repository/maven</directory>
-                            <outputDirectory>opt/jboss/.m2/repository</outputDirectory>  
-                          </fileSet> -->
-                        </fileSets>
+                        <fileSet>
+                          <directory>src/main/docker</directory>
+                          <outputDirectory>opt/jboss/.m2</outputDirectory>
+                          <includes>
+                            <include>settings.xml</include>
+                          </includes>
+                        </fileSet>
+                        <fileSet>
+                          <directory>../fifth-business-central-kjar/target/local-repository/maven</directory>
+                          <outputDirectory>opt/jboss/.m2/repository</outputDirectory>
+                        </fileSet>
                       </inline>
-                      <!-- only required when using jboss base image -->
-                      <!-- <user>jboss:jboss:jboss</user> -->
+                      <user>jboss:jboss:jboss</user>
                     </assembly>
                   </build>
                 </image>
@@ -258,24 +257,23 @@
       </activation>
 
       <properties>
-        <jkube.mode>openshift</jkube.mode>
-        <jkube.build.strategy>docker</jkube.build.strategy>
+        <fabric8.mode>openshift</fabric8.mode>
+        <fabric8.build.strategy>docker</fabric8.build.strategy>
       </properties>
 
       <build>
         <plugins>
           <plugin>
-            <groupId>org.eclipse.jkube</groupId>
-            <artifactId>openshift-maven-plugin</artifactId>
-            <version>${jkube.version}</version>
+            <groupId>io.fabric8</groupId>
+            <artifactId>fabric8-maven-plugin</artifactId>
+            <version>${fabric8.version}</version>
             <configuration>
               <verbose>false</verbose>
               <images>
                 <image>
                   <name>apps/${project.artifactId}:${project.version}</name>
                   <build>
-                    <!-- <from>fabric8/java-jboss-openjdk8-jdk</from> -->
-                    <from>fabric8/java-ubi-openjdk11-jdk</from>
+                    <from>fabric8/java-jboss-openjdk8-jdk</from>
                     <assembly>
                       <targetDir>/</targetDir>
                       <inline>
@@ -291,22 +289,19 @@
                             <destName>${project.artifactId}.xml</destName>
                           </file>
                         </files>
-                        <fileSets>
-                          <fileSet>
-                            <directory>src/main/docker</directory>
-                            <outputDirectory>opt/jboss/.m2</outputDirectory>
-                            <includes>
-                              <include>settings.xml</include>
-                            </includes>
-                          </fileSet>
-                          <!-- <fileSet>
-                            <directory>../fifth-business-central-kjar/target/local-repository/maven</directory>
-                            <outputDirectory>opt/jboss/.m2/repository</outputDirectory>  
-                          </fileSet> -->
-                        </fileSets>
+                        <fileSet>
+                          <directory>src/main/docker</directory>
+                          <outputDirectory>opt/jboss/.m2</outputDirectory>
+                          <includes>
+                            <include>settings.xml</include>
+                          </includes>
+                        </fileSet>
+                        <fileSet>
+                          <directory>../fifth-business-central-kjar/target/local-repository/maven</directory>
+                          <outputDirectory>opt/jboss/.m2/repository</outputDirectory>
+                        </fileSet>
                       </inline>
-                      <!-- only required when using jboss base image -->
-                      <!-- <user>jboss:jboss:jboss</user> -->
+                      <user>jboss:jboss:jboss</user>
                     </assembly>
                     <ports>
                       <port>8090</port>
