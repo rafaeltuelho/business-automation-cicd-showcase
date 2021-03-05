@@ -1,4 +1,5 @@
 spec:
+  replicas: 2
   template:
     spec:
       containers:
@@ -17,11 +18,11 @@ spec:
               httpHeaders:
                 - name: Authorization
                   value: Basic a2llc2VydmVyOmtpZXNlcnZlcjEh
-            initialDelaySeconds: 20
-            timeoutSeconds: 2
+            initialDelaySeconds: 30
+            timeoutSeconds: 3
             periodSeconds: 10
             successThreshold: 1
-            failureThreshold: 3
+            failureThreshold: 5
           livenessProbe:
             httpGet:
               path: /
