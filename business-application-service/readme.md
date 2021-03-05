@@ -139,6 +139,14 @@ Assuming you are logged into an Openshift Cluster (`oc login...`), execute the f
 mvn clean install -Popenshift
 ```
 
+The above command will generate the openshif resources and trigger a Binary Build to build the app image inside the current namespace. After a while you can execute:
+
+```
+mvn oc:apply -Popenshift
+```
+
+to create the DeploymentConfig, Service and Route resources.
+
 ## Start your Business Application Service
 
 ```

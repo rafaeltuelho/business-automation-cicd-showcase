@@ -1,0 +1,29 @@
+spec:
+  template:
+    spec:
+      containers:
+        - resources: 
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "500m"
+          readinessProbe:
+            httpGet:
+              path: /rest/server
+              port: 8090
+              scheme: HTTP
+              httpHeaders:
+                - name: Authorization
+                  value: Basic a2llc2VydmVyOmtpZXNlcnZlcjEh
+            initialDelaySeconds: 20
+            timeoutSeconds: 2
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8090
+              scheme: HTTP
