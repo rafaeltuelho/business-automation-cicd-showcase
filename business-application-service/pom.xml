@@ -264,9 +264,10 @@
       <properties>
         <jkube.mode>openshift</jkube.mode>
         <jkube.build.strategy>docker</jkube.build.strategy>
-        <jkube.openshift.generateRoute>true</jkube.openshift.generateRoute>
+        <!-- <jkube.openshift.generateRoute>true</jkube.openshift.generateRoute>
         <jkube.enricher.jkube-openshift-route.tlsTermination>edge</jkube.enricher.jkube-openshift-route.tlsTermination>
-        <jkube.enricher.jkube-openshift-route.tlsInsecureEdgeTerminationPolicy>Allow</jkube.enricher.jkube-openshift-route.tlsInsecureEdgeTerminationPolicy>
+        <jkube.enricher.jkube-openshift-route.tlsInsecureEdgeTerminationPolicy>Allow</jkube.enricher.jkube-openshift-route.tlsInsecureEdgeTerminationPolicy> -->
+        <jkube.enricher.jkube-service.expose>true</jkube.enricher.jkube-service.expose>
       </properties>
 
       <build>
