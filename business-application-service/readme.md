@@ -139,6 +139,28 @@ Assuming you are logged into an Openshift Cluster (`oc login...`), execute the f
 mvn clean install -Popenshift
 ```
 
+expect an output similar to the following:
+```
+[INFO] oc: Build business-application-service-s2i-1 in status Complete
+[INFO] oc: Found tag on ImageStream business-application-service tag: sha256:e98fa1316b236b0c70c6d97c0e5e22544e982327ecabfc9902d0fcaaf0ff20a5
+[INFO] oc: ImageStream business-application-service written to /Users/rsoares/dev/github/rafaeltuelho/my-business-automation-showcase/business-application-service/target/business-application-service-is.yml
+[INFO] 
+[INFO] --- openshift-maven-plugin:1.1.1:apply (default-cli) @ business-application-service ---
+[INFO] oc: Using OpenShift at https://api.cluster.com:6443/ in namespace dmlab with manifest /Users/rsoares/dev/github/rafaeltuelho/my-business-automation-showcase/business-application-service/target/classes/META-INF/jkube/openshift.yml 
+[INFO] oc: OpenShift platform detected
+[INFO] oc: Creating a Service from openshift.yml namespace dmlab name business-application-service
+[INFO] oc: Created Service: target/jkube/applyJson/dmlab/service-business-application-service.json
+[INFO] oc: Creating a DeploymentConfig from openshift.yml namespace dmlab name business-application-service
+[INFO] oc: Created DeploymentConfig: target/jkube/applyJson/dmlab/deploymentconfig-business-application-service.json
+[INFO] oc: HINT: Use the command `oc get pods -w` to watch your pods start up
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  03:07 min
+[INFO] Finished at: 2021-03-04T19:51:52-05:00
+[INFO] ------------------------------------------------------------------------
+```
+
 The above command will generate the openshif resources and trigger a Binary Build to build the app image inside the current namespace. After a while you can execute:
 
 ```
