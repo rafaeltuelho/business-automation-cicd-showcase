@@ -16,6 +16,7 @@ import {
   ActionGroup,
   Button,
   Radio,
+  Checkbox,
   Divider,
   ExpandableSection,
   Title,
@@ -39,14 +40,20 @@ class SettingsForm extends React.Component {
       jbpm: {
         containerId: kieSettings?.jbpm ? kieSettings.jbpm.containerId : '',
         processId: kieSettings?.jbpm ? kieSettings.jbpm.processId : '',
+        kogitoRuntime: kieSettings?.jbpm ? kieSettings.jbpm.kogitoRuntime : false,
+        endpointUrl: kieSettings?.jbpm ? kieSettings.jbpm.endpointUrl : '',
       },
       drools: {
         containerId: kieSettings?.drools ? kieSettings.drools.containerId : '',
+        kogitoRuntime: kieSettings?.drools ? kieSettings.drools.kogitoRuntime : false,
+        endpointUrl: kieSettings?.drools ? kieSettings.drools.endpointUrl : '',
       },
       dmn: {
         containerId: kieSettings?.dmn ? kieSettings.dmn.containerId : '',
         modelNamespace: kieSettings?.dmn ? kieSettings.dmn.modelNamespace : '',
         modelName: kieSettings?.dmn ? kieSettings.dmn.modelName : '',
+        kogitoRuntime: kieSettings?.dmn?.kogitoRuntime ? kieSettings.dmn.kogitoRuntime : false,
+        endpointUrl: kieSettings?.dmn ? kieSettings.dmn.endpointUrl : '',
       },
       fieldsValidation: {
         common: {
@@ -138,14 +145,14 @@ class SettingsForm extends React.Component {
         });
       })
       .catch((err) => {
-        console.error(err);
+        // console.error(err);
           this.setState({
           _saveStatus: 'ERROR',
           _rawServerResponse: err.response,
           _alert: {
             visible: true,
             variant: 'danger',
-            msg: err.status + ': ' +  err.response,
+            msg: (err.status ? err.status : err) + '' + (err.response ? ': ' + err.response : ''),
           },
         })
         
@@ -185,8 +192,19 @@ class SettingsForm extends React.Component {
     this.onInputChange({ name: id, value });
   };
 
+  // handler for Checkbox fields
+  handleCheckboxChange = (checked, event) => {
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+    this.onInputChange({ name, value });
+  };  
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.debug('SettingsForm ->>> componentDidUpdate...');
+    if (prevState.dmn?.kogitoRuntime !== this.dmn?.kogitoRuntime) {
+      // console.debug('---');
+    }    
   }
 
   componentDidMount() {
@@ -301,6 +319,32 @@ class SettingsForm extends React.Component {
         </ExpandableSection>
         <ExpandableSection toggleText="DMN">
           <FormSection>
+            <FormGroup>
+              <Checkbox
+                label="Kogito Runtime?"
+                isChecked={this.state.dmn.kogitoRuntime}
+                onChange={this.handleCheckboxChange}
+                aria-label="Kogito Runtime?"
+                id="dmn.kogitoRuntime"
+                name="dmn.kogitoRuntime"
+              />              
+            </FormGroup>
+            <FormGroup
+              label="Decision endpoint URL"
+              // isRequired
+              fieldId="dmn.endpointUrl"
+              helperText="Enter the URL for Decision endpoint"
+              helperTextInvalid="URL must not be empty">
+              <TextInput
+                isRequired
+                type="url"
+                id="dmn.endpointUrl"
+                // validated={this.state.fieldsValidation.dmn['endpointUrl'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
+                isDisabled={!this.state.dmn.kogitoRuntime}
+                value={this.state.dmn.endpointUrl}
+                onChange={ this.handleTextInputChange } />
+            </FormGroup>
+
             <FormGroup
                 label="Decision Kie Container Id"
                 // isRequired
@@ -311,6 +355,7 @@ class SettingsForm extends React.Component {
                   isRequired
                   type="text"
                   id="dmn.containerId"
+                  isDisabled={this.state.dmn.kogitoRuntime}
                   validated={this.state.fieldsValidation.dmn['containerId'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
                   value={this.state.dmn.containerId}
                   onChange={ this.handleTextInputChange } />
@@ -325,6 +370,7 @@ class SettingsForm extends React.Component {
                   isRequired
                   type="text"
                   id="dmn.modelNamespace"
+                  isDisabled={this.state.dmn.kogitoRuntime}
                   validated={this.state.fieldsValidation.dmn['modelNamespace'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
                   value={this.state.dmn.modelNamespace}
                   onChange={ this.handleTextInputChange } />
@@ -339,6 +385,7 @@ class SettingsForm extends React.Component {
                   isRequired
                   type="text"
                   id="dmn.modelName"
+                  isDisabled={this.state.dmn.kogitoRuntime}
                   validated={this.state.fieldsValidation.dmn['modelName'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
                   value={this.state.dmn.modelName}
                   onChange={ this.handleTextInputChange } />

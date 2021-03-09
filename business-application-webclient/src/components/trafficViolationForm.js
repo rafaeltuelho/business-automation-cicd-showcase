@@ -130,25 +130,33 @@ class TrafficViolationForm extends React.Component {
     this.kieClient
       .executeDecision(context)
       .then((response) => {
+        console.log(response)
 
         //parse DMN Results...
         let finalResult = null;
         let fine = null;
-        //TODO: instead of iterating over 'decision-results' try to get the results from 'dmn-context' using decision node name directly...
-        const dmnResults = response.result['dmn-evaluation-result']['decision-results'];
-        Object.getOwnPropertyNames(dmnResults).forEach(p => {
-          const result = dmnResults[p];
-          if (result['decision-name'] === 'Should the driver be suspended?') {
-            finalResult = result['result']; 
-          }
-          else if (result['decision-name'] === 'Fine') {
-            fine = result['result'];
-          }
-        });
-
+        let dmnResults = null;
+        if (response?.result) {
+          //TODO: instead of iterating over 'decision-results' try to get the results from 'dmn-context' using decision node name directly...
+          dmnResults = response.result['dmn-evaluation-result']['decision-results'];
+          Object.getOwnPropertyNames(dmnResults).forEach(p => {
+            const result = dmnResults[p];
+            if (result['decision-name'] === 'Should the driver be suspended?') {
+              finalResult = result['result']; 
+            }
+            else if (result['decision-name'] === 'Fine') {
+              fine = result['result'];
+            }
+          });          
+        }
+        else {
+          finalResult = response['Should the driver be suspended?']; 
+          fine = response['Fine'];
+        }  
         this.setState({
           _apiCallStatus: 'COMPLETE',
-          _rawServerResponse: response,
+          _responseModalOpen: true,
+          _rawServerResponse: response?.result ? response.result : response,
           _serverResponse: {
             finalResult: finalResult,
             fine: fine,
@@ -162,11 +170,12 @@ class TrafficViolationForm extends React.Component {
         console.error(err);
         this.setState({
           _apiCallStatus: 'ERROR',
+          _responseModalOpen: false,
           _rawServerResponse: err.response,
           _alert: {
             visible: true,
             variant: 'danger',
-            msg: err.status + ': ' +  err.response,
+            msg: (err.status ? err.status : err) + '' + (err.response ? ': ' + err.response : ''),
           },
         })
         
@@ -405,7 +414,7 @@ class TrafficViolationForm extends React.Component {
             </GridItem>
             <GridItem span={6}>
               <Title headingLevel="h6" size="md">Response Payload</Title>
-              <ReactJson name={false} src={this.state._rawServerResponse.result} />
+              <ReactJson name={false} src={this.state._rawServerResponse} />
             </GridItem>
           </Grid>
         </ExpandableSection>    

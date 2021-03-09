@@ -123,26 +123,27 @@ class CarInsuranceForm extends React.Component {
 
         this.setState({
           _apiCallStatus: 'COMPLETE',
+          _responseModalOpen: true,
           _rawServerResponse: response,
           _serverResponse: {
             driverFact,
             policyFact,
           },
-          _responseModalOpen: true,
         });
 
         // scroll the page to make alert visible
         this.scrollToTop();
       })
       .catch(err => {
-        console.error(err);
+        // console.error(err);
         this.setState({
           _apiCallStatus: 'ERROR',
+          _responseModalOpen: false,
           _rawServerResponse: err.response,
           _alert: {
             visible: true,
             variant: 'danger',
-            msg: err.status + ': ' +  err.response,
+            msg: (err.status ? err.status : err) + '' + (err.response ? ': ' + err.response : ''),
           },
         })
         

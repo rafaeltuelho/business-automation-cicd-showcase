@@ -35,27 +35,12 @@ export default class KieClient {
         containerId: props?.dmn?.containerId,
         modelNamespace: props?.dmn?.modelNamespace,
         modelName: props?.dmn?.modelName,
+        kogitoRuntime: props?.dmn?.kogitoRuntime ? props.dmn.kogitoRuntime : false,
+        endpointUrl: props?.dmn ? props.dmn.endpointUrl : '',
       }
     };
 
     console.debug('KieClient initialized!', this.settings);
-  }
-
-  testConnection() {
-    console.log('\n\n--------------------------------');
-    console.log('calling kie server...');
-
-    const url = this.settings.common.kieServerBaseUrl;
-    return fetch(url, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization':'Basic ' + this.settings.common.kieServerAuthBase64,
-        },
-      }).then(this.checkHttpStatus)
-          .then(this.parseJson)
-          .then(this.checkKieResponse)  
   }
 
   buildDroolsRequestBody(facts, kieSessionName) {
@@ -76,12 +61,18 @@ export default class KieClient {
   }
 
   buildDmnRequestBody(context) {
-    const requestBody = {
-      "model-namespace": this.settings.dmn.modelNamespace,
-      "model-name": this.settings.dmn.modelName,
-      // "decision-name":[],
-      // "decision-id": [],
-      "dmn-context" : context,      
+    let requestBody = {};
+    if (this.settings.dmn.kogitoRuntime) {
+      requestBody = context;
+    }
+    else {
+      requestBody = {
+        "model-namespace": this.settings.dmn.modelNamespace,
+        "model-name": this.settings.dmn.modelName,
+        // "decision-name":[],
+        // "decision-id": [],
+        "dmn-context" : context,      
+      }
     }
 
     return requestBody;
@@ -97,9 +88,9 @@ export default class KieClient {
   }
 
   executeDecision(context) {
-    const endpoint = (
-        this.settings.common.kieServerBaseUrl + '/containers/' + this.settings.drools.containerId + '/dmn'
-    );
+    const endpoint = this.settings.dmn.kogitoRuntime ?
+        this.settings.dmn.endpointUrl :
+          this.settings.common.kieServerBaseUrl + '/containers/' + this.settings.drools.containerId + '/dmn';
     const payload = this.buildDmnRequestBody(context);
     return this.callKieServer(endpoint, payload); 
   }
@@ -121,8 +112,30 @@ export default class KieClient {
         },
         body: JSON.stringify(payload),
       }).then(this.checkHttpStatus)
-            .then(this.parseJson)
-            .then(this.checkKieResponse) 
+          .then(this.parseJson)
+            .then(this.checkKieResponse)
+            .catch(err => {
+              console.debug(err);
+              const error = new Error(`HTTP Error [${err}]`);
+              throw error;          
+            }); 
+  }
+
+  testConnection() {
+    console.log('\n\n--------------------------------');
+    console.log('calling kie server...');
+
+    const url = this.settings.common.kieServerBaseUrl;
+    return fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization':'Basic ' + this.settings.common.kieServerAuthBase64,
+        },
+      }).then(this.checkHttpStatus)
+          .then(this.parseJson)
+            .then(this.checkKieResponse);
   }
 
   newInsertCommand(fact, factId, shouldReturn) {
@@ -154,13 +167,12 @@ export default class KieClient {
         error.status = 'FACT NOT FOUND';
         error.response = `Fact Object with identifier ${factId} not found on response`;
         console.debug(error);
-        console.log(error);
         throw error;        
     }
   }
   
   checkHttpStatus(response) {
-    console.debug('Response from api server: \n', JSON.stringify(response, null, '\t'));
+    console.debug('Response from api server: \n', JSON.stringify(response, null, '  '));
     if (response.status >= 200 && response.status < 300) {
         return response;
     } else {
@@ -168,23 +180,23 @@ export default class KieClient {
       error.status = response.status + '(' +  getReasonPhrase(response.status) + '):' + response.statusText;
       error.response = response;
       console.debug(error);
-      console.log(error);
       throw error;
     }
   }
 
   checkKieResponse(response) {
-    console.debug('Response from KIE api server: \n', JSON.stringify(response, null, '\t'));
-    if (response.type !== 'FAILURE' && response.result) {
-        return response;
-    } else {
-      const error = new Error(`KIE API Error ${response.msg}`);
-      error.status = response.type;
-      error.response = response.msg;
-      console.debug(error);
-      console.log(error);
-      throw error;
+    console.debug('Response from KIE api server: \n', JSON.stringify(response, null, '  '));
+    if (response.type && response.result) { // standard Kie Server (non Kogito)
+      if (response.type === 'FAILURE') {
+        const error = new Error(`KIE API Error ${response.msg}`);
+        error.status = response.type;
+        error.response = response.msg;
+        console.debug(error);
+        throw error;
+      }
     }
+
+    return response;
   }
 
   parseJson(response) {
