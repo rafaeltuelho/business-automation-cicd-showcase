@@ -180,3 +180,15 @@ java -jar target/business-application-service-1.0-SNAPSHOT.jar
 http://localhost:8090/rest/api-docs?url=http://localhost:8090/rest/swagger.json
 
 you can authenticate with `kieserver/kieserver1!`
+
+## Note about KieScanner
+
+ref: https://docs.jboss.org/drools/release/7.49.0.Final/drools-docs/html_single/#_kiescanner
+```
+The settings.xml file can be located in 3 locations, the actual settings used is a merge of those 3 locations.
+    The Maven install: $M2_HOME/conf/settings.xml
+
+    A user’s install: ${user.home}/.m2/settings.xml
+
+    Folder location specified by the system property kie.maven.settings.custom
+```

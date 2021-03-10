@@ -195,24 +195,32 @@
                             <outputDirectory>deployments</outputDirectory>
                             <destName>${project.artifactId}.xml</destName>
                           </file>
+                          <file>
+                            <!-- <source>src/main/docker/external-repo-settings.xml</source> -->
+                            <source>src/main/docker/offline-repo-settings.xml</source>
+                            <outputDirectory>deployments/.m2</outputDirectory>
+                            <destName>settings.xml</destName>
+                            <fileMode>0766</fileMode>
+                          </file>                             
                         </files>
                         <fileSets>
                           <fileSet>
-                            <directory>src/main/docker</directory>
-                            <outputDirectory>opt/jboss/.m2</outputDirectory>
-                            <includes>
-                              <include>settings.xml</include>
-                            </includes>
+                            <directory>src/main/docker/repository</directory>
+                            <outputDirectory>deployments/.m2/repository</outputDirectory>
+                            <directoryMode>0777</directoryMode>
                           </fileSet>
                           <!-- <fileSet>
-                            <directory>../fifth-business-central-kjar/target/local-repository/maven</directory>
-                            <outputDirectory>opt/jboss/.m2/repository</outputDirectory>  
+                            <directory>/local-repository/maven</directory>
+                            <outputDirectory>/deployments/.m2/repository</outputDirectory>  
                           </fileSet> -->
                         </fileSets>
                       </inline>
-                      <!-- only required when using jboss base image -->
-                      <!-- <user>jboss:jboss:jboss</user> -->
+                      <!-- user[:group][:run-user] can use id -->
+                      <user>1001:1001:1001</user>
                     </assembly>
+                    <env>
+                      <JAVA_OPTIONS>-Dkie.maven.settings.custom=/deployments/.m2/settings.xml</JAVA_OPTIONS>
+                    </env>
                   </build>
                 </image>
               </images>
@@ -253,6 +261,7 @@
         </plugins>
       </build>
     </profile>
+
     <profile>
       <id>openshift</id>
       <activation>
@@ -307,24 +316,32 @@
                             <outputDirectory>deployments</outputDirectory>
                             <destName>${project.artifactId}.xml</destName>
                           </file>
+                          <file>
+                            <!-- <source>src/main/docker/external-repo-settings.xml</source> -->
+                            <source>src/main/docker/offline-repo-settings.xml</source>
+                            <outputDirectory>deployments/.m2</outputDirectory>
+                            <destName>settings.xml</destName>
+                            <fileMode>0766</fileMode>
+                          </file>                             
                         </files>
                         <fileSets>
                           <fileSet>
-                            <directory>src/main/docker</directory>
-                            <outputDirectory>opt/jboss/.m2</outputDirectory>
-                            <includes>
-                              <include>settings.xml</include>
-                            </includes>
+                            <directory>src/main/docker/repository</directory>
+                            <outputDirectory>deployments/.m2/repository</outputDirectory>
+                            <directoryMode>0777</directoryMode>
                           </fileSet>
                           <!-- <fileSet>
-                            <directory>../fifth-business-central-kjar/target/local-repository/maven</directory>
-                            <outputDirectory>opt/jboss/.m2/repository</outputDirectory>  
+                            <directory>/local-repository/maven</directory>
+                            <outputDirectory>/deployments/.m2/repository</outputDirectory>  
                           </fileSet> -->
                         </fileSets>
                       </inline>
-                      <!-- only required when using jboss base image -->
-                      <!-- <user>jboss:jboss:jboss</user> -->
+                      <!-- user[:group][:run-user] can use id -->
+                      <!-- <user>1001:1001:1001</user> -->
                     </assembly>
+                    <env>
+                      <JAVA_OPTIONS>-Dkie.maven.settings.custom=/deployments/.m2/settings.xml</JAVA_OPTIONS>
+                    </env>
                     <ports>
                       <port>8090</port>
                     </ports>

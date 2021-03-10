@@ -28,3 +28,8 @@ spec:
               path: /
               port: 8090
               scheme: HTTP
+            initialDelaySeconds: 30
+            failureThreshold: 3
+          env:
+            - name: NEXUS_REPO
+              value: http://nexus-cicd.apps.cluster.com  
