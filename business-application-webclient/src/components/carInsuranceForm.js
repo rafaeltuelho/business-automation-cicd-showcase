@@ -129,6 +129,11 @@ class CarInsuranceForm extends React.Component {
             driverFact,
             policyFact,
           },
+          _alert: {
+            visible: false,
+            variant: 'default',
+            msg: '',
+          },           
         });
 
         // scroll the page to make alert visible
