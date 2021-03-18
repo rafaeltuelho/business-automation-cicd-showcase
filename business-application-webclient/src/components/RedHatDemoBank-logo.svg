@@ -5,12 +5,36 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   enable-background="new 0 0 225 35"
-   viewBox="0 0 225 35"
-   width="225"
-   height="35"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0rc1 (09960d6, 2020-04-09)"
+   sodipodi:docname="RedHatDemoBank-logo.svg"
+   id="svg39"
    version="1.1"
-   id="svg39">
+   height="35"
+   width="225"
+   viewBox="0 0 225 35"
+   enable-background="new 0 0 225 35">
+  <sodipodi:namedview
+     inkscape:current-layer="svg39"
+     inkscape:window-maximized="0"
+     inkscape:window-y="83"
+     inkscape:window-x="82"
+     inkscape:cy="25.293984"
+     inkscape:cx="116.70465"
+     inkscape:zoom="4.8755556"
+     showgrid="false"
+     id="namedview100"
+     inkscape:window-height="605"
+     inkscape:window-width="1531"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
   <metadata
      id="metadata45">
     <rdf:RDF>
@@ -19,40 +43,50 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <defs
-     id="defs43" />
+     id="defs43">
+    <style
+       id="style104">.cls-1{fill:#e00;}</style>
+  </defs>
   <linearGradient
-     id="a"
-     gradientUnits="userSpaceOnUse"
-     x1="17.4799"
-     x2="17.4799"
+     y2="34.1113"
      y1="2.0369"
-     y2="34.1113">
+     x2="17.4799"
+     x1="17.4799"
+     gradientUnits="userSpaceOnUse"
+     id="a">
     <stop
-       offset="0"
+       id="stop10"
        stop-color="#00f1ff"
-       id="stop10" />
+       offset="0" />
     <stop
-       offset="1"
+       id="stop12"
        stop-color="#0076c1"
-       id="stop12" />
+       offset="1" />
   </linearGradient>
-  <path
-     d="m12.3 26.7-5.2 1.2-7-9.9 17-16.6.4-.4.4.4 17 16.6-7 9.9-5.2-1.2-5.2 7.3zm5.2 5.6 4.2-5.8-1.3-.3-2.8 4.1-3-4.1-1.3.3zm.1-3.8 2-3-2.1-20.3-2.1 20.3zm9.8-1.8 6.1-8.6-10.3-10.1 5.5 6.7-3.1 4.3 1 2.3-3.2 4.5zm-19.9 0 4.1-.9-3.2-4.5 1-2.3-3.1-4.3 5.4-6.7-10.3 10.1zm5.2-1.2 1.3-.3-3.9-5.3-.5 1.2zm9.6 0 3.1-4.4-.5-1.2-3.9 5.3zm-1.8-1.4 3.9-5.3-5.8-13.2zm-6.1 0 2-18.5-5.8 13.3zm-4.5-6.2 5.8-13.1-8.1 9.9zm15.2 0 2.3-3.2-8.1-9.9z"
-     fill="url(#a)"
-     id="path15" />
   <text
-     xml:space="preserve"
-     style="font-size:21.33330000000000126px;line-height:1.25;font-family:sans-serif;word-spacing:0px;fill:#ffffff;"
-     x="40"
-     y="24"
-     id="text880"><tspan
-       id="tspan878"
-       x="40"
-       y="24"
-       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-family:'Red Hat Display';-inkscape-font-specification:'Red Hat Display Medium';letter-spacing:3px;fill:#ffffff;">RED HAT BANK</tspan></text>
+     transform="matrix(1.0729834,0.00146045,-0.00269472,0.93197718,0,0)"
+     id="text880"
+     y="27.579201"
+     x="42.092163"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.53569999999999851px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke-width:1.07298;"
+     xml:space="preserve"><tspan
+       style="stroke-width:1.07298;fill:#ffffff;"
+       y="27.579201"
+       x="42.092163"
+       id="tspan1044"
+       sodipodi:role="line">Showcase App</tspan></text>
+  <g
+     transform="matrix(0.18283072,0,0,0.17009557,-64.35092,-46.958709)"
+     id="g122">
+    <path
+       inkscape:connector-curvature="0"
+       class="cls-1"
+       d="m 493.5163,385.6611 c 12.5,0 30.61,-2.58 30.61,-17.46 a 14,14 0 0 0 -0.31,-3.42 l -7.45,-32.36 c -1.73,-7.12 -3.23,-10.35 -15.74,-16.6 -9.7,-4.97 -30.83,-13.16 -37.08,-13.16 -5.83,0 -7.54,7.54 -14.44,7.54 -6.68,0 -11.64,-5.6 -17.89,-5.6 -6,0 -9.92,4.09 -12.94,12.5 0,0 -8.4,23.72 -9.48,27.16 a 6.12,6.12 0 0 0 -0.22,1.94 c 0,9.22 36.29,39.46 84.94,39.46 m 32.55,-11.42 c 1.72,8.19 1.72,9.05 1.72,10.13 0,14 -15.73,21.77 -36.43,21.77 -46.78,-0.01 -87.74,-27.38 -87.74,-45.48 a 18.45,18.45 0 0 1 1.51,-7.33 c -16.81,0.85 -38.58,3.87 -38.58,23.05 0,31.48 74.58,70.28 133.65,70.28 45.27,0 56.69,-20.48 56.69,-36.65 0,-12.72 -11,-27.16 -30.82,-35.78"
+       id="path110" />
+  </g>
 </svg>

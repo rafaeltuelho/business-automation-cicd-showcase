@@ -25,7 +25,6 @@ import CarInsuranceForm from './carInsuranceForm'
 import TrafficViolationForm from './trafficViolationForm'
 import SettingsForm from './settings'
 import AppHeader from "./header";
-import KieClient from './kieClient';
 
 class AppPagelayout extends React.Component {
   state = {
@@ -117,7 +116,7 @@ class AppPagelayout extends React.Component {
                 <Route path="/">
                   <PageSection variant={PageSectionVariants.light}>
                     <TextContent>
-                      <Text component="h1">Wellcome to Decision Manager Show Case app!</Text>
+                      <Text component="h1">Welcome to Decision Manager Show Case app!</Text>
                     </TextContent>
                   </PageSection>
                 </Route>

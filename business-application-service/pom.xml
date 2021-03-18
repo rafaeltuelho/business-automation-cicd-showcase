@@ -76,7 +76,7 @@
         <groupId>org.kie</groupId>
         <artifactId>kie-maven-plugin</artifactId>
         <version>${version.org.kie}</version>
-        <!--
+        
         <executions>
           <execution>
             <id>copy</id>
@@ -95,7 +95,7 @@
             </artifactItem>
           </artifactItems>
         </configuration>
-      -->
+     
       </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>

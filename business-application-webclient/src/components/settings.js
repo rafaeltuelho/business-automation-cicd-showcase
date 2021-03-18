@@ -154,8 +154,9 @@ class SettingsForm extends React.Component {
             variant: 'danger',
             msg: (err.status ? err.status : err) + '' + (err.response ? ': ' + err.response : ''),
           },
-        })
-        
+        })        
+      })
+      .finally(() => {
         this.scrollToTop();
       });
   };
