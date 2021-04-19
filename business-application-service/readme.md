@@ -164,7 +164,7 @@ expect an output similar to the following:
 The above command will generate the openshif resources and trigger a Binary Build to build the app image inside the current namespace. After a while you can execute:
 
 ```
-mvn oc:apply -Popenshift
+mvn oc:resource oc:apply -Popenshift
 ```
 
 to create the DeploymentConfig, Service and Route resources.

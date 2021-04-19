@@ -1,0 +1,11 @@
+java -Dkie.maven.settings.custom=/deployments/.m2/settings.xml \
+-javaagent:/opt/agent-bond/agent-bond.jar=jolokia{{host=0.0.0.0}},jmx_exporter{{9779:/opt/agent-bond/jmx_exporter_config.yml}} \
+-XX:+ExitOnOutOfMemoryError -cp . \
+-jar /deployments/business-application-service-1.0-SNAPSHOT.jar
+
+Jolokia: Agent started with URL http://10.128.2.85:8778/jolokia/
+
+https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz
+curl https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz -O
+./oc login --insecure-skip-tls-verify=true --token=sha256~ --server=https://api.cluster.example.com:6443
+./oc whoami
