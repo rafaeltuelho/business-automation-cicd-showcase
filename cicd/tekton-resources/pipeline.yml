@@ -118,8 +118,7 @@ spec:
       - name: MAVEN_PROJECT_CONTEXT_DIR
         value: "business-application-service"
       - name: GOALS
-        value:
-          - oc:build
+        value: "oc:build"
     workspaces:
       - name: maven-repo
         workspace: maven-local-repo
@@ -138,9 +137,7 @@ spec:
       - name: MAVEN_PROJECT_CONTEXT_DIR
         value: "business-application-service"
       - name: GOALS
-        value:
-          - oc:resource
-          - oc:apply
+        value: "oc:resource oc:apply"
     workspaces:
       - name: maven-repo
         workspace: maven-local-repo
