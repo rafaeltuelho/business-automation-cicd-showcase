@@ -26,7 +26,7 @@ spec:
       default: "clean package"
   steps:
     - name: mvn
-      image: quay.io/rafaeltuelho/mvn-kube-oc
+      image: quay.io/rafaeltuelho/mvn-kube-oc:openjdk-11
       workingDir: /workspace/source
       script: | 
         echo "Deploy to OCP using jKube"

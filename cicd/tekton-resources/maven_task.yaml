@@ -26,7 +26,8 @@ spec:
       default: ["clean", "package"]
   steps:
     - name: mvn
-      image: gcr.io/cloud-builders/mvn
+      #image: gcr.io/cloud-builders/mvn
+      image: registry.access.redhat.com/ubi8/openjdk-11:latest
       workingDir: /workspace/source
       command: ["/usr/bin/mvn"]
       args:

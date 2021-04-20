@@ -130,7 +130,7 @@ To be able to use JKube Maven Plugin I extended the standard Tekton Maven image 
 docker build -f docker/mvn-with-oc-task.dockerfile \ 
 --no-cache \ 
 --build-arg OC_PKG_URL="https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz" \
--t quay.io/rafaeltuelho/mvn-kube-oc:latest .
+-t quay.io/rafaeltuelho/mvn-kube-oc:openjdk-11 .
 ```
 
 > NOTE: this image is publicaly available in my Quay.io repo: https://quay.io/repository/rafaeltuelho/mvn-kube-oc
