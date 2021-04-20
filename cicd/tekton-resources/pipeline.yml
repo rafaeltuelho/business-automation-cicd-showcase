@@ -44,6 +44,14 @@ spec:
       value: "true"
     - name: revision
       value: $(params.git-revision)
+  - name: fix-repo-permission
+    taskRef:
+      name: fix-repo-permission
+    runAfter:
+      - clone-repo
+    workspaces:
+      - name: source
+        workspace: shared-workspace      
   - name: maven-assets-build
     taskRef:
       name: mvn

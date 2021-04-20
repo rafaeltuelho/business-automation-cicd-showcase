@@ -1,0 +1,20 @@
+# This task writes a KieApp YAML Resource
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: fix-repo-permission
+spec:
+  workspaces:
+  - name: source
+  steps:
+  - name: fix-repo-permission
+    image: registry.redhat.io/ubi8/ubi-minimal
+    script: | 
+      pwd
+      ls -la source/
+      # ensure the Arbitrary User used by tekton/openshift pipelines will be able write into the repo
+      # see "Support Arbitrary User IDs" on https://docs.openshift.com/container-platform/3.4/creating_images/guidelines.html#openshift-container-platform-specific-guidelines
+      chgrp -R 0 source/
+      chmod -R g+rwX source/
+      find source/ -type d -exec chmod g+x {} +
+      ls -la source/
