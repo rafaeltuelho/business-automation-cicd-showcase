@@ -1,68 +1,125 @@
 # CICD Demo script
 
+## Setup
+
  1. Create an Openshift Project
 
  2. Install Tekton/Pipeline Operator in your Cluster
 
- 3. Apply the Openshift Pipelines (Tekton) Resources
-    3.1 Fork and Clone this repo
+ 3. Fork and Clone this repo
 
-    ```
- 		Event Listener
- 		Triggers
-			Template
-			Binding
- 		Tasks
- 		Pipeline
- 		PVCs for maven and git
- 			maven-repo-pvc
- 			shared-workspace
- 		ConfigMap with the Maven settings.xml (with the correct nexus credentials)
-    ```
+ 4. Apply the Openshift Pipelines (Tekton) Resources
 
-	3.2 Run the following command to create the Tekton resources into your project namespace:
-	```
-	oc create -f tekton-resources/
+### 4.1 Create Tekton resources into your project namespace
+```
+oc create -f tekton-resources/
 
-	configmap/custom-maven-settings created
-	eventlistener.triggers.tekton.dev/ba-cicd-event-listener created
-	persistentvolumeclaim/maven-repo-pvc created
-	task.tekton.dev/mvn-jkube created
-	task.tekton.dev/mvn created
-	pipeline.tekton.dev/ba-cicd-pipeline created
-	persistentvolumeclaim/source-workspace-pvc created
-	triggerbinding.triggers.tekton.dev/ba-cicd-trigger-binding created
-	triggertemplate.triggers.tekton.dev/ba-cicd-trigger-template created	
-	```
+configmap/custom-maven-settings created
+eventlistener.triggers.tekton.dev/ba-cicd-event-listener created
+persistentvolumeclaim/maven-repo-pvc created
+task.tekton.dev/mvn-jkube created
+task.tekton.dev/mvn created
+pipeline.tekton.dev/ba-cicd-pipeline created
+persistentvolumeclaim/source-workspace-pvc created
+triggerbinding.triggers.tekton.dev/ba-cicd-trigger-binding created
+triggertemplate.triggers.tekton.dev/ba-cicd-trigger-template created	
+```
 
-	3.3 Expose the Pipeline Event Listener
-	```
-	oc expose svc el-ba-cicd-event-listener
-	route.route.openshift.io/el-ba-cicd-event-listener exposed	
-	```
+The following resources should be created in your namespace:
 
-	3.4 Create the Git Webhook to trigger your Pipeline
-	```
-	echo "URL: $(oc  get route el-ba-cicd-event-listener --template='http://{{.spec.host}}')"
-	URL: http://el-ba-cicd-event-listener-rhpam-sandbox.your.cluster.domain.com
-	```
+* PVCs for maven and git repos
+	* maven-repo-pvc
+	* shared-workspace
+* ConfigMap with a custom Maven settings.xml
+* Tekton Resources
+	* Event Listener
+	* Triggers
+	* Template
+	* Binding
+	* Tasks
+	* Pipeline
 
- 1. Make some changes and push it to Git  
-  * Configure a Webhook pointing to Pipeline **Event Listener**
+If you open the Pipelines view in the Openshift Developer Dashboard you should see the `ba-cicd-pipeline`
+![Pipeline View	](docs/pipelines-view.png)
 
-  * Create a new branch (eg: v1.0.0-Final)
-  ```
- 	git commit -m "v1.0.0-Final"
-  ```
+Click the `ba-cicd-pipeline` to see its details with a graphical representation.
+![Pipeline View](docs/pipeline-details.png)
 
-  * make some changes
-  ```
- 	git add .
- 	git commit -m "new release..."
- 	git push origin v1.0.0-Final
-  ```
+### 4.2 Expose the Pipeline Event Listener
+In order to trigger a *Pipeline Run* with a *Git Push event* you need to expose your Pipeline **EventListener**
+
+```
+oc expose svc el-ba-cicd-event-listener
+route.route.openshift.io/el-ba-cicd-event-listener exposed	
+```
+
+Open the Topology view in the Developer Dashboard to see the Trigger Event Listener POD
+![Trigger Event Listener](docs/pipeline-trigger-event-listener.png)
+
+This is the service that listen to your git hook events (via webhooks)!
+
+### 4.3 Create the Git Webhook to trigger your Pipeline
+Get the EventListener URL:
+
+```
+echo "$(oc  get route el-ba-cicd-event-listener --template='http://{{.spec.host}}')"
+http://el-ba-cicd-event-listener-rhpam-sandbox.your.cluster.domain.com
+```
+
+### 4.4 Go to the (forked) Project Settings in your github and add a Webhook. 
+* Set the Payload URL with the Pipeline EventListener URL copied previously.
+* Set the Content type as `application/json`
+
+![Git webhook setup](docs/github-webhook.png) 
+
+
+### Trigger the Pipeline execution
+ Open the [decisions-showcase](../decisions-showcase) project and make some changes in your Business Assets (eg: change a rule/decision definition) and push it to your git repo.
+> **Remember** to change the artifact version in the `pom.xml`
+
+```
+  <groupId>com.redhat.demos</groupId>
+  <artifactId>decisions-showcase</artifactId>
+  <version>1.1.0-SNAPSHOT</version>
+```
+
+Commit and push
+```
+git commit -am "applying some changes"
+git push origin master
+```
+
+At this point the **git push webhook** previously configured for your repo should be activated...
+![Git Webhook activated](docs/github-webhook-payload.png)
+
+And consequently a new **Pipeline Run** should be trigged in the Openshift as well...
+![Pipeline Event trigged](docs/pipeline-run-status.png)
+
+Click the `Pipeline Runs` tab to see your Pipeline executions
+![Pipeline Runs](docs/pipeline-run-status-2.png)
+
+Click on the active execution to follow the run status
+![Pipeline Event trigged](docs/pipeline-status-3.png)
+
+Click on the `Logs` tab to see the output of each individual task execution
+![Pipeline task logs](docs/pipeline-run-task-logs.png)
+
+## Access the Business Application Service
+
+At the end of the Pipeline execution you should have two instances of your Kie Server running on Spring Boot containers.
+![Kie Server SB POD](docs/kie-server-pods-topology.png)
+
+click on the POD edge arrow to open the public App Route URL
+![Kie Server SB POD](docs/kie-server-pod.png)
+
+You should see the sample Business Application Service home page
+![Kie Server home page](docs/business-service-app.png)
+
+exposing the standard Kie Server API
+![Kie Server API](docs/kie-server-swagger.png)
 
 ## Build a custom Tekton Maven Task image
+To be able to use JKube Maven Plugin I extended the standard Tekton Maven image to include the `oc` CLI tool.
 
 ```
 docker build -f docker/mvn-with-oc-task.dockerfile \ 
@@ -71,7 +128,11 @@ docker build -f docker/mvn-with-oc-task.dockerfile \
 -t quay.io/rafaeltuelho/mvn-kube-oc:latest .
 ```
 
+> NOTE: this image is publicaly available in my Quay.io repo: https://quay.io/repository/rafaeltuelho/mvn-kube-oc
+> No need to do anything here.
+
 ## Clean up your namespace
+To delete the application provisioned y the Pipeline Run, execute the following command.
 
 ```
 oc delete all -l provider=jkube -n <namespace>

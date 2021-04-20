@@ -35,4 +35,6 @@ spec:
         -Dmaven.repo.local=$(workspaces.maven-repo.path)
       env:
         - name: NEXUS_REPO
-          value: "$(inputs.params.NEXUS_REPO)"        
+          value: "$(inputs.params.NEXUS_REPO)"
+        - name: MAVEN_OPTS
+          value: "-Xms1024m -Xmx2048m -XX:+ExitOnOutOfMemoryError"          

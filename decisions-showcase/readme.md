@@ -12,7 +12,7 @@ to build and install the kajar in  your local maven repository (`~/.m2/repositor
 
 ## Deploying the kjar artifact
 
-To deploy and run your kjar using a Spring Boot kie-server runtime, use the following command to bootstrap a Business Application using the [KIE Service Spring Boot Archetype](https://github.com/kiegroup/droolsjbpm-knowledge/tree/master/kie-archetypes/kie-service-spring-boot-archetype):
+To deploy and run your kjar using a Spring Boot kie-server runtime in your local environment, use the following command to bootstrap a Business Application using the [KIE Service Spring Boot Archetype](https://github.com/kiegroup/droolsjbpm-knowledge/tree/master/kie-archetypes/kie-service-spring-boot-archetype):
 
 ```
 mvn archetype:generate \
@@ -26,12 +26,14 @@ You can also go to the start.jbpm.org and download a boostrap Spring Boot maven 
 
 > NOTE: remember to update the `application.properties` or configure the `kie-maven-plugin` to properly add reference to your decision/rules kjar artifact dependency.
 > Starting with version `7.44.0.Final` you can use the `kie-maven-plugin` to package your kjar in the spring boot uberjar. Add these props in your Spring Boot `application.properties`:
+
 ```
 kieserver.classPathContainer=true
 kieserver.autoScanDeployments=true
 ```
 
 and configure your Spring Boot app `kie-maven-plugin` in your pom.xml like this:
+
 ```xml
   <build>
     <plugins>
@@ -93,6 +95,7 @@ and configure your Spring Boot app `kie-maven-plugin` in your pom.xml like this:
 ```
 
 and add this property on your `application.properties`
+
 ```
 kieserver.swagger.enabled=true
 ```
@@ -100,18 +103,23 @@ kieserver.swagger.enabled=true
 To access the swagger ui: http://localhost:8090/rest/api-docs?url=http://localhost:8090/rest/swagger.json
 
 ## Executing your Decision Service
+
 after building and deploying your kjar into a kie-server you can test the API using the following payload samples:
 
 ### DMN Decision
-`GET`  http://localhost:8080/kie-server/services/rest/server/containers/decisions-showcase-1.0.0-SNAPSHOT/dmn 
+
+`GET`  http://localhost:8080/kie-server/services/rest/server/containers/decisions-showcase-1.0.0-SNAPSHOT/dmn
+
 > if running on Spring Boot use this url: http://localhost:8090/rest/server/server/containers/decisions-showcase-1.0.0-SNAPSHOT/dmn
 
 copy the `model-namespace` and the `model-name`
 
-`POST` http://localhost:8080/kie-server/services/rest/server/containers/decisions-showcase-1.0.0-SNAPSHOT/dmn 
+`POST` http://localhost:8080/kie-server/services/rest/server/containers/decisions-showcase-1.0.0-SNAPSHOT/dmn
+
 > if running on Spring Boot use this url: http://localhost:8090/rest/server/server/containers/decisions-showcase-1.0.0-SNAPSHOT/dmn
 
 Payload:
+
 ```json
 {
   "model-namespace": "https://kiegroup.org/dmn/_4502BB15-E55D-4302-91EA-CFD7E2EA470C",
@@ -159,9 +167,11 @@ Response:
 ### XLS decision Table rule base
 
 `POST` http://localhost:8080/kie-server/services/rest/server/containers/instances/decisions-showcase-1.0.0-SNAPSHOT
+
 > if running on Spring Boot use this url: http://localhost:8090/rest/server/server/containers/instances/decisions-showcase-1.0.0-SNAPSHOT
 
 Payload:
+
 ```json
 {
     "lookup": "stateless-session",

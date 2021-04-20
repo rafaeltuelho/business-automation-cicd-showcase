@@ -10,7 +10,7 @@ curl https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.ta
 ./oc login --insecure-skip-tls-verify=true --token=sha256~ --server=https://api.cluster.example.com:6443
 ./oc whoami
 
-----
+---- 
 
     - image: gcr.io/cloud-builders/mvn
       name: mvn
