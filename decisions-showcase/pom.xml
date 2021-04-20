@@ -94,12 +94,14 @@
       <scope>test</scope>
     </dependency>
     <!-- -->
+    <!--
     <dependency>
       <groupId>org.kie.kogito</groupId>
        <artifactId>kogito-scenario-simulation</artifactId>
        <version>1.2.0.Final</version>
       <scope>test</scope>
-    </dependency>    
+    </dependency>
+    -->
     <dependency>
       <groupId>org.drools</groupId>
       <artifactId>drools-compiler</artifactId>

@@ -54,7 +54,10 @@ route.route.openshift.io/el-ba-cicd-event-listener exposed
 ```
 
 Open the Topology view in the Developer Dashboard to see the Trigger Event Listener POD
-![Trigger Event Listener](docs/pipeline-trigger-event-listener.png)
+<p align="center">
+  <img src="docs/pipeline-trigger-event-listener.png">
+</p>
+
 
 This is the service that listen to your git hook events (via webhooks)!
 
@@ -110,7 +113,9 @@ At the end of the Pipeline execution you should have two instances of your Kie S
 ![Kie Server SB POD](docs/kie-server-pods-topology.png)
 
 click on the POD edge arrow to open the public App Route URL
-![Kie Server SB POD](docs/kie-server-pod.png)
+<p align="center">
+  <img src="docs/kie-server-pod.png">
+</p>
 
 You should see the sample Business Application Service home page
 ![Kie Server home page](docs/business-service-app.png)
