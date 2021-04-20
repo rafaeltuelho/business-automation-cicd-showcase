@@ -25,7 +25,7 @@ spec:
       type: string
       default: "clean package"
   steps:
-    - name: mvn
+    - name: mvn-jkube
       image: quay.io/rafaeltuelho/mvn-kube-oc:openjdk-11
       workingDir: /workspace/source
       script: | 
