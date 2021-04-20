@@ -1,0 +1,41 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: mvn
+spec:
+  workspaces:
+  - name: maven-repo
+    description: The .m2 repo volume
+  - name: source
+    description: The workspace consisting of maven project.
+  - name: maven-settings
+    description: >-
+      The workspace consisting of the custom maven settings
+      provided by the user.  
+  inputs:
+    params:
+    - name: NEXUS_REPO
+      description: Nexus repo URL
+      type: string
+    - name: MAVEN_PROJECT_CONTEXT_DIR
+      description: Project/Module directory
+      type: string      
+    - name: GOALS
+      description: The Maven goals to run
+      type: array
+      default: ["clean", "package"]
+  steps:
+    - name: mvn
+      image: gcr.io/cloud-builders/mvn
+      workingDir: /workspace/source
+      command: ["/usr/bin/mvn"]
+      args:
+        - -s
+        - $(workspaces.maven-settings.path)/settings.xml
+        - -f
+        - $(inputs.params.MAVEN_PROJECT_CONTEXT_DIR)
+        - -Dmaven.repo.local=$(workspaces.maven-repo.path)
+        - "$(inputs.params.GOALS)"
+      env:
+        - name: NEXUS_REPO
+          value: "$(inputs.params.NEXUS_REPO)"

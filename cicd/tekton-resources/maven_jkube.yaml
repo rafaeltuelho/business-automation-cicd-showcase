@@ -1,0 +1,34 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: mvn-jkube
+spec:
+  workspaces:
+  - name: maven-repo
+    description: The .m2 repo volume
+  - name: source
+    description: The workspace consisting of maven project.
+  - name: maven-settings
+    description: >-
+      The workspace consisting of the custom maven settings
+      provided by the user.  
+  inputs:
+    params:
+    - name: NEXUS_REPO
+      description: Nexus repo URL
+      type: string
+    - name: MAVEN_PROJECT_CONTEXT_DIR
+      description: Project/Module directory
+      type: string      
+  steps:
+    - name: mvn
+      image: quay.io/rafaeltuelho/mvn-kube-oc
+      workingDir: /workspace/source
+      script: | 
+        echo "Deploy to OCP using jKube"
+        mvn oc:resource oc:apply -P openshift -f "$(inputs.params.MAVEN_PROJECT_CONTEXT_DIR)"
+        -s $(workspaces.maven-settings.path)/settings.xml
+        -Dmaven.repo.local=$(workspaces.maven-repo.path)
+      env:
+        - name: NEXUS_REPO
+          value: "$(inputs.params.NEXUS_REPO)"        

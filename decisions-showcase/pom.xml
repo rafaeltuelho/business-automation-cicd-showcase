@@ -12,7 +12,7 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <!-- kieVersion>7.39.0.Final-redhat-00007</kieVersion -->
-    <kieVersion>7.49.0.Final</kieVersion>
+    <kieVersion>7.52.0.Final</kieVersion>
   </properties>
 
   <dependencies>

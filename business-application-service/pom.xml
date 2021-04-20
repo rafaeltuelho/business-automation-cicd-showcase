@@ -20,7 +20,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <narayana.version>5.9.0.Final</narayana.version>
     <!-- fabric8.version>4.4.1</fabric8.version -->
-    <jkube.version>1.1.1</jkube.version>
+    <jkube.version>1.2.0</jkube.version>
   </properties>
 
   <dependencies>
@@ -175,7 +175,10 @@
               <verbose>false</verbose>
               <images>
                 <image>
-                  <!-- <name>${project.artifactId}:${project.version}</name> -->
+                  <!-- 
+                    derived from Maven GAV coordinates
+                    refer to https://www.eclipse.org/jkube/docs/openshift-maven-plugin#image-name for more details
+                   -->
                   <name>%a:%l</name>
                   <build>
                     <!-- <from>fabric8/java-jboss-openjdk8-jdk</from> -->
@@ -285,7 +288,7 @@
             <artifactId>openshift-maven-plugin</artifactId>
             <version>${jkube.version}</version>
             <configuration>
-              <verbose>false</verbose>
+              <verbose>true</verbose>
               <enricher>
                 <config>
                   <jkube-openshift-route>
@@ -297,6 +300,10 @@
               </enricher>              
               <images>
                 <image>
+                  <!-- 
+                    derived from Maven GAV coordinates
+                    refer to https://www.eclipse.org/jkube/docs/openshift-maven-plugin#image-name for more details
+                   -->
                   <name>%a:%l</name>
                   <build>
                     <!-- <from>fabric8/java-jboss-openjdk8-jdk</from> -->

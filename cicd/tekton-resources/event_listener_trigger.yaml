@@ -1,0 +1,17 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: ba-cicd-event-listener
+spec:
+  serviceAccountName: pipeline
+  triggers:
+    - name: pipeline-trigger
+      # use when you need to apply some filter in the git webhook payload
+      # interceptors:
+      #   - cel:
+      #       filter: "body.ref.split('/')[2].startsWith('v')"
+      serviceAccountName: pipeline  
+      bindings:
+       - ref: ba-cicd-trigger-binding
+      template:
+        name: ba-cicd-trigger-template

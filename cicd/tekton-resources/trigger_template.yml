@@ -1,0 +1,53 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: ba-cicd-trigger-template
+spec:
+  params:
+  - name: git-repo-url
+    description: The git repository url
+  - name: git-revision
+    description: The git revision
+    default: v1.0.0-Final
+  - name: git-repo-name
+    description: The name of the deployment to be created / patched
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1beta1
+    kind: PipelineRun
+    metadata:
+      name: build-deploy-$(tt.params.git-repo-name)-$(uid)
+    spec:
+      serviceAccountName: pipeline
+      pipelineRef:
+        name: ba-cicd-pipeline
+      params:
+      - name: deployment-name
+        value: $(tt.params.git-repo-name)
+      - name: git-url
+        value: $(tt.params.git-repo-url)
+      - name: git-revision
+        value: $(tt.params.git-revision)
+      workspaces:
+      - name: maven-settings
+        configMap:
+          name: custom-maven-settings
+      - name: maven-local-repo
+        persistentVolumeClaim:
+          claimName: maven-repo-pvc      
+        # volumeClaimTemplate:
+        #   spec:
+        #     accessModes:
+        #       - ReadWriteOnce
+        #     resources:
+        #       requests:
+        #         storage: 5Gi
+      - name: shared-workspace
+        persistentVolumeClaim:
+          claimName: source-workspace-pvc
+        # volumeClaimTemplate:
+        #   spec:
+        #     accessModes:
+        #       - ReadWriteOnce
+        #     resources:
+        #       requests:
+        #         storage: 2Gi                
