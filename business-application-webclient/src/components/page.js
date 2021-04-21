@@ -31,7 +31,7 @@ class AppPagelayout extends React.Component {
     isDropdownOpen: false,
     isKebabDropdownOpen: false,
     activeGroup: 'grp-1',
-    activeItem: 'grp-1_itm-1'
+    activeItem: ''
   };
 
   onNavSelect = result => {
@@ -56,7 +56,7 @@ class AppPagelayout extends React.Component {
               isActive={activeItem === 'grp-1_itm-1'}
               onClick={this.handleItemOnclick}
               >
-              <Link to="/carInsurance">Car Policy Insurance</Link>
+              <Link to="/carInsurance">Car Insurance</Link>
             </NavItem>
             <NavItem groupId="grp-1" itemId="grp-1_itm-2" 
               isActive={activeItem === 'grp-1_itm-2'}
