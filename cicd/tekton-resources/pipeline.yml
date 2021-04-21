@@ -59,7 +59,7 @@ spec:
       name: mvn
       #kind: ClusterTask
     runAfter:
-      - clone-repo     
+      - fix-repo-permission     
     params:
       - name: NEXUS_REPO
         value: $(params.maven-repo-url)
