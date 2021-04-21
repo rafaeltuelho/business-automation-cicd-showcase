@@ -14,15 +14,6 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.
 
-### `yarn build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 ## Deploying on Openshift
 
 ```
@@ -34,9 +25,40 @@ Ok to proceed? (y) y
 
 A new NodeJS S2I Build should be created in your Openshift Project. Wait until this build finishes. After a while you should see your NodeJS Web App POD in the Openshift Developer Dashboad.
 
-
-
 For more details about how to deploy React and Angular JS apps on Openshift see this post: https://developers.redhat.com/blog/2018/10/04/modern-web-apps-openshift-part-1/
 
 ## Demo the Sample Use Cases
+The first thing you need to do is enter the connection settings to your Kie Server service.
+Click on the Gear icon located at the top right of the app to open the **Settings** page.
 
+ * Enter the Kie Server Rest API URL and the credentials (`kieserver/kieserver1!`)
+
+![](docs/webclient-settings-1.png)
+
+ * Click on the Drools and DMN link and enter the Kie (container) Deployment Unit details
+
+![](docs/webclient-drools-dmn-settings.png)
+
+Click on `Test Connection` button and then `Save`
+
+### Car Insurance Use Case
+This use case makes use of a Drools Decision Table implemented using a [XLS Spreadsheet representation](https://github.com/rafaeltuelho/my-business-automation-showcase/blob/37d63ac7ef5397c4892a6ba8b6fab7630c07b5b3/decisions-showcase/src/main/resources/com/redhat/demos/decisiontable/ExamplePolicyPricing.xls)
+
+![](docs/car-insurance-form.png)
+
+  * Enter the input data and hit `Submit` to see the Decision Service's response.
+
+![](docs/car-insurance-response.png)
+
+  * You can also see the client request and server response payload clicking on `Debug` link at the bottom of the web form.
+
+![](docs/car-insurance-debug-payload-view.png)
+
+### Car Insurance Use Case
+This use case makes use of a Decision Logic implemented using [DMN](https://github.com/rafaeltuelho/my-business-automation-showcase/blob/d37e4073e0a278da22ff517dc8422279c2b427d8/decisions-showcase/src/main/resources/com/redhat/demos/dmn/Traffic%20Violation.dmn)
+
+![](docs/traffic-form.png)
+
+  * Enter the input data and hit `Submit` to see the Decision Service's response.
+
+![](docs/traffic-response.png)
