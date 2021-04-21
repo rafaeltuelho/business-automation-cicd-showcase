@@ -16,9 +16,10 @@ mvn archetype:generate \
 ```
 
 > NOTE: remember to update the `application.properties` or configure the `kie-maven-plugin` to properly add your decision/rules `kjar` artifact as a dependency.
-
-> the Kie Server **state file** used to start the Kie Container for the Decision Showcase project **KJAR** is: `src/business-application-service.xml`.
-> note that the Scanner is configured to scan the kjar each 60secs. Thus you can change your rules, rebuild the kjar for demo purpose.
+>
+> The Kie Server **state file** used to start the Kie Container for the Decision Showcase project **KJAR** is: `src/business-application-service.xml`.
+> 
+> note that the Scanner is configured to scan the kjar every 60secs. In this way you can change your rules, rebuild and install the kjar for demo purposes.
 
 ## Self contained Immutable uberjar
 
