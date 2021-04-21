@@ -51,7 +51,9 @@ spec:
       - clone-repo
     workspaces:
       - name: source
-        workspace: shared-workspace      
+        workspace: shared-workspace
+      - name: maven-repo
+        workspace: maven-local-repo
   - name: maven-assets-build
     taskRef:
       name: mvn

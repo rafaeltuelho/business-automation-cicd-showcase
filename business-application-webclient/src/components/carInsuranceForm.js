@@ -144,7 +144,9 @@ class CarInsuranceForm extends React.Component {
         this.setState({
           _apiCallStatus: 'ERROR',
           _responseModalOpen: false,
-          _rawServerResponse: err.response,
+          _rawServerResponse: {
+            result: {},
+          },
           _alert: {
             visible: true,
             variant: 'danger',
