@@ -32,6 +32,10 @@ Need to install the following packages:
 Ok to proceed? (y) y
 ```
 
+A new NodeJS S2I Build should be created in your Openshift Project. Wait until this build finishes. After a while you should see your NodeJS Web App POD in the Openshift Developer Dashboad.
+
+
+
 For more details about how to deploy React and Angular JS apps on Openshift see this post: https://developers.redhat.com/blog/2018/10/04/modern-web-apps-openshift-part-1/
 
 ## Demo the Sample Use Cases
