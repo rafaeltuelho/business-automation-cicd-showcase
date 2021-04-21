@@ -207,11 +207,11 @@ data:
       </profiles>
 
       <activeProfiles>
-        <activeProfile>maven-central-repository</activeProfile>
-        <activeProfile>redhat-maven-GA-repository</activeProfile>
-        <activeProfile>redhat-maven-EA-repository</activeProfile>
         <activeProfile>redhat-maven-TP-repository</activeProfile>
+        <activeProfile>redhat-maven-EA-repository</activeProfile>
+        <activeProfile>redhat-maven-GA-repository</activeProfile>
         <activeProfile>ocp-nexus</activeProfile>
+        <activeProfile>maven-central-repository</activeProfile>
       </activeProfiles>
 
     </settings>
