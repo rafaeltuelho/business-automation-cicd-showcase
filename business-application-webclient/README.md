@@ -25,6 +25,14 @@ Your app is ready to be deployed!
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 ## Deploying on Openshift
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```
+npx nodeshift --strictSSL=false --dockerImage=nodeshift/ubi8-s2i-web-app --imageTag=14.x --build.env YARN_ENABLED=true --expose
+Need to install the following packages:
+  nodeshift
+Ok to proceed? (y) y
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+For more details about how to deploy React and Angular JS apps on Openshift see this post: https://developers.redhat.com/blog/2018/10/04/modern-web-apps-openshift-part-1/
+
+## Demo the Sample Use Cases
+
