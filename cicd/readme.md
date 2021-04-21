@@ -95,14 +95,14 @@ git push origin master
 At this point the **git push webhook** previously configured for your repo should be activated...
 ![Git Webhook activated](docs/github-webhook-payload.png)
 
-And consequently a new **Pipeline Run** should be trigged in the Openshift as well...
-![Pipeline Event trigged](docs/pipeline-run-status.png)
+And consequently a new **Pipeline Run** should be triggered in the Openshift as well...
+![Pipeline Event triggered](docs/pipeline-run-status.png)
 
 Click the `Pipeline Runs` tab to see your Pipeline executions
 ![Pipeline Runs](docs/pipeline-run-status-2.png)
 
 Click on the active execution to follow the run status
-![Pipeline Event trigged](docs/pipeline-status-3.png)
+![Pipeline Event triggered](docs/pipeline-status-3.png)
 
 Click on the `Logs` tab to see the output of each individual task execution
 ![Pipeline task logs](docs/pipeline-run-task-logs.png)
@@ -133,7 +133,7 @@ docker build -f docker/mvn-with-oc-task.dockerfile \
 -t quay.io/rafaeltuelho/mvn-kube-oc:openjdk-11 .
 ```
 
-> NOTE: this image is publicaly available in my Quay.io repo: https://quay.io/repository/rafaeltuelho/mvn-kube-oc
+> NOTE: this image is publicly available in my Quay.io repo: https://quay.io/repository/rafaeltuelho/mvn-kube-oc
 > No need to do anything here.
 
 ## Clean up your namespace
