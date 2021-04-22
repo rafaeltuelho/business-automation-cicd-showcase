@@ -31,6 +31,18 @@
       <version>${version.org.kie}</version>
     </dependency>
 
+    <!-- prometheus metrics --> 
+    <dependency>
+      <groupId>org.kie.server</groupId>
+      <artifactId>kie-server-services-prometheus</artifactId>
+      <version>${version.org.kie}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.server</groupId>
+      <artifactId>kie-server-rest-prometheus</artifactId>
+      <version>${version.org.kie}</version>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
