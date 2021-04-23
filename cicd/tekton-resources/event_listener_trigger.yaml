@@ -12,6 +12,7 @@ spec:
       #       filter: "body.ref.split('/')[2].startsWith('v')"
       serviceAccountName: pipeline  
       bindings:
-       - ref: ba-cicd-trigger-binding
+        - kind: TriggerBinding
+          ref: ba-cicd-trigger-binding
       template:
-        name: ba-cicd-trigger-template
+        ref: ba-cicd-trigger-template

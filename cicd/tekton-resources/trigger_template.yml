@@ -15,7 +15,7 @@ spec:
   - apiVersion: tekton.dev/v1beta1
     kind: PipelineRun
     metadata:
-      name: build-deploy-$(tt.params.git-repo-name)-$(uid)
+      generateName: build-deploy-
     spec:
       serviceAccountName: pipeline
       pipelineRef:
@@ -33,21 +33,7 @@ spec:
           name: custom-maven-settings
       - name: maven-local-repo
         persistentVolumeClaim:
-          claimName: maven-repo-pvc      
-        # volumeClaimTemplate:
-        #   spec:
-        #     accessModes:
-        #       - ReadWriteOnce
-        #     resources:
-        #       requests:
-        #         storage: 5Gi
+          claimName: maven-repo-pvc
       - name: shared-workspace
         persistentVolumeClaim:
-          claimName: source-workspace-pvc
-        # volumeClaimTemplate:
-        #   spec:
-        #     accessModes:
-        #       - ReadWriteOnce
-        #     resources:
-        #       requests:
-        #         storage: 2Gi                
+          claimName: source-workspace-pvc         
