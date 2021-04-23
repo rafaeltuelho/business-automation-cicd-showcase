@@ -11,7 +11,7 @@ It contains two decision/rules artifacts.
 ![Traffic Violation DMN](docs/Traffic%20Violation.svg)
 
 It also contains unit tests for both Drools and DMN rules and visual tabular _Test Scenario Simulation_. Execute the tests with `mvn test` to see the results.
-![Scsim](docs/traffic-dmn-scsim.png)
+![Scsim](docs/traffic-dmn-scsim.png) 
 
 ## Building the kjar artifact
 To build and install the kjar in  your local maven repository (`~/.m2/repository`)
