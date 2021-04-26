@@ -7,7 +7,12 @@
         <agendaEventListener type="org.drools.core.event.DebugAgendaEventListener"/>
       </listeners>
     </ksession>
-    <ksession name="stateful-session" type="stateful" default="true" clockType="realtime"/>
+    <ksession name="stateful-session" type="stateful" default="true" clockType="realtime">
+      <listeners>
+        <ruleRuntimeEventListener type="org.drools.core.event.DebugRuleRuntimeEventListener"/>
+        <agendaEventListener type="org.drools.core.event.DebugAgendaEventListener"/>
+      </listeners>
+    </ksession>    
     <ksession name="debug-stateful-session" type="stateful" default="false" clockType="realtime">
       <listeners>
         <ruleRuntimeEventListener type="org.drools.core.event.DebugRuleRuntimeEventListener"/>
