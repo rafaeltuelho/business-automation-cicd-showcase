@@ -14,6 +14,22 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.
 
+## Generating a Container Image
+
+Use the [source-to-image](https://github.com/openshift/source-to-image) CLI tool to easily generate an image containing your react app. 
+
+ * `s2i` CLI build usage
+```
+Usage:
+  s2i build <source> <image> [<tag>] [flags]
+```
+
+ * using the [Nodeshift s2i base image](https://hub.docker.com/r/nodeshift/ubi8-s2i-web-app)
+
+```
+s2i build . nodeshift/ubi8-s2i-web-app:latest business-application-webclient
+```
+
 ## Deploying on Openshift
 
 ```

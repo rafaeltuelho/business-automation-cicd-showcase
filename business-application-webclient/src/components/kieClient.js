@@ -29,7 +29,7 @@ export default class KieClient {
       },
       drools: {
         containerId: props?.drools?.containerId,
-        kieSessionName: props?.drools?.kiesessionName ? props.drools.kieSessionName : KIE_SESSION_NAME,
+        kieSessionName: props?.drools?.kieSessionName ? props.drools.kieSessionName : KIE_SESSION_NAME,
       },
       dmn: {
         containerId: props?.dmn?.containerId,

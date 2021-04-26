@@ -33,6 +33,7 @@ class SettingsForm extends React.Component {
     const DEMO_KIE_SERVER_BASE_URL = 'http://localhost:8090/rest/server';
     const DEMO_KIE_SERVER_USER = 'kieserver';
     const DEMO_KIE_SERVER_PASSWORD = 'kieserver1!';
+    const DEMO_KIE_SESSION_NAME = 'default';
     const DEMO_CONTAINER_ID = 'decisions-showcase-1.0.0-SNAPSHOT';
     const DEMO_DMN_MODEL_NAMESPACE = 'https://github.com/kiegroup/drools/kie-dmn/_A4BCA8B8-CF08-433F-93B2-A2598F19ECFF';
     const DEMO_DMN_MODEL_NAME = 'Traffic Violation';
@@ -52,6 +53,7 @@ class SettingsForm extends React.Component {
       },
       drools: {
         containerId: kieSettings?.drools ? kieSettings.drools.containerId : DEMO_CONTAINER_ID,
+        kieSessionName: kieSettings?.drools ? kieSettings.drools.kieSessionName : DEMO_KIE_SESSION_NAME,
         kogitoRuntime: kieSettings?.drools ? kieSettings.drools.kogitoRuntime : false,
         endpointUrl: kieSettings?.drools ? kieSettings.drools.endpointUrl : '',
       },
@@ -85,6 +87,9 @@ class SettingsForm extends React.Component {
         drools: {
           containerId: {
             valid: () => !isEmpty(this.state.drools.containerId),
+          },
+          kieSessionName: {
+            valid: () => true,
           },
         },
         dmn: {
@@ -321,6 +326,20 @@ class SettingsForm extends React.Component {
                   id="drools.containerId"
                   validated={this.state.fieldsValidation.drools['containerId'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
                   value={this.state.drools.containerId}
+                  onChange={ this.handleTextInputChange } />
+            </FormGroup>          
+            <FormGroup
+                label="Kie Session Name"
+                isRequired={false}
+                fieldId="drools.kieSessionName"
+                helperText="Enter the specific Session Name"
+                >
+                <TextInput
+                  isRequired={false}
+                  type="text"
+                  id="drools.kieSessionName"
+                  validated={this.state.fieldsValidation.drools['kieSessionName'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
+                  value={this.state.drools.kieSessionName}
                   onChange={ this.handleTextInputChange } />
             </FormGroup>          
           </FormSection>
