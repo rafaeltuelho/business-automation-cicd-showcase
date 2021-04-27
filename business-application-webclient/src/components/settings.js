@@ -41,9 +41,9 @@ class SettingsForm extends React.Component {
     const kieSettings = loadFromLocalStorage('kieSettings', true);
     this.state = {
       common: {
-        kieServerBaseUrl: kieSettings?.common ? kieSettings.common.kieServerBaseUrl : DEMO_KIE_SERVER_BASE_URL,
-        kieServerUser: kieSettings?.common ? kieSettings.common.kieServerUser : DEMO_KIE_SERVER_USER,
-        kieServerPassword: kieSettings?.common ? kieSettings.common.kieServerPassword : DEMO_KIE_SERVER_PASSWORD,
+        kieServerBaseUrl: kieSettings?.common?.kieServerBaseUrl ? kieSettings.common.kieServerBaseUrl : DEMO_KIE_SERVER_BASE_URL,
+        kieServerUser: kieSettings?.common?.kieServerUser ? kieSettings.common.kieServerUser : DEMO_KIE_SERVER_USER,
+        kieServerPassword: kieSettings?.common?.kieServerPassword ? kieSettings.common.kieServerPassword : DEMO_KIE_SERVER_PASSWORD,
       },
       jbpm: {
         containerId: kieSettings?.jbpm ? kieSettings.jbpm.containerId : '',
@@ -52,15 +52,15 @@ class SettingsForm extends React.Component {
         endpointUrl: kieSettings?.jbpm ? kieSettings.jbpm.endpointUrl : '',
       },
       drools: {
-        containerId: kieSettings?.drools ? kieSettings.drools.containerId : DEMO_CONTAINER_ID,
-        kieSessionName: kieSettings?.drools ? kieSettings.drools.kieSessionName : DEMO_KIE_SESSION_NAME,
-        kogitoRuntime: kieSettings?.drools ? kieSettings.drools.kogitoRuntime : false,
+        containerId: kieSettings?.drools?.containerId ? kieSettings.drools.containerId : DEMO_CONTAINER_ID,
+        kieSessionName: kieSettings?.drools?.kieSessionName ? kieSettings.drools.kieSessionName : DEMO_KIE_SESSION_NAME,
+        kogitoRuntime: kieSettings?.drools?.kogitoRuntime ? kieSettings.drools.kogitoRuntime : false,
         endpointUrl: kieSettings?.drools ? kieSettings.drools.endpointUrl : '',
       },
       dmn: {
-        containerId: kieSettings?.dmn ? kieSettings.dmn.containerId : DEMO_CONTAINER_ID,
-        modelNamespace: kieSettings?.dmn ? kieSettings.dmn.modelNamespace : DEMO_DMN_MODEL_NAMESPACE,
-        modelName: kieSettings?.dmn ? kieSettings.dmn.modelName : DEMO_DMN_MODEL_NAME,
+        containerId: kieSettings?.dmn?.containerId ? kieSettings.dmn.containerId : DEMO_CONTAINER_ID,
+        modelNamespace: kieSettings?.dmn?.modelNamespace ? kieSettings.dmn.modelNamespace : DEMO_DMN_MODEL_NAMESPACE,
+        modelName: kieSettings?.dmn?.modelName ? kieSettings.dmn.modelName : DEMO_DMN_MODEL_NAME,
         kogitoRuntime: kieSettings?.dmn?.kogitoRuntime ? kieSettings.dmn.kogitoRuntime : false,
         endpointUrl: kieSettings?.dmn ? kieSettings.dmn.endpointUrl : '',
       },
