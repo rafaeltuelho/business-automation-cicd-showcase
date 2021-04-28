@@ -27,8 +27,15 @@ Usage:
  * using the [Nodeshift s2i base image](https://hub.docker.com/r/nodeshift/ubi8-s2i-web-app)
 
 ```
-s2i build . nodeshift/ubi8-s2i-web-app:latest business-application-webclient
+s2i build . nodeshift/ubi8-s2i-web-app:latest rafaeltuelho/business-application-webclient
 ```
+
+ * to run this container
+```
+docker run -d --name business-application-webclient -p 3000:8080 rafaeltuelho/business-application-webclient
+```
+
+  * the UI should be accessible at http://localhost:3000
 
 ## Deploying on Openshift
 
