@@ -23,6 +23,7 @@ import {
 // make sure you've installed @patternfly/patternfly
 import CarInsuranceForm from './carInsuranceForm'
 import TrafficViolationForm from './trafficViolationForm'
+import GenericDecisionModelForm from './genericDmnForm'
 import SettingsForm from './settings'
 import AppHeader from "./header";
 
@@ -64,6 +65,12 @@ class AppPagelayout extends React.Component {
               >
               <Link to="/trafficViolation">Traffic Violation</Link>
             </NavItem>
+            <NavItem groupId="grp-1" itemId="grp-1_itm-2" 
+              isActive={activeItem === 'grp-1_itm-2'}
+              onClick={this.handleItemOnclick}
+              >
+              <Link to="/genericDmn">Decision Models</Link>
+            </NavItem>
           </NavExpandable>
         </NavList>
       </Nav>
@@ -101,6 +108,16 @@ class AppPagelayout extends React.Component {
                   </PageSection>
                   <PageSection variant={PageSectionVariants.light}>
                     <TrafficViolationForm />
+                  </PageSection>
+                </Route>                
+                <Route path="/genericDmn">
+                  <PageSection variant={PageSectionVariants.light}>
+                    <TextContent>
+                      <Text component="h1">Decision Models</Text>
+                    </TextContent>
+                  </PageSection>
+                  <PageSection variant={PageSectionVariants.light}>
+                    <GenericDecisionModelForm />
                   </PageSection>
                 </Route>                
                 <Route path="/settings">

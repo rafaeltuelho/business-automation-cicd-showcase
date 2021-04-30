@@ -34,7 +34,7 @@ import {
 } from '@patternfly/react-core';
 import ReactJson from 'react-json-view'
 
-class TrafficViolationForm extends React.Component {
+class TrafficViolationAutoForm extends React.Component {
   constructor(props) {
     super(props);
 
@@ -360,7 +360,7 @@ class TrafficViolationForm extends React.Component {
               >
               {
               violationTypes.map((option, index) => (
-                  <FormSelectOption 
+                  <FormSelectOption
                     isDisabled={option.disabled} 
                     key={index} 
                     value={option.value} 
@@ -428,4 +428,4 @@ class TrafficViolationForm extends React.Component {
   }
 }
 
-export default TrafficViolationForm;
+export default TrafficViolationAutoForm;
