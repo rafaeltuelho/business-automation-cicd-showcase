@@ -8,7 +8,6 @@ import Ajv from 'ajv';
 import { JSONSchemaBridge } from 'uniforms-bridge-json-schema';
 import ObjectAsCard  from './objectCardRenderer'
 import _ from 'lodash';
-import { ForOwn, UpperCase } from 'react-lodash';
 
 import React from 'react';
 import {

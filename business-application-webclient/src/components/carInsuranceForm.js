@@ -4,6 +4,11 @@ import isEmpty from 'validator/lib/isEmpty';
 import KieClient from './kieClient';
 import { formValidate } from './formValidation';
 import { loadFromLocalStorage } from './util'
+import { AutoForm } from 'uniforms-patternfly';
+import Ajv from 'ajv';
+import { JSONSchemaBridge } from 'uniforms-bridge-json-schema';
+import ObjectAsCard  from './objectCardRenderer'
+import _ from 'lodash';
 import './fonts.css';
 
 import React from 'react';
@@ -293,29 +298,10 @@ class CarInsuranceForm extends React.Component {
             ]}
           >
             {this.state._apiCallStatus === 'WAITING' && (<Spinner isSVG />)}
-            {this.state._apiCallStatus === 'COMPLETE' && (            
-              <TextContent>
-                <TextList component={TextListVariants.dl}>
-                  <TextListItem component={TextListItemVariants.dt}>Name</TextListItem>
-                  <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.driverFact.name}</TextListItem>
-                  <TextListItem component={TextListItemVariants.dt}>Age</TextListItem>
-                  <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.driverFact.age}</TextListItem>
-                  <TextListItem component={TextListItemVariants.dt}>Prior Claims</TextListItem>
-                  <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.driverFact.priorClaims}</TextListItem>
-                  <TextListItem component={TextListItemVariants.dt}>Location Risk Profile</TextListItem>
-                  <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.driverFact.locationRiskProfile}</TextListItem>
-                </TextList>
-                <TextList component={TextListVariants.dl}>
-                  <TextListItem component={TextListItemVariants.dt}>Policy Type</TextListItem>
-                  <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.policyFact.type}</TextListItem>
-                  <TextListItem component={TextListItemVariants.dt}>Approved?</TextListItem>
-                  <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.policyFact.approved ? 'yes' : 'no'}</TextListItem>
-                  <TextListItem component={TextListItemVariants.dt}>Discount</TextListItem>
-                  <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.policyFact.discountPercent}</TextListItem>
-                  <TextListItem component={TextListItemVariants.dt}>Base Price</TextListItem>
-                  <TextListItem component={TextListItemVariants.dd}>{this.state._serverResponse.policyFact.basePrice}</TextListItem>
-                </TextList>
-              </TextContent>
+            {this.state._apiCallStatus === 'COMPLETE' && (
+              
+
+              <ObjectAsCard obj={this.state._serverResponse} />
             )}
           </Modal>        
         </React.Fragment>

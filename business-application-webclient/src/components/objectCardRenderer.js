@@ -41,7 +41,7 @@ function ObjectAsCard({ obj, parentName = 'Response' }) {
                         <DataListCell key={k}>
                           <span id={k}>{k}</span>
                         </DataListCell>,
-                        <DataListCell key={v}>{v}</DataListCell>
+                        <DataListCell key={v}>{String(v)}</DataListCell>
                       ]}
                     />
                   </DataListItemRow>

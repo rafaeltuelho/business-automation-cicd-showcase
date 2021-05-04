@@ -63,12 +63,6 @@ class AppPagelayout extends React.Component {
               isActive={activeItem === 'grp-1_itm-2'}
               onClick={this.handleItemOnclick}
               >
-              <Link to="/trafficViolation">Traffic Violation</Link>
-            </NavItem>
-            <NavItem groupId="grp-1" itemId="grp-1_itm-2" 
-              isActive={activeItem === 'grp-1_itm-2'}
-              onClick={this.handleItemOnclick}
-              >
               <Link to="/genericDmn">Decision Models</Link>
             </NavItem>
           </NavExpandable>
