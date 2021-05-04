@@ -6,6 +6,9 @@ import './fonts.css';
 import { AutoForm } from 'uniforms-patternfly';
 import Ajv from 'ajv';
 import { JSONSchemaBridge } from 'uniforms-bridge-json-schema';
+import ObjectAsCard  from './objectCardRenderer'
+import _ from 'lodash';
+import { ForOwn, UpperCase } from 'react-lodash';
 
 import React from 'react';
 import {
@@ -35,13 +38,6 @@ import {
 } from '@patternfly/react-core';
 import ReactJson from 'react-json-view'
 
-class SwaggerResult {
-  constructor(endpoints, servers) {
-      this.endpoints = endpoints;
-      this.servers = servers;
-  }
-}
-
 class GenericDecisionModelForm extends React.Component {
   constructor(props) {
     super(props);
@@ -68,6 +64,7 @@ class GenericDecisionModelForm extends React.Component {
         msg: '',
       },
       _isDebugExpanded: false,
+      _renderForm: false,
     };
   }
 
@@ -141,20 +138,23 @@ class GenericDecisionModelForm extends React.Component {
 
   // handler for Select fields
   handleSelectInputChange = (value, event) => {
-    console.debug('handleSelectInputChange.value: ' + value);
+    // console.debug('handleSelectInputChange.value: ' + value);
+    let renderForm = false;
     let selected = {url: 'none', schema: { } };
     if (value !== 'none') {
       selected = this.state.decisionEndpoints.find(e => e.url === value);
+      renderForm = true;
     }
 
-    console.debug('handleSelectInputChange.selected: ', selected);
+    // console.debug('handleSelectInputChange.selected: ', selected);
     this.setState({
       selectedDecisionEndpoint : selected,
       requestPayload : { },
       _rawServerRequest : { },
       _rawServerResponse : { },
+      _renderForm: renderForm,
     });
-    this.formRef.reset();
+    this.formRef && this.formRef.reset();
 
   };
 
@@ -220,6 +220,7 @@ class GenericDecisionModelForm extends React.Component {
   render() {
     const schemaValidator = this.createValidator(this.state.selectedDecisionEndpoint?.schema);
     const bridgeSchema = new JSONSchemaBridge(this.state.selectedDecisionEndpoint?.schema, schemaValidator);
+    // console.debug('bridgeSchema ', bridgeSchema, this.state.selectedDecisionEndpoint);
 
     return (
       <Stack hasGutter>
@@ -250,11 +251,10 @@ class GenericDecisionModelForm extends React.Component {
               ]}
             >
               {this.state._apiCallStatus === 'WAITING' && (<Spinner isSVG />)}
-              {this.state._apiCallStatus === 'COMPLETE'}
+              {this.state._apiCallStatus === 'COMPLETE' && (<ObjectAsCard obj={this.state._rawServerResponse} />)}
             </Modal>
           </React.Fragment>
           <Form>
-            {/** Violation fields */}
             <FormSection>
               <FormGroup
                 label="Decision Name"
@@ -289,13 +289,15 @@ class GenericDecisionModelForm extends React.Component {
         </StackItem>
         <StackItem isFilled>
           {/** Auto Form */}
-          <AutoForm
-            ref={ref => (this.formRef = ref)}
-            placeholder={true}
-            schema={bridgeSchema} 
-            onChangeModel={model => this.updateState(model)} 
-            onSubmit={this.onFormSubmit} >
-          </AutoForm>
+          {this.state._renderForm && 
+            (<AutoForm
+              ref={ref => (this.formRef = ref)}
+              placeholder={true}
+              schema={bridgeSchema} 
+              onChangeModel={model => this.updateState(model)} 
+              onSubmit={this.onFormSubmit} >
+            </AutoForm>)
+          }
         </StackItem>
         <StackItem>
           <ExpandableSection toggleText="Debug View">
