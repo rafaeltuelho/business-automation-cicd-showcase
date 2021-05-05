@@ -62,7 +62,8 @@ export default class KieClient {
             .then(this.checkKieResponse);
   }
 
-  buildDroolsRequestBody(facts, kieSessionName) {
+  buildDroolsRequestBody(facts, kieSessionName = KIE_SESSION_NAME) {
+    console.debug('kieSessionName: ', kieSessionName);
     const requestBody = {
       "lookup": kieSessionName,
       "commands": [
@@ -102,7 +103,7 @@ export default class KieClient {
     const endpoint =
         this.settings.common.kieServerBaseUrl + '/containers/instances/' + 
         this.settings.drools.containerId;
-    const payload = this.buildDroolsRequestBody(facts);
+    const payload = this.buildDroolsRequestBody(facts, this.settings.drools.kieSessionName);
     return this.callKieServer(endpoint, payload); 
   }
 
@@ -219,6 +220,23 @@ export default class KieClient {
         const error = new Error(`Fact Object with identifier ${factId} not found on response`);
         error.status = 'FACT NOT FOUND';
         error.response = `Fact Object with identifier ${factId} not found on response`;
+        console.debug(error);
+        throw error;        
+    }
+  }
+
+  extractFactsFromKieResponse(serverResponse) {
+    let facts = [];
+    if (serverResponse.result) {
+        serverResponse.result['execution-results'].results.forEach(f => {
+          facts.push(f); // {key: x, value: y}
+        });
+
+        return facts;
+    } else {
+        const error = new Error(`Fact results not found on response`);
+        error.status = 'FACT NOT FOUND';
+        error.response = 'Fact results not found on response';
         console.debug(error);
         throw error;        
     }

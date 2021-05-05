@@ -22,7 +22,7 @@ import {
 } from '@patternfly/react-core';
 // make sure you've installed @patternfly/patternfly
 import CarInsuranceForm from './carInsuranceForm'
-import TrafficViolationForm from './trafficViolationForm'
+import DroolsDynamicForm from './droolsDynamicForm'
 import GenericDecisionModelForm from './genericDmnForm'
 import SettingsForm from './settings'
 import AppHeader from "./header";
@@ -63,6 +63,12 @@ class AppPagelayout extends React.Component {
               isActive={activeItem === 'grp-1_itm-2'}
               onClick={this.handleItemOnclick}
               >
+              <Link to="/droolsDynamicForm">Car Insurance (dyna)</Link>
+            </NavItem>            
+            <NavItem groupId="grp-1" itemId="grp-1_itm-3" 
+              isActive={activeItem === 'grp-1_itm-3'}
+              onClick={this.handleItemOnclick}
+              >
               <Link to="/genericDmn">Decision Models</Link>
             </NavItem>
           </NavExpandable>
@@ -93,15 +99,15 @@ class AppPagelayout extends React.Component {
                   <PageSection variant={PageSectionVariants.light}>
                     <CarInsuranceForm />
                   </PageSection>
-                </Route>
-                <Route path="/trafficViolation">
+                </Route>             
+                <Route path="/droolsDynamicForm">
                   <PageSection variant={PageSectionVariants.light}>
                     <TextContent>
-                      <Text component="h1">Traffic Violation</Text>
+                      <Text component="h1">Drools Rules</Text>
                     </TextContent>
                   </PageSection>
                   <PageSection variant={PageSectionVariants.light}>
-                    <TrafficViolationForm />
+                    <DroolsDynamicForm />
                   </PageSection>
                 </Route>                
                 <Route path="/genericDmn">

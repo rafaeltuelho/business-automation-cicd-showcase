@@ -1,21 +1,25 @@
 import "@patternfly/react-core/dist/styles/base.css";
+import isEmpty from 'validator/lib/isEmpty';
 
 import KieClient from './kieClient';
+import { formValidate } from './formValidation';
 import { loadFromLocalStorage } from './util'
-import './fonts.css';
 import { AutoForm } from 'uniforms-patternfly';
 import Ajv from 'ajv';
 import { JSONSchemaBridge } from 'uniforms-bridge-json-schema';
+import SimpleSchema from 'simpl-schema';
+import SimpleSchema2Bridge from 'uniforms-bridge-simple-schema-2';
 import ObjectAsCard  from './objectCardRenderer'
 import _ from 'lodash';
+import './fonts.css';
 
 import React from 'react';
 import {
   Form,
   FormGroup,
   FormSection,
-  FormSelect,
   FormSelectOption,
+  FormSelect,
   Button,
   Alert, 
   AlertActionCloseButton,
@@ -30,24 +34,25 @@ import {
 } from '@patternfly/react-core';
 import ReactJson from 'react-json-view'
 
-class GenericDecisionModelForm extends React.Component {
+const RULES_KIE_SESSION_NAME='stateless-session';
+
+class DroolsDynamicForm extends React.Component {
   constructor(props) {
     super(props);
 
     const kieSettings = loadFromLocalStorage('kieSettings', true);
-    let formRef; //AutoForm reference
     this.kieClient = new KieClient(kieSettings);
+    let formRef; //AutoForm reference
 
     this.state = {
-      decisionEndpoints: [ { url: 'none', schema: { } } ],
-      selectedDecisionEndpoint: { 
-        url: '/',
-        schema: { },
-      },
-      requestPayload: { },
+      _renderForm: true,
       _apiCallStatus: 'NONE',
-      _rawServerRequest: { },
-      _rawServerResponse: { },
+      _rawServerRequest: {},
+      _rawServerResponse: {},
+      _serverResponse: {
+        driverFact: { },
+        policyFact: { },
+      },
       _responseErrorAlertVisible: false,
       _responseModalOpen: false,
       _alert: {
@@ -56,7 +61,6 @@ class GenericDecisionModelForm extends React.Component {
         msg: '',
       },
       _isDebugExpanded: false,
-      _renderForm: false,
     };
   }
 
@@ -66,34 +70,47 @@ class GenericDecisionModelForm extends React.Component {
       _responseModalOpen: true,      
     });
 
-    // const rawServerRequest = data;
-    const endpointPath = this.state.selectedDecisionEndpoint.url.replace('/server', '');
+    // iterate over the AutoForm's model, extract each root Object as Fact
+    let facts = [];
+    _.map(data, (v, k, o) => {
+      // console.debug('building drools fact for: ', k);
+      const f = this.kieClient.newInsertCommand({ [k]: v }, k, true);      
+      facts.push(f);
+    });
+    // console.debug('drools facts: ', facts);
+    // build server request payload just for debug purposes
+    const rawServerRequest = this.kieClient.buildDroolsRequestBody(facts);
 
     this.kieClient
-      .executeDecisionOpenApi(endpointPath, data)
+      .fireRules(facts)
       .then((response) => {
-        console.debug('executeDecisionOpenApi.response: ', response)
+
+        // const driverFact = this.kieClient.extractFactFromKieResponse(response, 'driver');
+        // const policyFact = this.kieClient.extractFactFromKieResponse(response, 'policy');
 
         this.setState({
           _apiCallStatus: 'COMPLETE',
           _responseModalOpen: true,
-          _rawServerResponse: response?.result ? response.result : response,
+          _rawServerResponse: response,
+          _serverResponse: response.result['execution-results'].results,
           _alert: {
             visible: false,
             variant: 'default',
             msg: '',
-          },                    
+          },           
         });
 
         // scroll the page to make alert visible
         this.scrollToTop();
       })
       .catch(err => {
-        console.error(err);
+        // console.error(err);
         this.setState({
           _apiCallStatus: 'ERROR',
           _responseModalOpen: false,
-          _rawServerResponse: err.response,
+          _rawServerResponse: {
+            result: {},
+          },
           _alert: {
             visible: true,
             variant: 'danger',
@@ -104,9 +121,9 @@ class GenericDecisionModelForm extends React.Component {
         this.scrollToTop();
       })
       .finally(() => {
-        // this.setState({
-        //   _rawServerRequest: rawServerRequest,
-        // })
+        this.setState({
+          _rawServerRequest: rawServerRequest,
+        })
       });
 
   };
@@ -130,40 +147,20 @@ class GenericDecisionModelForm extends React.Component {
 
   // handler for Select fields
   handleSelectInputChange = (value, event) => {
-    // console.debug('handleSelectInputChange.value: ' + value);
-    let renderForm = false;
-    let selected = {url: 'none', schema: { } };
-    if (value !== 'none') {
-      selected = this.state.decisionEndpoints.find(e => e.url === value);
-      renderForm = true;
-    }
-
-    // console.debug('handleSelectInputChange.selected: ', selected);
-    this.setState({
-      selectedDecisionEndpoint : selected,
-      requestPayload : { },
-      _rawServerRequest : { },
-      _rawServerResponse : { },
-      _renderForm: renderForm,
-    });
-    this.formRef && this.formRef.reset();
-
+    const { id } = event.currentTarget;
+    this.onInputChange({ name: id, value });
   };
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    console.debug('GenericDecisionModelForm ->>> componentDidUpdate...');
+    console.debug('CarInsuranceForm ->>> componentDidUpdate...');
   }
 
-  async componentDidMount() {
-    console.debug('GenericDecisionModelForm ->>> componentDidMount...');
-    const decisionEndpoints = await this.kieClient.getOpenApiDecisionEndpoints();
-    // console.debug(decisionEndpoints);
-    const filteredEndpoints = decisionEndpoints.filter(e => e.url.split('/').pop() !== 'dmnresult');
-    this.setState({ decisionEndpoints : filteredEndpoints });
+  componentDidMount() {
+    console.debug('CarInsuranceForm ->>> componentDidMount...');
   }
-  
+
   componentWillUnmount() {
-    console.debug('GenericDecisionModelForm ->>> componentWillMount...');
+    console.debug('CarInsuranceForm ->>> componentWillMount...');
   }
 
   closeResponseAlert = () => {
@@ -176,10 +173,6 @@ class GenericDecisionModelForm extends React.Component {
     });
   }
   
-  updateState(formModelData) {
-    this.setState({_rawServerRequest: formModelData});
-  }
-
   handleModalToggle = () => {
     this.setState(({ _responseModalOpen }) => ({
       _responseModalOpen: !_responseModalOpen
@@ -199,20 +192,33 @@ class GenericDecisionModelForm extends React.Component {
     });
   }
 
-  createValidator(schema) {
-    const ajv = new Ajv({ allErrors: true, useDefaults: true });
-    const validator = ajv.compile(schema);
-  
-    return (model) => {
-      validator(model);
-      return validator.errors?.length ? { details: validator.errors } : null;
-    };
-  }  
+  updateState(formModelData) {
+    this.setState({_rawServerRequest: formModelData});
+  }
 
   render() {
-    const schemaValidator = this.createValidator(this.state.selectedDecisionEndpoint?.schema);
-    const bridgeSchema = new JSONSchemaBridge(this.state.selectedDecisionEndpoint?.schema, schemaValidator);
-    // console.debug('bridgeSchema ', bridgeSchema, this.state.selectedDecisionEndpoint);
+    const bridgeSchema = new SimpleSchema2Bridge(
+      new SimpleSchema({
+        driver: { type: Object, },
+        'driver.name': { type: String, min: 3, required: false},
+        'driver.age': { type: Number, min: 16, required: false},
+        'driver.claims': { type: SimpleSchema.Integer, min: 0, defaultValue: 0 },
+        'driver.locationRiskProfile': { 
+          type: String,
+          defaultValue: 'Select',
+          allowedValues: ['LOW', 'MEDIUM', 'HIGH'],
+        },
+        policy: { type: Object, },
+        'policy.type': { 
+          type: String,
+          defaultValue: 'Select',
+          allowedValues: ['COMPREHENSIVE', 'FIRE_THEFT', 'THIRD_PARTY'],
+        },
+        // 'policy.approved': { type: Boolean, },
+        // 'policy.discountPercent': { type: Number },
+        // 'policy.basePrice': { type: Number },
+      })
+    );
 
     return (
       <Stack hasGutter>
@@ -243,41 +249,9 @@ class GenericDecisionModelForm extends React.Component {
               ]}
             >
               {this.state._apiCallStatus === 'WAITING' && (<Spinner isSVG />)}
-              {this.state._apiCallStatus === 'COMPLETE' && (<ObjectAsCard obj={this.state._rawServerResponse} />)}
+              {this.state._apiCallStatus === 'COMPLETE' && (<ObjectAsCard obj={this.state._serverResponse} />)}
             </Modal>
           </React.Fragment>
-          <Form>
-            <FormSection>
-              <FormGroup
-                label="Decision Name"
-                isRequired
-                fieldId="decisionEndpoint">
-                <FormSelect
-                  id="decisionEndpoint" 
-                  value={this.state.selectedDecisionEndpoint.url} 
-                  onChange={this.handleSelectInputChange}
-                  // validated={}
-                  >
-                  <FormSelectOption
-                    isDisabled={false} 
-                    key={0} 
-                    value='none' 
-                    label='>>> Select a Decision <<<'
-                  />
-                  {
-                  this.state.decisionEndpoints.map((option, index) => (
-                      <FormSelectOption 
-                        isDisabled={false} 
-                        key={index+1}
-                        value={option.url} 
-                        label={option.url.split('/').pop()} 
-                      />
-                    ))
-                  }
-                </FormSelect>
-              </FormGroup>
-            </FormSection>
-          </Form>
         </StackItem>
         <StackItem isFilled>
           {/** Auto Form */}
@@ -300,7 +274,7 @@ class GenericDecisionModelForm extends React.Component {
               </GridItem>
               <GridItem span={6}>
                 <Title headingLevel="h6" size="md">Response Payload</Title>
-                <ReactJson name={false} src={this.state._rawServerResponse} />
+                <ReactJson name={false} src={this.state._rawServerResponse.result} />
               </GridItem>
             </Grid>
           </ExpandableSection>
@@ -310,4 +284,4 @@ class GenericDecisionModelForm extends React.Component {
   }
 }
 
-export default GenericDecisionModelForm;
+export default DroolsDynamicForm;

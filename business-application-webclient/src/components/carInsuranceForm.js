@@ -4,9 +4,6 @@ import isEmpty from 'validator/lib/isEmpty';
 import KieClient from './kieClient';
 import { formValidate } from './formValidation';
 import { loadFromLocalStorage } from './util'
-import { AutoForm } from 'uniforms-patternfly';
-import Ajv from 'ajv';
-import { JSONSchemaBridge } from 'uniforms-bridge-json-schema';
 import ObjectAsCard  from './objectCardRenderer'
 import _ from 'lodash';
 import './fonts.css';
@@ -26,12 +23,7 @@ import {
   Alert, 
   AlertActionCloseButton,
   Modal,
-  TextContent,
   Title,
-  TextList,
-  TextListVariants,
-  TextListItem,
-  TextListItemVariants,
   ExpandableSection,
   Grid,
   GridItem,

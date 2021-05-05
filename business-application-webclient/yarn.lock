@@ -10015,7 +10015,7 @@
   "resolved" "https://registry.npmjs.org/signal-exit/-/signal-exit-3.0.2.tgz"
   "version" "3.0.2"
 
-"simpl-schema@^1.12.0":
+"simpl-schema@^1.0.0 || ^0.0.4", "simpl-schema@^1.12.0":
   "integrity" "sha512-lzXC3L8jJbPhNXGR3cjlyIauqqrC5WUJS4O34Ym/wLIvb8K3ZieK+1OfTzs4mBpDc3Y8u53gQFAr1X37DmTcEg=="
   "resolved" "https://registry.npmjs.org/simpl-schema/-/simpl-schema-1.12.0.tgz"
   "version" "1.12.0"
@@ -10946,6 +10946,17 @@
   dependencies:
     "invariant" "^2.0.0"
     "lodash" "^4.0.0"
+    "tslib" "^1.10.0"
+    "uniforms" "^3.4.0"
+
+"uniforms-bridge-simple-schema-2@^3.4.0":
+  "integrity" "sha512-J3t2HmG7Jymod1uQI9K0tCESU3EG/PuN9Ij5qQayrlsLm4rVnp8TW4BSOqC8nKcy653FY7PDFbVG3r8VHrtXPA=="
+  "resolved" "https://registry.npmjs.org/uniforms-bridge-simple-schema-2/-/uniforms-bridge-simple-schema-2-3.4.0.tgz"
+  "version" "3.4.0"
+  dependencies:
+    "invariant" "^2.0.0"
+    "lodash" "^4.0.0"
+    "simpl-schema" "^1.0.0 || ^0.0.4"
     "tslib" "^1.10.0"
     "uniforms" "^3.4.0"
 

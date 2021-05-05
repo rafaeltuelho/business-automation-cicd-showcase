@@ -24,6 +24,7 @@
     "uniforms": "^3.4.0",
     "uniforms-bridge-json-schema": "^3.4.0",
     "uniforms-bridge-simple-schema": "^3.4.0",
+    "uniforms-bridge-simple-schema-2": "^3.4.0",
     "uniforms-patternfly": "^4.4.2",
     "validator": "^13.0.0"
   },

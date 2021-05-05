@@ -14,12 +14,14 @@ import {
 
 function ObjectAsCard({ obj, parentName = 'Response' }) {
   if (_.isArray(obj) && obj.length > 0){
-    console.debug('root element is an array');
-    obj.map(i => {
-      return (<ObjectAsCard obj={i} parentName='' />)
+    console.debug('root element is an array', obj);
+    _.map(obj, (v, i) => {
+      console.debug('array element ', v, i);
+      console.debug('is object? ', _.isObjectLike(v), _.isObject(v), _.isPlainObject(v));
+      return <ObjectAsCard obj={v} parentName='' />;
     });
   }
-  else if (_.isPlainObject(obj) && !_.isEmpty(obj)) {
+  else if (_.isObjectLike(obj) && !_.isEmpty(obj)) {
     console.debug('current pro is an obj', obj);
     return (
       <Card>
@@ -41,7 +43,7 @@ function ObjectAsCard({ obj, parentName = 'Response' }) {
                         <DataListCell key={k}>
                           <span id={k}>{k}</span>
                         </DataListCell>,
-                        <DataListCell key={v}>{String(v)}</DataListCell>
+                        <DataListCell key={v}>{String()}</DataListCell>
                       ]}
                     />
                   </DataListItemRow>
