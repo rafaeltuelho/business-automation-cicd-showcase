@@ -1,6 +1,7 @@
 import fetch from 'isomorphic-fetch';
 import { getReasonPhrase } from 'http-status-codes' 
 import SwaggerClient from "swagger-client";
+import _ from 'lodash';
 
 // EAP runtime
 //const KIE_SERVER_API_BASE_URL='http://localhost:8080/kie-server/services/rest/server';
@@ -71,7 +72,7 @@ export default class KieClient {
           {
               "fire-all-rules": {
                 "max": -1,
-                "out-identifier": "rules fired"                  
+                "out-identifier": "fired rules"                  
               }
           }
       ]
@@ -226,12 +227,20 @@ export default class KieClient {
   }
 
   extractFactsFromKieResponse(serverResponse) {
-    let facts = [];
+    let facts = { };
+    
     if (serverResponse.result) {
         serverResponse.result['execution-results'].results.forEach(f => {
-          facts.push(f); // {key: x, value: y}
+          // console.debug('is Object? ', _.isObjectLike(f.value), f.value);
+          if (_.isObjectLike(f.value)) {
+            // console.debug('Result object: ', Object.entries(f.value)[0][1]);
+            facts[f.key] = Object.entries(f.value)[0][1];
+          }
+          else {
+            facts[f.key] = f.value;
+          }
         });
-
+        console.debug('extracted facts: ', facts);
         return facts;
     } else {
         const error = new Error(`Fact results not found on response`);
