@@ -8,7 +8,7 @@ import { AutoForm } from 'uniforms-patternfly';
 import Ajv from 'ajv';
 import { JSONSchemaBridge } from 'uniforms-bridge-json-schema';
 import SimpleSchema from 'simpl-schema';
-import SimpleSchema2Bridge from 'uniforms-bridge-simple-schema-2';
+import { SimpleSchema2Bridge } from 'uniforms-bridge-simple-schema-2';
 import ObjectAsCard from './objectCardRenderer'
 import CodeEditorModal from './codeEditorModal';
 import _ from 'lodash';
@@ -36,6 +36,46 @@ import {
 import ReactJson from 'react-json-view'
 
 const RULES_KIE_SESSION_NAME='stateless-session';
+const DEMO_SIMPLE_SCHEMA = new SimpleSchema2Bridge(
+  new SimpleSchema({
+    Driver: { type: Object, },
+    'Driver.name': { type: String, min: 3, required: false},
+    'Driver.age': { type: Number, min: 16, required: false},
+    'Driver.claims': { type: SimpleSchema.Integer, min: 0 },
+    'Driver.locationRiskProfile': { 
+      type: String,
+      defaultValue: 'Select',
+      allowedValues: ['LOW', 'MEDIUM', 'HIGH'],
+      uniforms: {
+        options:
+          [
+            { label: 'Select', value: 'NONE' },
+            { label: 'Low', value: 'LOW' },
+            { label: 'Medium', value: 'MEDIUM' },
+            { label: 'High', value: 'HIGH' },
+          ]
+      }
+    },
+    Policy: { type: Object, },
+    'Policy.type': { 
+      type: String,
+      defaultValue: 'Select',
+      allowedValues: ['COMPREHENSIVE', 'FIRE_THEFT', 'THIRD_PARTY'],
+      uniforms: {
+        options:
+          [
+            { label: 'Select', value: 'NONE' },
+            { label: 'Comprehensive', value: 'COMPREHENSIVE' },
+            { label: 'Fire Theft', value: 'FIRE_THEFT' },
+            { label: '3rd Party', value: 'THIRD_PARTY' },
+          ]
+      }
+    },
+    // 'Policy.approved': { type: Boolean, },
+    // 'Policy.discountPercent': { type: Number },
+    // 'Policy.basePrice': { type: Number },
+  })
+);
 
 class DroolsDynamicForm extends React.Component {
   constructor(props) {
@@ -43,57 +83,15 @@ class DroolsDynamicForm extends React.Component {
 
     const kieSettings = loadFromLocalStorage('kieSettings', true);
     this.kieClient = new KieClient(kieSettings);
-    let formRef; //AutoForm reference
+    this.formRef = null; //AutoForm reference
 
     this.state = {
-      formBridgeSchema: new SimpleSchema2Bridge(
-        new SimpleSchema({
-          Driver: { type: Object, },
-          'Driver.name': { type: String, min: 3, required: false},
-          'Driver.age': { type: Number, min: 16, required: false},
-          'Driver.claims': { type: SimpleSchema.Integer, min: 0 },
-          'Driver.locationRiskProfile': { 
-            type: String,
-            defaultValue: 'Select',
-            allowedValues: ['LOW', 'MEDIUM', 'HIGH'],
-            uniforms: {
-              options:
-                [
-                  { label: 'Select', value: 'NONE' },
-                  { label: 'Low', value: 'LOW' },
-                  { label: 'Medium', value: 'MEDIUM' },
-                  { label: 'High', value: 'HIGH' },
-                ]
-            }
-          },
-          Policy: { type: Object, },
-          'Policy.type': { 
-            type: String,
-            defaultValue: 'Select',
-            allowedValues: ['COMPREHENSIVE', 'FIRE_THEFT', 'THIRD_PARTY'],
-            uniforms: {
-              options:
-                [
-                  { label: 'Select', value: 'NONE' },
-                  { label: 'Comprehensive', value: 'COMPREHENSIVE' },
-                  { label: 'Fire Theft', value: 'FIRE_THEFT' },
-                  { label: '3rd Party', value: 'THIRD_PARTY' },
-                ]
-            }
-          },
-          // 'Policy.approved': { type: Boolean, },
-          // 'Policy.discountPercent': { type: Number },
-          // 'Policy.basePrice': { type: Number },
-        })
-      ),      
+      formBridgeSchema: DEMO_SIMPLE_SCHEMA,      
       _renderForm: true,
       _apiCallStatus: 'NONE',
-      _rawServerRequest: {},
-      _rawServerResponse: {},
-      _serverResponse: {
-        driverFact: { },
-        policyFact: { },
-      },
+      _rawServerRequest: { },
+      _rawServerResponse: { },
+      _serverResponse: { },
       _responseErrorAlertVisible: false,
       _responseModalOpen: false,
       _alert: {
@@ -229,8 +227,21 @@ class DroolsDynamicForm extends React.Component {
     });
   }
 
-  updateState(formModelData) {
+  updateState = (formModelData) => {
     this.setState({_rawServerRequest: formModelData});
+  }
+
+  handleFormSchemaState = (simpleSchema) => {
+    if (this.formRef) {
+      this.formRef.reset();
+    }
+
+    this.setState({
+      formBridgeSchema: simpleSchema,
+      _rawServerRequest: { },
+      _rawServerResponse: { },
+      _serverResponse: { },
+    });
   }
 
   render() {
@@ -269,7 +280,7 @@ class DroolsDynamicForm extends React.Component {
           </React.Fragment>
         </StackItem>
         <StackItem isFilled>
-          <CodeEditorModal />
+          <CodeEditorModal ancestorStateHandler={this.handleFormSchemaState} />
           {/** Auto Form */}
           {this.state._renderForm && 
             (<AutoForm

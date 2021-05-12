@@ -22,35 +22,32 @@ class CodeEditorModal extends React.Component {
     const header = (
       <React.Fragment>
         <Title id="custom-header-label" headingLevel="h1" size={TitleSizes['2xl']}>
-          With custom modal header/footer
+          Form JSON Schema Definition
         </Title>
-        <p className="pf-u-pt-sm">Allows for custom content in the header and/or footer by passing components.</p>
+        <p className="pf-u-pt-sm">Define your JSON Schema using <a href='https://github.com/longshotlabs/simpl-schema' target='blank'>SimpleSchema</a></p>
       </React.Fragment>
     );
 
     const footer = (
       <Title headingLevel="h4" size={TitleSizes.md}>
         <WarningTriangleIcon />
-        <span className="pf-u-pl-sm">Custom modal footer.</span>
+        <span className="pf-u-pl-sm">Save to reload the web Form</span>
       </Title>
     );
 
     return (
       <React.Fragment>
         <Button variant="primary" onClick={this.handleModalToggle}>
-          Show Custom Header/Footer Modal
+          Define Data Input Schema (form)
         </Button>
         <Modal
           variant={ModalVariant.large}
           isOpen={isModalOpen}
           header={header}
-          aria-label="My dialog"
-          aria-labelledby="custom-header-label"
-          aria-describedby="custom-header-description"
           onClose={this.handleModalToggle}
           footer={footer}
         >
-          <JSCodeEditor />
+          <JSCodeEditor ancestorStateHandler={this.props.ancestorStateHandler} />
         </Modal>
       </React.Fragment>
     );
