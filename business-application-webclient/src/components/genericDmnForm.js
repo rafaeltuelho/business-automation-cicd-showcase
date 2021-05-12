@@ -200,7 +200,7 @@ class GenericDecisionModelForm extends React.Component {
   }
 
   createValidator(schema) {
-    const ajv = new Ajv({ allErrors: true, useDefaults: true });
+    const ajv = new Ajv({ allErrors: true, useDefaults: true, strict: false });
     const validator = ajv.compile(schema);
   
     return (model) => {

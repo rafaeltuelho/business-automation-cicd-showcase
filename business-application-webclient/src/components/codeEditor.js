@@ -10,8 +10,8 @@ const scope = typeof window === 'undefined' ? global : window;
 scope.SimpleSchema = SimpleSchema;
 scope.SimpleSchema2Bridge = SimpleSchema2Bridge;
 
-const DEMO_JSON_SCHEMA = `
-new SimpleSchema2Bridge(
+const DEMO_JSON_SCHEMA = 
+`new SimpleSchema2Bridge(
   new SimpleSchema({
     Driver: { type: Object, },
     'Driver.name': { type: String, min: 3, required: false},
@@ -46,8 +46,7 @@ new SimpleSchema2Bridge(
           ]
       }
     },
-  }));
-`;
+  }))`;
 
 class JSCodeEditor extends React.Component {
   constructor(props) {
@@ -63,12 +62,25 @@ class JSCodeEditor extends React.Component {
     
     this.onExecuteCode = (code) => {
       console.debug('Applying JSON Schema... ', code);
-      const simpleBridgeSchema = eval(`(${code})`);
-      // console.debug('code parsed: ', simpleBridgeSchema);
-      
-      if (props.ancestorStateHandler) {
-        console.info('calling ancestor state handler...');
-        props.ancestorStateHandler(simpleBridgeSchema);
+
+      try {
+        const simpleBridgeSchema = eval(`(${code})`);
+        // console.debug('code parsed: ', simpleBridgeSchema);
+        
+        if (props.ancestorStateHandler) {
+          console.info('calling ancestor state handler...');
+          props.ancestorStateHandler(simpleBridgeSchema);
+
+          if (props.addAlertHandler) {
+            props.addAlertHandler('Form schema updated. Close the code editor to see the form updated!', 'success', new Date().getTime());
+          }
+        }
+      } catch (error) {
+        console.error(error);
+
+        if (props.addAlertHandler) {
+          props.addAlertHandler('Schema Validation Failed:' + error, 'danger', new Date().getTime());
+        }
       }
     };
   }
@@ -77,8 +89,8 @@ class JSCodeEditor extends React.Component {
     const customControl = (
       <CodeEditorControl 
         icon={<PlayIcon/>}
-        aria-label="Execute code"
-        toolTipText="Execute code"
+        aria-label="Update the Form Definition"
+        toolTipText="Update the Form Definition"
         onClick={this.onExecuteCode}
         isVisible={true}
       />);
@@ -97,7 +109,7 @@ class JSCodeEditor extends React.Component {
           customControls={customControl}
           code={this.state.code}
           onChange={this.onChange}
-        />    
+        />
       </>
     );
   }

@@ -57,20 +57,14 @@ class AppPagelayout extends React.Component {
               isActive={activeItem === 'grp-1_itm-1'}
               onClick={this.handleItemOnclick}
               >
-              <Link to="/carInsurance">Car Insurance</Link>
+              <Link to="/droolsDynamicForm">Business Rules (Drools)</Link>
             </NavItem>
             <NavItem groupId="grp-1" itemId="grp-1_itm-2" 
               isActive={activeItem === 'grp-1_itm-2'}
               onClick={this.handleItemOnclick}
               >
-              <Link to="/droolsDynamicForm">Car Insurance (dyna)</Link>
+              <Link to="/genericDmn">Decision Models (DMN)</Link>
             </NavItem>            
-            <NavItem groupId="grp-1" itemId="grp-1_itm-3" 
-              isActive={activeItem === 'grp-1_itm-3'}
-              onClick={this.handleItemOnclick}
-              >
-              <Link to="/genericDmn">Decision Models</Link>
-            </NavItem>
           </NavExpandable>
         </NavList>
       </Nav>
@@ -103,7 +97,7 @@ class AppPagelayout extends React.Component {
                 <Route path="/droolsDynamicForm">
                   <PageSection variant={PageSectionVariants.light}>
                     <TextContent>
-                      <Text component="h1">Drools Rules</Text>
+                      <Text component="h1">Business Rules Data Input</Text>
                     </TextContent>
                   </PageSection>
                   <PageSection variant={PageSectionVariants.light}>
@@ -113,7 +107,7 @@ class AppPagelayout extends React.Component {
                 <Route path="/genericDmn">
                   <PageSection variant={PageSectionVariants.light}>
                     <TextContent>
-                      <Text component="h1">Decision Models</Text>
+                      <Text component="h1">Decision Models Data Input</Text>
                     </TextContent>
                   </PageSection>
                   <PageSection variant={PageSectionVariants.light}>
@@ -134,6 +128,7 @@ class AppPagelayout extends React.Component {
                   <PageSection variant={PageSectionVariants.light}>
                     <TextContent>
                       <Text component="h1">Welcome to Decision Manager Show Case app!</Text>
+                      <Text component="h3">Select an option from the left menu.</Text>
                     </TextContent>
                   </PageSection>
                 </Route>
