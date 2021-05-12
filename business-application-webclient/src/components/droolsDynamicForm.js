@@ -228,7 +228,17 @@ class DroolsDynamicForm extends React.Component {
   }
 
   updateState = (formModelData) => {
-    this.setState({_rawServerRequest: formModelData});
+    // iterate over the AutoForm's model, extract each root Object as Fact
+    let facts = [];
+    _.map(formModelData, (v, k, o) => {
+      // console.debug('building drools fact for: ', k);
+      const f = this.kieClient.newInsertCommand({ [k]: v }, k, true);      
+      facts.push(f);
+    });
+    // console.debug('drools facts: ', facts);
+    // build server request payload just for debug purposes
+    const rawServerRequest = this.kieClient.buildDroolsRequestBody(facts);    
+    this.setState({_rawServerRequest: rawServerRequest});
   }
 
   handleFormSchemaState = (simpleSchema) => {
