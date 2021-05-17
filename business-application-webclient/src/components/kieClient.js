@@ -31,7 +31,7 @@ export default class KieClient {
       },
       drools: {
         containerId: props?.drools?.containerId,
-        kieSessionName: props?.drools?.kieSessionName ? props.drools.kieSessionName : KIE_SESSION_NAME,
+        kieSessionName: (props?.drools?.kieSessionName && !_.isEmpty(props.drools.kieSessionName)) ? props.drools.kieSessionName : null,
       },
       dmn: {
         containerId: props?.dmn?.containerId,
@@ -63,7 +63,7 @@ export default class KieClient {
             .then(this.checkKieResponse);
   }
 
-  buildDroolsRequestBody(facts, kieSessionName = KIE_SESSION_NAME) {
+  buildDroolsRequestBody(facts, kieSessionName = null) {
     console.debug('kieSessionName: ', kieSessionName);
     const requestBody = {
       "lookup": kieSessionName,
@@ -123,11 +123,16 @@ export default class KieClient {
 
   // OpenAPI client functions
   async getOpenApiDecisionEndpoints() {
-    const openApiURL = 
-      this.settings.common.kieServerBaseUrl + '/containers/' + 
-      this.settings.dmn.containerId + '/dmn/openapi.json';
-    const api = await SwaggerClient.resolve({url: openApiURL});
+    let openApiURL = '';
+    if (this.settings.dmn.kogitoRuntime){
+      openApiURL = this.settings.common.kieServerBaseUrl + '/q/openapi';      
+    }
+    else {
+      openApiURL = this.settings.common.kieServerBaseUrl + '/containers/' + 
+                    this.settings.dmn.containerId + '/dmn/openapi.json';
+    }
 
+    const api = await SwaggerClient.resolve({url: openApiURL});
     let endpoints = [];
     const paths = api.spec.paths;
     for (const url in paths) {
@@ -178,10 +183,19 @@ export default class KieClient {
 
   testConnection() {
     console.log('\n\n--------------------------------');
-    console.log('calling kie server...');
+    console.log('testing kie server...');
+    // console.debug('btoa: ' + this.settings.common.kieServerAuthBase64);
 
-    const url = this.settings.common.kieServerBaseUrl;
+    let url = '';
+    if (this.settings.dmn.kogitoRuntime || this.settings.drools.kogitoRuntime) {
+      url = this.settings.common.kieServerBaseUrl + '/q/openapi';
+    }
+    else {
+      url = this.settings.common.kieServerBaseUrl;
+    }
+    
     return fetch(url, {
+        mode: 'cors',
         method: 'GET',
         headers: {
           'Accept': 'application/json',

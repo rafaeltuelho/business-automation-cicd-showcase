@@ -15,4 +15,10 @@ export function loadFromLocalStorage(key, parseJson = false) {
     return parseJson ? strObj : rawObj;
 }
 
+// export function stringifyValue(rawValue) {
+//   let str = '';
+
+//   return str;
+// }
+
 export default { loadFromLocalStorage }

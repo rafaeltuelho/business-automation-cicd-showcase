@@ -1,8 +1,6 @@
 import "@patternfly/react-core/dist/styles/base.css";
-import isEmpty from 'validator/lib/isEmpty';
 
 import KieClient from './kieClient';
-import { formValidate } from './formValidation';
 import { loadFromLocalStorage } from './util'
 import { AutoForm } from 'uniforms-patternfly';
 import Ajv from 'ajv';
@@ -16,11 +14,6 @@ import './fonts.css';
 
 import React from 'react';
 import {
-  Form,
-  FormGroup,
-  FormSection,
-  FormSelectOption,
-  FormSelect,
   Button,
   Alert, 
   AlertActionCloseButton,
@@ -86,7 +79,8 @@ class DroolsDynamicForm extends React.Component {
     this.formRef = null; //AutoForm reference
 
     this.state = {
-      formBridgeSchema: DEMO_SIMPLE_SCHEMA,      
+      formBridgeSchema: DEMO_SIMPLE_SCHEMA,
+      formBridgeSchemaCode: null,
       _renderForm: true,
       _apiCallStatus: 'NONE',
       _rawServerRequest: { },
@@ -241,13 +235,14 @@ class DroolsDynamicForm extends React.Component {
     this.setState({_rawServerRequest: rawServerRequest});
   }
 
-  handleFormSchemaState = (simpleSchema) => {
+  handleFormSchemaState = (simpleSchema, code) => {
     if (this.formRef) {
       this.formRef.reset();
     }
 
     this.setState({
       formBridgeSchema: simpleSchema,
+      formBridgeSchemaCode: code,
       _rawServerRequest: { },
       _rawServerResponse: { },
       _serverResponse: { },
@@ -290,7 +285,7 @@ class DroolsDynamicForm extends React.Component {
           </React.Fragment>
         </StackItem>
         <StackItem isFilled>
-          <CodeEditorModal ancestorStateHandler={this.handleFormSchemaState} />
+          <CodeEditorModal ancestorStateHandler={this.handleFormSchemaState} currentCode={this.state.formBridgeSchemaCode} />
           {/** Auto Form */}
           {this.state._renderForm && 
             (<AutoForm

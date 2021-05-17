@@ -52,8 +52,9 @@ class JSCodeEditor extends React.Component {
   constructor(props) {
     super(props);
 
+    const codeContent = props.currentCode ? props.currentCode : DEMO_JSON_SCHEMA;
     this.state = {
-      code: DEMO_JSON_SCHEMA,
+      code: codeContent,
     };
     
     this.onChange = code => {
@@ -61,7 +62,7 @@ class JSCodeEditor extends React.Component {
     };
     
     this.onExecuteCode = (code) => {
-      console.debug('Applying JSON Schema... ', code);
+      // console.debug('Applying JSON Schema... ', code);
 
       try {
         const simpleBridgeSchema = eval(`(${code})`);
@@ -69,7 +70,7 @@ class JSCodeEditor extends React.Component {
         
         if (props.ancestorStateHandler) {
           console.info('calling ancestor state handler...');
-          props.ancestorStateHandler(simpleBridgeSchema);
+          props.ancestorStateHandler(simpleBridgeSchema, code);
 
           if (props.addAlertHandler) {
             props.addAlertHandler('Form schema updated. Close the code editor to see the form updated!', 'success', new Date().getTime());
@@ -105,7 +106,7 @@ class JSCodeEditor extends React.Component {
           isReadOnly={false}
           isLanguageLabelVisible
           language={Language.javascript}
-          height='400px'
+          height='600px'
           customControls={customControl}
           code={this.state.code}
           onChange={this.onChange}

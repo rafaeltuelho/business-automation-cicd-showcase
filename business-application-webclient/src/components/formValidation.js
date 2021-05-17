@@ -1,4 +1,4 @@
-import { Form } from '@patternfly/react-core';
+
 import isEmpty from 'validator/lib/isEmpty';
 
 /**

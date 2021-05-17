@@ -82,9 +82,10 @@ class CodeEditorModal extends React.Component {
           isOpen={isModalOpen}
           header={header}
           onClose={this.handleModalToggle}
+          onEscapePress={() => null}
           footer={footer}
         >
-          <JSCodeEditor ancestorStateHandler={this.props.ancestorStateHandler} addAlertHandler={this.addAlert} removeAlertHandler={this.removeAlert} />
+          <JSCodeEditor ancestorStateHandler={this.props.ancestorStateHandler} currentCode={this.props.currentCode} addAlertHandler={this.addAlert} removeAlertHandler={this.removeAlert} />
         </Modal>
       </React.Fragment>
     );

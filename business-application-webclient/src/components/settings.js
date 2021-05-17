@@ -2,7 +2,7 @@ import "@patternfly/react-core/dist/styles/base.css";
 import isEmpty from 'validator/lib/isEmpty';
 import KieClient from './kieClient';
 import { formValidate } from './formValidation';
-import SingleSelectInput from './singleSelectInput';
+import _ from 'lodash';
 import './fonts.css';
 
 import React from 'react';
@@ -11,19 +11,15 @@ import {
   FormGroup,
   FormSection,
   TextInput,
+  Checkbox,
   ValidatedOptions,
   FormSelectOption,
   FormSelect,
   ActionGroup,
   Button,
-  Radio,
-  Checkbox,
   ExpandableSection,
   Alert, 
   AlertActionCloseButton,
-  ContextSelector, 
-  ContextSelectorItem, 
-  ContextSelectorFooter,
 } from '@patternfly/react-core';
 import { BorderNoneIcon } from '@patternfly/react-icons';
 import { loadFromLocalStorage } from './util'
@@ -49,18 +45,22 @@ class SettingsForm extends React.Component {
       },
       jbpm: {
         containerId: kieSettings?.jbpm ? kieSettings.jbpm.containerId : '',
+        kieContainerOptions: [ {value: DEMO_CONTAINER_ID, label: DEMO_CONTAINER_ID, disabled: false} ],
         processId: kieSettings?.jbpm ? kieSettings.jbpm.processId : '',
         kogitoRuntime: kieSettings?.jbpm ? kieSettings.jbpm.kogitoRuntime : false,
         endpointUrl: kieSettings?.jbpm ? kieSettings.jbpm.endpointUrl : '',
       },
       drools: {
         containerId: kieSettings?.drools?.containerId ? kieSettings.drools.containerId : DEMO_CONTAINER_ID,
-        kieSessionName: kieSettings?.drools?.kieSessionName ? kieSettings.drools.kieSessionName : DEMO_KIE_SESSION_NAME,
+        kieContainerOptions: [ {value: DEMO_CONTAINER_ID, label: DEMO_CONTAINER_ID, disabled: false} ],
+        kieSessionName: (kieSettings?.drools?.kieSessionName && !_.isEmpty(kieSettings.drools.kieSessionName)) ? kieSettings.drools.kieSessionName : null,
         kogitoRuntime: kieSettings?.drools?.kogitoRuntime ? kieSettings.drools.kogitoRuntime : false,
         endpointUrl: kieSettings?.drools ? kieSettings.drools.endpointUrl : '',
       },
       dmn: {
         containerId: kieSettings?.dmn?.containerId ? kieSettings.dmn.containerId : DEMO_CONTAINER_ID,
+        kieContainerOptions: [ {value: DEMO_CONTAINER_ID, label: DEMO_CONTAINER_ID, disabled: false} ],
+        kogitoRuntime: kieSettings?.dmn?.kogitoRuntime ? kieSettings.dmn.kogitoRuntime : false,
       },
       fieldsValidation: {
         common: {
@@ -96,6 +96,7 @@ class SettingsForm extends React.Component {
           },
         }
       },
+      // TODO: create one array for jBPM, Drools and DMN
       kieContainers: [ {value: DEMO_CONTAINER_ID, label: DEMO_CONTAINER_ID, disabled: false} ],
       _saveStatus: 'NONE',
       _rawServerResponse: { },
@@ -134,7 +135,13 @@ class SettingsForm extends React.Component {
           containers.push({value: c['container-id'], label: c['container-id'], disabled: false});
         });
 
-      this.setState({ kieContainers: containers, });
+      const jbpmClone = Object.assign({}, this.state['jbpm']);
+      jbpmClone.kieContainerOptions = containers;
+      const dmnClone = Object.assign({}, this.state['dmn']);
+      dmnClone.kieContainerOptions = containers;
+      const droolsClone = Object.assign({}, this.state['drools']);
+      droolsClone.kieContainerOptions = containers;
+      this.setState({ jbpm: jbpmClone, dmn: dmnClone, drools: droolsClone });
     })
     .catch((err) => {
       // console.error(err);
@@ -167,13 +174,15 @@ class SettingsForm extends React.Component {
       .then((response) => {
 
         // retrieve Kie Containers
-        this.updateKieContainersList(kieClient);
+        if (!this.state.dmn.kogitoRuntime && !this.state.drools.kogitoRuntime) {
+          this.updateKieContainersList(kieClient);
+        }
 
         this.setState({
           _alert: {
             visible: true,
             variant: 'success',
-            msg: response?.type,
+            msg: response?.type || ' Success!',
           },
         });
       })
@@ -236,9 +245,6 @@ class SettingsForm extends React.Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     console.debug('SettingsForm ->>> componentDidUpdate...');
-    if (prevState.dmn?.kogitoRuntime !== this.dmn?.kogitoRuntime) {
-      // console.debug('---');
-    }    
   }
 
   componentDidMount() {
@@ -344,15 +350,18 @@ class SettingsForm extends React.Component {
                 
                 <FormSelect
                   isRequired
-                  // isDisabled={this.state.kieContainers.length === 0}
+                  isDisabled={this.state.drools.kogitoRuntime}
                   id="drools.containerId"
                   validated={this.state.fieldsValidation.drools['containerId'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
                   value={this.state.drools.containerId} 
                   onChange={this.handleSelectInputChange}>
                     <FormSelectOption key={-1} value='NONE' label='choose a kie container...' isPlaceholder={true} />
-                    {this.state.kieContainers.map((option, index) => (
-                      <FormSelectOption key={index} value={option.value} label={option.label} />
-                    ))}
+                    {this.state.drools.kieContainerOptions.map((option, index) => (
+                      <FormSelectOption 
+                      key={index} value={option.value} label={option.label} 
+                      selected={option.value === this.state.drools.containerId}
+                      />
+                  ))}
                 </FormSelect>
             </FormGroup>
             <FormGroup
@@ -372,6 +381,16 @@ class SettingsForm extends React.Component {
         </ExpandableSection>
         <ExpandableSection toggleText="DMN">
           <FormSection>
+          <FormGroup>
+              <Checkbox
+                label="Kogito Runtime?"
+                isChecked={this.state.dmn.kogitoRuntime}
+                onChange={this.handleCheckboxChange}
+                aria-label="Kogito Runtime?"
+                id="dmn.kogitoRuntime"
+                name="dmn.kogitoRuntime"
+              />              
+            </FormGroup>            
             <FormGroup
                 label="Decision Kie Container Id"
                 // isRequired
@@ -381,14 +400,16 @@ class SettingsForm extends React.Component {
                 
                 <FormSelect
                   isRequired
-                  // isDisabled={this.state.kieContainers.length === 0}
+                  isDisabled={this.state.dmn.kogitoRuntime}
                   id="dmn.containerId"
                   validated={this.state.fieldsValidation.dmn['containerId'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
                   value={this.state.dmn.containerId} 
                   onChange={this.handleSelectInputChange}>
                     <FormSelectOption key={-1} value='NONE' label='choose a kie container...' isPlaceholder={true} />
-                    {this.state.kieContainers.map((option, index) => (
-                      <FormSelectOption key={index} value={option.value} label={option.label} />
+                    {this.state.dmn.kieContainerOptions.map((option, index) => (
+                      <FormSelectOption 
+                        key={index} value={option.value} label={option.label} 
+                        selected={option.value === this.state.dmn.containerId} />
                     ))}
                 </FormSelect>
             </FormGroup>
@@ -411,9 +432,11 @@ class SettingsForm extends React.Component {
                   value={this.state.jbpm.containerId} 
                   onChange={this.handleSelectInputChange}>
                     <FormSelectOption key={-1} value='NONE' label='choose a kie container...' isPlaceholder={true} />
-                    {this.state.kieContainers.map((option, index) => (
-                      <FormSelectOption key={index} value={option.value} label={option.label} />
-                    ))}
+                    {this.state.jbpm.kieContainerOptions.map((option, index) => (
+                      <FormSelectOption 
+                      key={index} value={option.value} label={option.label} 
+                      selected={option.value === this.state.jbpm.containerId} />
+                  ))}
                 </FormSelect>
             </FormGroup>          
             <FormGroup
