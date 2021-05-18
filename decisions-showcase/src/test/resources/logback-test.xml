@@ -3,7 +3,7 @@
 
   <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-      <!-- %l lowers performance -->
+      <!-- %l lowers performance   -->
       <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %c{1.} - %msg%n</pattern>
       <!-- <pattern>%d [%t] %-5p %m%n</pattern> -->
     </encoder>
