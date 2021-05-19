@@ -94,6 +94,7 @@ class DroolsDynamicForm extends React.Component {
     let facts = [];
     _.map(data, (v, k, o) => {
       // console.debug('building drools fact for: ', k);
+      //TODO: test if v is and array of obj...
       const f = this.kieClient.newInsertCommand({ [k]: v }, k, true);      
       facts.push(f);
     });
@@ -354,6 +355,7 @@ class DroolsDynamicForm extends React.Component {
                       <Grid hasGutter>
                         <GridItem span={6}>
                         <Title headingLevel="h6" size="md">Request Payload</Title>
+                          {/* <ReactJson name={false} src={this.state._rawServerRequest} */}
                           <ReactJson name={false} src={this.state._rawServerRequest}
                             onEdit={ e => { this.setState({ src: e.updated_src }); } }
                             onDelete={ e => { this.setState({ src: e.updated_src }); } }

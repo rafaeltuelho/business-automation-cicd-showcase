@@ -13,7 +13,7 @@ import {
 } from '@patternfly/react-core';
 import { BellIcon, CogIcon, HelpIcon } from '@patternfly/react-icons';
 import imgAvatar from './imgAvatar.svg';
-import {withRouter} from 'react-router';
+import { withRouter } from 'react-router';
 
 class HeaderTools extends React.Component {
   state = {
