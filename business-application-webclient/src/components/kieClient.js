@@ -9,8 +9,6 @@ import _ from 'lodash';
 const KIE_SERVER_API_BASE_URL='http://localhost:8090/rest/server';
 const KIE_SERVER_CLIENT_USER='kieserver';
 const KIE_SERVER_CLIENT_PWD='kieserver1!';
-// const KIE_SERVER_AUTH_BASE64=btoa(KIE_SERVER_CLIENT_USER + ':' + KIE_SERVER_CLIENT_PWD);
-const KIE_SESSION_NAME = 'default';
 
 /**
  * Client for the Remote KIE Sever API
@@ -64,7 +62,7 @@ export default class KieClient {
   }
 
   buildDroolsRequestBody(facts, kieSessionName = null) {
-    console.debug('kieSessionName: ', kieSessionName);
+    // console.debug('kieSessionName: ', kieSessionName);
     const requestBody = {
       "lookup": kieSessionName,
       "commands": [

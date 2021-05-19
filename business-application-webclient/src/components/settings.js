@@ -21,7 +21,6 @@ import {
   Alert, 
   AlertActionCloseButton,
 } from '@patternfly/react-core';
-import { BorderNoneIcon } from '@patternfly/react-icons';
 import { loadFromLocalStorage } from './util'
 
 class SettingsForm extends React.Component {
@@ -31,12 +30,18 @@ class SettingsForm extends React.Component {
     const DEMO_KIE_SERVER_BASE_URL = 'http://localhost:8090/rest/server';
     const DEMO_KIE_SERVER_USER = 'kieserver';
     const DEMO_KIE_SERVER_PASSWORD = 'kieserver1!';
-    const DEMO_KIE_SESSION_NAME = 'default';
     const DEMO_CONTAINER_ID = 'decisions-showcase-1.0.0-SNAPSHOT';
     // const DEMO_DMN_MODEL_NAMESPACE = 'https://github.com/kiegroup/drools/kie-dmn/_A4BCA8B8-CF08-433F-93B2-A2598F19ECFF';
     // const DEMO_DMN_MODEL_NAME = 'Traffic Violation';
 
     const kieSettings = loadFromLocalStorage('kieSettings', true);
+    
+    // initialize the containers select list
+    let savedKieContainers = [ {value: DEMO_CONTAINER_ID, label: DEMO_CONTAINER_ID, disabled: false} ];
+    kieSettings.jbpm?.containerId && savedKieContainers.push({ value: kieSettings.jbpm.containerId, label: kieSettings.jbpm.containerId, disabled: false });
+    kieSettings.drools?.containerId && savedKieContainers.push({ value: kieSettings.drools.containerId, label: kieSettings.drools.containerId, disabled: false });
+    kieSettings.dmn?.containerId && savedKieContainers.push({ value: kieSettings.dmn.containerId, label: kieSettings.dmn.containerId, disabled: false });
+
     this.state = {
       common: {
         kieServerBaseUrl: kieSettings?.common?.kieServerBaseUrl ? kieSettings.common.kieServerBaseUrl : DEMO_KIE_SERVER_BASE_URL,
@@ -44,22 +49,19 @@ class SettingsForm extends React.Component {
         kieServerPassword: kieSettings?.common?.kieServerPassword ? kieSettings.common.kieServerPassword : DEMO_KIE_SERVER_PASSWORD,
       },
       jbpm: {
-        containerId: kieSettings?.jbpm ? kieSettings.jbpm.containerId : '',
-        kieContainerOptions: [ {value: DEMO_CONTAINER_ID, label: DEMO_CONTAINER_ID, disabled: false} ],
-        processId: kieSettings?.jbpm ? kieSettings.jbpm.processId : '',
+        containerId: kieSettings?.jbpm ? kieSettings.jbpm.containerId : undefined,
+        processId: kieSettings?.jbpm ? kieSettings.jbpm.processId : undefined,
         kogitoRuntime: kieSettings?.jbpm ? kieSettings.jbpm.kogitoRuntime : false,
-        endpointUrl: kieSettings?.jbpm ? kieSettings.jbpm.endpointUrl : '',
+        endpointUrl: kieSettings?.jbpm ? kieSettings.jbpm.endpointUrl : undefined,
       },
       drools: {
         containerId: kieSettings?.drools?.containerId ? kieSettings.drools.containerId : DEMO_CONTAINER_ID,
-        kieContainerOptions: [ {value: DEMO_CONTAINER_ID, label: DEMO_CONTAINER_ID, disabled: false} ],
-        kieSessionName: (kieSettings?.drools?.kieSessionName && !_.isEmpty(kieSettings.drools.kieSessionName)) ? kieSettings.drools.kieSessionName : null,
-        kogitoRuntime: kieSettings?.drools?.kogitoRuntime ? kieSettings.drools.kogitoRuntime : false,
-        endpointUrl: kieSettings?.drools ? kieSettings.drools.endpointUrl : '',
+        kieSessionName: (kieSettings?.drools?.kieSessionName && !_.isEmpty(kieSettings.drools.kieSessionName)) ? kieSettings.drools.kieSessionName : undefined,
+        kogitoRuntime: kieSettings?.drools?.kogitoRuntime ? kieSettings.drools.kogitoRuntime : undefined,
+        endpointUrl: kieSettings?.drools ? kieSettings.drools.endpointUrl : undefined,
       },
       dmn: {
         containerId: kieSettings?.dmn?.containerId ? kieSettings.dmn.containerId : DEMO_CONTAINER_ID,
-        kieContainerOptions: [ {value: DEMO_CONTAINER_ID, label: DEMO_CONTAINER_ID, disabled: false} ],
         kogitoRuntime: kieSettings?.dmn?.kogitoRuntime ? kieSettings.dmn.kogitoRuntime : false,
       },
       fieldsValidation: {
@@ -97,7 +99,7 @@ class SettingsForm extends React.Component {
         }
       },
       // TODO: create one array for jBPM, Drools and DMN
-      kieContainers: [ {value: DEMO_CONTAINER_ID, label: DEMO_CONTAINER_ID, disabled: false} ],
+      kieContainers: _.uniqBy(savedKieContainers, 'value'),
       _saveStatus: 'NONE',
       _rawServerResponse: { },
       _responseErrorAlertVisible: false,
@@ -135,13 +137,7 @@ class SettingsForm extends React.Component {
           containers.push({value: c['container-id'], label: c['container-id'], disabled: false});
         });
 
-      const jbpmClone = Object.assign({}, this.state['jbpm']);
-      jbpmClone.kieContainerOptions = containers;
-      const dmnClone = Object.assign({}, this.state['dmn']);
-      dmnClone.kieContainerOptions = containers;
-      const droolsClone = Object.assign({}, this.state['drools']);
-      droolsClone.kieContainerOptions = containers;
-      this.setState({ jbpm: jbpmClone, dmn: dmnClone, drools: droolsClone });
+      this.setState({ kieContainers: containers, });
     })
     .catch((err) => {
       // console.error(err);
@@ -356,7 +352,7 @@ class SettingsForm extends React.Component {
                   value={this.state.drools.containerId} 
                   onChange={this.handleSelectInputChange}>
                     <FormSelectOption key={-1} value='NONE' label='choose a kie container...' isPlaceholder={true} />
-                    {this.state.drools.kieContainerOptions.map((option, index) => (
+                    {this.state.kieContainers.map((option, index) => (
                       <FormSelectOption 
                       key={index} value={option.value} label={option.label} 
                       selected={option.value === this.state.drools.containerId}
@@ -406,7 +402,7 @@ class SettingsForm extends React.Component {
                   value={this.state.dmn.containerId} 
                   onChange={this.handleSelectInputChange}>
                     <FormSelectOption key={-1} value='NONE' label='choose a kie container...' isPlaceholder={true} />
-                    {this.state.dmn.kieContainerOptions.map((option, index) => (
+                    {this.state.kieContainers.map((option, index) => (
                       <FormSelectOption 
                         key={index} value={option.value} label={option.label} 
                         selected={option.value === this.state.dmn.containerId} />
@@ -432,7 +428,7 @@ class SettingsForm extends React.Component {
                   value={this.state.jbpm.containerId} 
                   onChange={this.handleSelectInputChange}>
                     <FormSelectOption key={-1} value='NONE' label='choose a kie container...' isPlaceholder={true} />
-                    {this.state.jbpm.kieContainerOptions.map((option, index) => (
+                    {this.state.kieContainers.map((option, index) => (
                       <FormSelectOption 
                       key={index} value={option.value} label={option.label} 
                       selected={option.value === this.state.jbpm.containerId} />

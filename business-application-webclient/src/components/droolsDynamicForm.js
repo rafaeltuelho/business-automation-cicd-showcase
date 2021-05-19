@@ -3,20 +3,15 @@ import "@patternfly/react-core/dist/styles/base.css";
 import KieClient from './kieClient';
 import { loadFromLocalStorage } from './util'
 import { AutoForm } from 'uniforms-patternfly';
-import Ajv from 'ajv';
-import { JSONSchemaBridge } from 'uniforms-bridge-json-schema';
-import SimpleSchema from 'simpl-schema';
-import { SimpleSchema2Bridge } from 'uniforms-bridge-simple-schema-2';
 import ObjectAsCard from './objectCardRenderer'
-import CodeEditorModal from './codeEditorModal';
+import JSCodeEditor from './codeEditor';
 import _ from 'lodash';
 import './fonts.css';
+import CodeIcon from '@patternfly/react-icons/dist/js/icons/code-icon';
 
 import React from 'react';
 import {
   Button,
-  Alert, 
-  AlertActionCloseButton,
   Modal,
   Title,
   ExpandableSection,
@@ -25,62 +20,47 @@ import {
   Spinner,
   Stack,
   StackItem,
+  Tabs, 
+  Tab, 
+  TabTitleIcon,
+  TabTitleText,
+  Alert, 
+  AlertGroup, 
+  AlertActionCloseButton, 
+  AlertVariant,
+  Drawer,
+  DrawerPanelContent,
+  DrawerContent,
+  DrawerContentBody,
+  DrawerHead,
+  DrawerActions,
+  DrawerCloseButton,
+  Tooltip,
 } from '@patternfly/react-core';
 import ReactJson from 'react-json-view'
 
-const RULES_KIE_SESSION_NAME='stateless-session';
-const DEMO_SIMPLE_SCHEMA = new SimpleSchema2Bridge(
-  new SimpleSchema({
-    Driver: { type: Object, },
-    'Driver.name': { type: String, min: 3, required: false},
-    'Driver.age': { type: Number, min: 16, required: false},
-    'Driver.claims': { type: SimpleSchema.Integer, min: 0 },
-    'Driver.locationRiskProfile': { 
-      type: String,
-      defaultValue: 'Select',
-      allowedValues: ['LOW', 'MEDIUM', 'HIGH'],
-      uniforms: {
-        options:
-          [
-            { label: 'Select', value: 'NONE' },
-            { label: 'Low', value: 'LOW' },
-            { label: 'Medium', value: 'MEDIUM' },
-            { label: 'High', value: 'HIGH' },
-          ]
-      }
-    },
-    Policy: { type: Object, },
-    'Policy.type': { 
-      type: String,
-      defaultValue: 'Select',
-      allowedValues: ['COMPREHENSIVE', 'FIRE_THEFT', 'THIRD_PARTY'],
-      uniforms: {
-        options:
-          [
-            { label: 'Select', value: 'NONE' },
-            { label: 'Comprehensive', value: 'COMPREHENSIVE' },
-            { label: 'Fire Theft', value: 'FIRE_THEFT' },
-            { label: '3rd Party', value: 'THIRD_PARTY' },
-          ]
-      }
-    },
-    // 'Policy.approved': { type: Boolean, },
-    // 'Policy.discountPercent': { type: Number },
-    // 'Policy.basePrice': { type: Number },
-  })
-);
+import { DEMO_SIMPLE_SCHEMA, DEMO_SIMPLE_SCHEMA_CODE } from './demoFormSchema';
 
 class DroolsDynamicForm extends React.Component {
   constructor(props) {
     super(props);
 
     const kieSettings = loadFromLocalStorage('kieSettings', true);
+    const schemaWrapper = loadFromLocalStorage('schemaWrapper', true);
     this.kieClient = new KieClient(kieSettings);
     this.formRef = null; //AutoForm reference
 
+    let schemaBridge = DEMO_SIMPLE_SCHEMA;
+    let schemaCode = DEMO_SIMPLE_SCHEMA_CODE;
+    // console.debug('schemaCode: ', schemaCode);
+    if (schemaWrapper?.code) {
+      schemaCode = schemaWrapper.code;
+      schemaBridge = eval(`(${schemaWrapper.code})`);
+    }
+
     this.state = {
-      formBridgeSchema: DEMO_SIMPLE_SCHEMA,
-      formBridgeSchemaCode: null,
+      formBridgeSchema: schemaBridge,
+      formBridgeSchemaCode: schemaCode,
       _renderForm: true,
       _apiCallStatus: 'NONE',
       _rawServerRequest: { },
@@ -88,14 +68,21 @@ class DroolsDynamicForm extends React.Component {
       _serverResponse: { },
       _responseErrorAlertVisible: false,
       _responseModalOpen: false,
-      _alert: {
-        visible: false,
-        variant: 'default',
-        msg: '',
-      },
+      alerts: [ ],
       _isDebugExpanded: false,
+      activeTabKey: 0,
+      isExpanded: false,
     };
+
+    this.drawerRef = React.createRef();
   }
+
+  // Toggle currently active tab
+  handleTabClick = (event, tabIndex) => {
+    this.setState({
+      activeTabKey: tabIndex,
+    });
+  };
 
   onFormSubmit = (data) => {
     this.setState({
@@ -122,11 +109,6 @@ class DroolsDynamicForm extends React.Component {
           _responseModalOpen: true,
           _rawServerResponse: response,
           _serverResponse: this.kieClient.extractFactsFromKieResponse(response),
-          _alert: {
-            visible: false,
-            variant: 'default',
-            msg: '',
-          },           
         });
 
         // scroll the page to make alert visible
@@ -140,13 +122,9 @@ class DroolsDynamicForm extends React.Component {
           _rawServerResponse: {
             result: {},
           },
-          _alert: {
-            visible: true,
-            variant: 'danger',
-            msg: (err.status ? err.status : err) + '' + (err.response ? ': ' + err.response : ''),
-          },
         })
-        
+        const msg = (err.status ? err.status : err) + '' + (err.response ? ': ' + err.response : '');
+        this.addAlert(msg, 'danger', new Date().getTime);
         this.scrollToTop();
       })
       .finally(() => {
@@ -154,11 +132,10 @@ class DroolsDynamicForm extends React.Component {
           _rawServerRequest: rawServerRequest,
         })
       });
-
   };
 
   onInputChange = ({name, value}) => {
-
+    this.setState( { [name]: value } );
   };  
 
   // handler for Text fields
@@ -181,27 +158,17 @@ class DroolsDynamicForm extends React.Component {
   };
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    console.debug('CarInsuranceForm ->>> componentDidUpdate...');
+    console.debug('DroolsDynamicForm ->>> componentDidUpdate...');
   }
 
   componentDidMount() {
-    console.debug('CarInsuranceForm ->>> componentDidMount...');
+    console.debug('DroolsDynamicForm ->>> componentDidMount...');
   }
 
   componentWillUnmount() {
-    console.debug('CarInsuranceForm ->>> componentWillMount...');
+    console.debug('DroolsDynamicForm ->>> componentWillUnmount...');
   }
 
-  closeResponseAlert = () => {
-    this.setState({
-      _alert: {
-        visible: false,
-        variant: 'default',
-        msg: '',
-      },
-    });
-  }
-  
   handleModalToggle = () => {
     this.setState(({ _responseModalOpen }) => ({
       _responseModalOpen: !_responseModalOpen
@@ -219,7 +186,7 @@ class DroolsDynamicForm extends React.Component {
       top: 0,
       behavior: "smooth"
     });
-  }
+  };
 
   updateState = (formModelData) => {
     // iterate over the AutoForm's model, extract each root Object as Fact
@@ -247,90 +214,167 @@ class DroolsDynamicForm extends React.Component {
       _rawServerResponse: { },
       _serverResponse: { },
     });
-  }
+
+    const schemaWrapper = {
+      code: code,
+      format: 'SimpleSchema', // can handle different formats (Uniforms Bridge implementations) in the future!
+    }
+    // console.debug('saving form\'s SimpleSchema code into Browser\'s storage...', schemaWrapper);
+    localStorage.setItem('schemaWrapper', JSON.stringify(schemaWrapper));    
+  };
+
+  addAlert = (title, variant, key) => {
+    this.setState({
+      alerts: [ ...this.state.alerts, { title: title, variant: variant, key }]
+    });
+  };
+
+  removeAlert = key => {
+    this.setState({ alerts: [...this.state.alerts.filter(el => el.key !== key)] });
+  };
+
+  onExpand = () => {
+    this.drawerRef.current && this.drawerRef.current.focus();
+  };
+
+  onClick = () => {
+    const isExpanded = !this.state.isExpanded;
+    this.setState({
+      isExpanded,
+    });
+  };
+
+  onCloseClick = () => {
+    this.setState({
+      isExpanded: false
+    });
+  };  
 
   render() {
+    const { isExpanded } = this.state;
+    const panelContent = (
+      <DrawerPanelContent
+        isResizable={false}
+        defaultSize={'900px'}
+        minSize={'800px'}>
+        <DrawerHead>
+          <span tabIndex={isExpanded ? 0 : -1} ref={this.drawerRef}>
+            Form Schema Definition
+          </span>
+          <JSCodeEditor
+              ancestorStateHandler={this.handleFormSchemaState} 
+              code={this.state.formBridgeSchemaCode} 
+              addAlertHandler={this.addAlert} 
+              removeAlertHandler={this.removeAlert} 
+          />
+          <DrawerActions>
+            <DrawerCloseButton onClick={this.onCloseClick} />
+          </DrawerActions>
+        </DrawerHead>
+      </DrawerPanelContent>
+    );
 
     return (
-      <Stack hasGutter>
-        <StackItem>
-          <React.Fragment>
-            {
-              this.state._alert.visible && (
-                <Alert
-                  variant={this.state._alert.variant}
-                  autoFocus={true}
-                  title={this.state._alert.msg}
-                  action={<AlertActionCloseButton onClose={this.closeResponseAlert} />}
-                />
-              )
+      <>
+      <AlertGroup isToast>
+        {this.state.alerts.map(({key, variant, title}) => (
+          <Alert
+            isLiveRegion
+            variant={AlertVariant[variant]}
+            title={title}
+            actionClose={
+              <AlertActionCloseButton
+                title={title}
+                variantLabel={`${variant} alert`}
+                onClose={() => this.removeAlert(key)}
+              />
             }
-            <Modal
-              variant="small"
-              title="Request submitted!"
-              isOpen={this.state._responseModalOpen}
-              onClose={this.handleModalToggle}
-              actions={[
-                <Button key="confirm" variant="primary" onClick={this.handleModalToggle}>
-                  Confirm
-                </Button>,
-                <Button key="cancel" variant="link" onClick={this.handleModalToggle}>
-                  Cancel
-                </Button>
-              ]}
-            >
-              {this.state._apiCallStatus === 'WAITING' && (<Spinner isSVG />)}
-              {this.state._apiCallStatus === 'COMPLETE' && (<ObjectAsCard obj={this.state._serverResponse} />)}
-            </Modal>
-          </React.Fragment>
-        </StackItem>
-        <StackItem isFilled>
-          <CodeEditorModal ancestorStateHandler={this.handleFormSchemaState} currentCode={this.state.formBridgeSchemaCode} />
-          {/** Auto Form */}
-          {this.state._renderForm && 
-            (<AutoForm
-              ref={ref => (this.formRef = ref)}
-              placeholder={true}
-              schema={this.state.formBridgeSchema} 
-              onChangeModel={model => this.updateState(model)} 
-              onSubmit={this.onFormSubmit} >
-            </AutoForm>)
+            key={key} />
+        ))}
+      </AlertGroup>       
+      
+      <Tabs activeKey={this.state.activeTabKey} onSelect={this.handleTabClick}>
+        {/* Form Section */}
+        <Tab eventKey={0} 
+          title={
+            <>
+              <TabTitleIcon>
+                <Tooltip
+                content={
+                  <div>Click here to open the Form Schema Editor.</div>
+                }
+                >
+                  <CodeIcon onClick={this.onClick} />
+                </Tooltip>
+              </TabTitleIcon> 
+              <TabTitleText>Input Data</TabTitleText>
+            </>
           }
-        </StackItem>
-        <StackItem>
-          <ExpandableSection toggleText="Debug View">
-            <Grid hasGutter>
-              <GridItem span={6}>
-              <Title headingLevel="h6" size="md">Request Payload</Title>
-                <ReactJson name={false} src={this.state._rawServerRequest}
-                 onEdit={
-                          e => {
-                                console.log(e);
-                                this.setState({ src: e.updated_src });
-                            }
-                  }
-                  onDelete={
-                          e => {
-                                console.log(e);
-                                this.setState({ src: e.updated_src });
-                            }
-                  }
-                  onAdd={
-                          e => {
-                                console.log(e);
-                                this.setState({ src: e.updated_src });
-                            }
-                  }
-                />
-              </GridItem>
-              <GridItem span={6}>
-                <Title headingLevel="h6" size="md">Response Payload</Title>
-                <ReactJson name={false} src={this.state._rawServerResponse.result} />
-              </GridItem>
-            </Grid>
-          </ExpandableSection>
-        </StackItem>
-      </Stack>
+        >
+          <Drawer isExpanded={isExpanded} onExpand={this.onExpand}>
+            <DrawerContent panelContent={panelContent}>
+              <DrawerContentBody>
+
+                <Stack hasGutter>
+                  <StackItem>
+                    <React.Fragment>
+                      <Modal
+                        variant="small"
+                        title="Request submitted!"
+                        isOpen={this.state._responseModalOpen}
+                        onClose={this.handleModalToggle}
+                        actions={[
+                          <Button key="confirm" variant="primary" onClick={this.handleModalToggle}>
+                            Confirm
+                          </Button>,
+                          <Button key="cancel" variant="link" onClick={this.handleModalToggle}>
+                            Cancel
+                          </Button>
+                        ]}
+                      >
+                        {this.state._apiCallStatus === 'WAITING' && (<Spinner isSVG />)}
+                        {this.state._apiCallStatus === 'COMPLETE' && (<ObjectAsCard obj={this.state._serverResponse} />)}
+                      </Modal>
+                    </React.Fragment>
+                  </StackItem>
+                  <StackItem isFilled>
+                    {/** Auto Form */}
+                    {this.state._renderForm && 
+                      (<AutoForm
+                        ref={ref => (this.formRef = ref)}
+                        placeholder={true}
+                        schema={this.state.formBridgeSchema} 
+                        onChangeModel={model => this.updateState(model)} 
+                        onSubmit={this.onFormSubmit} >
+                      </AutoForm>)
+                    }
+                  </StackItem>
+                  <StackItem>
+                    <ExpandableSection toggleText="Debug View">
+                      <Grid hasGutter>
+                        <GridItem span={6}>
+                        <Title headingLevel="h6" size="md">Request Payload</Title>
+                          <ReactJson name={false} src={this.state._rawServerRequest}
+                            onEdit={ e => { this.setState({ src: e.updated_src }); } }
+                            onDelete={ e => { this.setState({ src: e.updated_src }); } }
+                            onAdd={ e => { this.setState({ src: e.updated_src }); } }
+                          />
+                        </GridItem>
+                        <GridItem span={6}>
+                          <Title headingLevel="h6" size="md">Response Payload</Title>
+                          <ReactJson name={false} src={this.state._rawServerResponse.result} />
+                        </GridItem>
+                      </Grid>
+                    </ExpandableSection>
+                  </StackItem>
+                </Stack>
+                
+              </DrawerContentBody>
+            </DrawerContent>
+          </Drawer>
+        </Tab>
+      </Tabs>
+      </>
     );
   }
 }

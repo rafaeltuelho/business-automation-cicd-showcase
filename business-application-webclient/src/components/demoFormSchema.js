@@ -1,3 +1,6 @@
+import SimpleSchema from 'simpl-schema';
+import { SimpleSchema2Bridge } from 'uniforms-bridge-simple-schema-2';
+
 export const DEMO_SIMPLE_SCHEMA = new SimpleSchema2Bridge(
   new SimpleSchema({
     Driver: { type: Object, },
@@ -75,4 +78,50 @@ export const DEMO_SIMPLE_SCHEMA_CODE =
           ]
       }
     },
+  }))`;
+
+export const DEMO_SIMPLE_SCHEMA_MORTGAGE_CODE = 
+`new SimpleSchema2Bridge(
+  new SimpleSchema({
+    Applicant: { type: Object },
+    'Applicant.name': { type: String, min: 3, required: false},
+    'Applicant.age': { type: SimpleSchema.Integer, min: 16, required: false},
+    'Applicant.applicationDate': { type: Date, defaultValue: new Date(), required: false },
+    'Applicant.creditRating': {
+      type: String,
+      defaultValue: 'Select',
+      allowedValues: ['AA', 'OK', 'Sub prime'],
+      uniforms: {
+        options:
+          [
+            { label: 'Select', value: 'NONE' },
+            { label: 'AA', value: 'AA' },
+            { label: 'Ok', value: 'OK' },
+            { label: 'Sub prime', value: 'Sub prime' },
+          ]
+      }
+    },
+    LoanApplication: { type: Object },
+    // 'LoanApplication.approved': { type: Boolean },
+    'LoanApplication.amount': { type: Number, required: false },
+    'LoanApplication.lengthYears': { type: SimpleSchema.Integer, min: 0, required: false },
+    IncomeSource: { type: Object },
+    'IncomeSource.amount': { type: Number, required: false },
+    'IncomeSource.type': { 
+      type: String,
+      defaultValue: 'Select',
+      allowedValues: ['Job', 'Asset', 'Other'],
+      uniforms: {
+        options:
+          [
+            { label: 'Select', value: 'NONE' },
+            { label: 'Job', value: 'Job' },
+            { label: 'Asset', value: 'Asset' },
+            { label: 'Other', value: 'Other' },
+          ]
+      }
+    },
+    Bankruptcy: { type: Object },
+    'Bankruptcy.amountOwed': { type: Number, required: false },
+    'Bankruptcy.yearOfOccurrence': { type: SimpleSchema.Integer, min: 1970, required: false },
   }))`;

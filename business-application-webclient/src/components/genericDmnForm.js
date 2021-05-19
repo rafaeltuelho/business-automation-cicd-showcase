@@ -7,7 +7,6 @@ import { AutoForm } from 'uniforms-patternfly';
 import Ajv from 'ajv';
 import { JSONSchemaBridge } from 'uniforms-bridge-json-schema';
 import ObjectAsCard  from './objectCardRenderer'
-import _ from 'lodash';
 
 import React from 'react';
 import {
@@ -35,7 +34,7 @@ class GenericDecisionModelForm extends React.Component {
     super(props);
 
     const kieSettings = loadFromLocalStorage('kieSettings', true);
-    let formRef; //AutoForm reference
+    this.formRef = null; //AutoForm reference
     this.kieClient = new KieClient(kieSettings);
 
     this.state = {
@@ -163,7 +162,7 @@ class GenericDecisionModelForm extends React.Component {
   }
   
   componentWillUnmount() {
-    console.debug('GenericDecisionModelForm ->>> componentWillMount...');
+    console.debug('GenericDecisionModelForm ->>> componentWillUnmount...');
   }
 
   closeResponseAlert = () => {

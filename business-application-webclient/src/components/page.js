@@ -20,13 +20,11 @@ import {
   TextContent,
   Text,
 } from '@patternfly/react-core';
-// make sure you've installed @patternfly/patternfly
+
 import DroolsDynamicForm from './droolsDynamicForm'
 import GenericDecisionModelForm from './genericDmnForm'
 import SettingsForm from './settings'
 import AppHeader from "./header";
-
-const DynamicFormContext = React.createContext({ formBridgeSchema: DEMO_SIMPLE_SCHEMA, formBridgeSchemaCode: '' });
 
 class AppPagelayout extends React.Component {
   state = {
@@ -87,20 +85,10 @@ class AppPagelayout extends React.Component {
               <Switch>           
                 <Route path="/droolsDynamicForm">
                   <PageSection variant={PageSectionVariants.light}>
-                    <TextContent>
-                      <Text component="h1">Business Rules Data Input</Text>
-                    </TextContent>
-                  </PageSection>
-                  <PageSection variant={PageSectionVariants.light}>
                     <DroolsDynamicForm />
                   </PageSection>
                 </Route>                
                 <Route path="/genericDmn">
-                  <PageSection variant={PageSectionVariants.light}>
-                    <TextContent>
-                      <Text component="h1">Decision Models Data Input</Text>
-                    </TextContent>
-                  </PageSection>
                   <PageSection variant={PageSectionVariants.light}>
                     <GenericDecisionModelForm />
                   </PageSection>

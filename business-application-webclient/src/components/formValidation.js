@@ -1,6 +1,3 @@
-
-import isEmpty from 'validator/lib/isEmpty';
-
 /**
  * Common Form validation functions
  */

@@ -1,8 +1,11 @@
 import React from 'react';
 import SimpleSchema from 'simpl-schema';
 import { SimpleSchema2Bridge } from 'uniforms-bridge-simple-schema-2';
+import { DEMO_SIMPLE_SCHEMA_CODE } from './demoFormSchema';
 import { CodeEditor, CodeEditorControl, Language } from '@patternfly/react-code-editor';
 import PlayIcon from '@patternfly/react-icons/dist/js/icons/play-icon';
+import BlueprintIcon from '@patternfly/react-icons/dist/js/icons/blueprint-icon';
+
 
 // FIXME: Make it extensible for globals.
 const scope = typeof window === 'undefined' ? global : window;
@@ -10,64 +13,28 @@ const scope = typeof window === 'undefined' ? global : window;
 scope.SimpleSchema = SimpleSchema;
 scope.SimpleSchema2Bridge = SimpleSchema2Bridge;
 
-const DEMO_JSON_SCHEMA = 
-`new SimpleSchema2Bridge(
-  new SimpleSchema({
-    Driver: { type: Object, },
-    'Driver.name': { type: String, min: 3, required: false},
-    'Driver.age': { type: Number, min: 16, required: false},
-    'Driver.claims': { type: SimpleSchema.Integer, min: 0 },
-    'Driver.locationRiskProfile': { 
-      type: String,
-      defaultValue: 'Select',
-      allowedValues: ['LOW', 'MEDIUM', 'HIGH'],
-      uniforms: {
-        options:
-          [
-            { label: 'Select', value: 'NONE' },
-            { label: 'Low', value: 'LOW' },
-            { label: 'Medium', value: 'MEDIUM' },
-            { label: 'High', value: 'HIGH' },
-          ]
-      }
-    },
-    Policy: { type: Object, },
-    'Policy.type': { 
-      type: String,
-      defaultValue: 'Select',
-      allowedValues: ['COMPREHENSIVE', 'FIRE_THEFT', 'THIRD_PARTY'],
-      uniforms: {
-        options:
-          [
-            { label: 'Select', value: 'NONE' },
-            { label: 'Comprehensive', value: 'COMPREHENSIVE' },
-            { label: 'Fire Theft', value: 'FIRE_THEFT' },
-            { label: '3rd Party', value: 'THIRD_PARTY' },
-          ]
-      }
-    },
-  }))`;
-
 class JSCodeEditor extends React.Component {
   constructor(props) {
     super(props);
 
-    const codeContent = props.currentCode ? props.currentCode : DEMO_JSON_SCHEMA;
+    console.debug('JSCodeEditor.props.code: ', props.code);
+
     this.state = {
-      code: codeContent,
+      code: props.code,
     };
     
     this.onChange = code => {
       this.setState({ code })
     };
+
+    this.onDemoCode = () => {
+      this.setState({ code: DEMO_SIMPLE_SCHEMA_CODE })
+    };
     
     this.onExecuteCode = (code) => {
-      // console.debug('Applying JSON Schema... ', code);
-
       try {
         const simpleBridgeSchema = eval(`(${code})`);
-        // console.debug('code parsed: ', simpleBridgeSchema);
-        
+        // console.debug('code parsed: ', simpleBridgeSchema);        
         if (props.ancestorStateHandler) {
           console.info('calling ancestor state handler...');
           props.ancestorStateHandler(simpleBridgeSchema, code);
@@ -78,7 +45,6 @@ class JSCodeEditor extends React.Component {
         }
       } catch (error) {
         console.error(error);
-
         if (props.addAlertHandler) {
           props.addAlertHandler('Schema Validation Failed:' + error, 'danger', new Date().getTime());
         }
@@ -86,18 +52,41 @@ class JSCodeEditor extends React.Component {
     };
   }
  
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    console.debug('CodeEditor ->>> componentDidUpdate...');
+  }
+
+  componentDidMount() {
+    console.debug('CodeEditor ->>> componentDidMount...');
+  }
+
+  componentWillUnmount() {
+    console.debug('CodeEditor ->>> componentWillUnmount...');
+  }
+
   render() {
-    const customControl = (
+    const customControlApplyCode = (
+        <CodeEditorControl 
+          icon={<PlayIcon/>}
+          aria-label="Update the Form Definition"
+          toolTipText="Update the Form Definition"
+          onClick={this.onExecuteCode}
+          isVisible={true}
+        />
+      );
+    const customControlLoadDemoCode = (
       <CodeEditorControl 
-        icon={<PlayIcon/>}
-        aria-label="Update the Form Definition"
-        toolTipText="Update the Form Definition"
-        onClick={this.onExecuteCode}
+        icon={<BlueprintIcon/>}
+        aria-label="Load demo code"
+        toolTipText="Load demo code"
+        onClick={this.onDemoCode}
         isVisible={true}
-      />);
+      />
+    );
     
     return (
       <>
+        <span hidden={true}>oi</span>
         <CodeEditor
           isDownloadEnabled
           isCopyEnabled
@@ -107,7 +96,7 @@ class JSCodeEditor extends React.Component {
           isLanguageLabelVisible
           language={Language.javascript}
           height='600px'
-          customControls={customControl}
+          customControls={[customControlApplyCode, customControlLoadDemoCode]}
           code={this.state.code}
           onChange={this.onChange}
         />

@@ -5,12 +5,12 @@ import {
   Card, 
   CardTitle, 
   CardBody, 
-  CardFooter,
   DataList,
   DataListItem,
   DataListItemRow,
   DataListItemCells,
-  DataListCell, } from '@patternfly/react-core';
+  DataListCell, 
+} from '@patternfly/react-core';
 
 function ObjectAsCard({ obj, parentName = 'Response' }) {
   if (_.isArray(obj) && obj.length > 0){
