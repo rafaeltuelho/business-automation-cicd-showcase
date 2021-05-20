@@ -1,4 +1,6 @@
 # CICD Demo script
+This directory provides a set of Custom Resources used to implement the Decision Service CI/CD deployment pipeline.
+For more information on how the [**Openshift Pipelines**](https://www.openshift.com/learn/topics/ci-cd) based on [Tekton](https://tekton.dev/) works please refer to this [tutorial](https://github.com/openshift/pipelines-tutorial) or this [blog series](https://www.openshift.com/blog/guide-to-openshift-pipelines-part-1-introducing-openshift-pipelines).
 
 ## Setup
 
@@ -33,11 +35,22 @@ The following resources should be created in your namespace:
 * ConfigMap with a custom Maven settings.xml
 * Tekton Resources
 	* Event Listener
+		> provides an addressable endpoint (the event sink). Trigger is referenced inside the EventListener Spec. It uses the extracted event parameters from each TriggerBinding (and any supplied static parameters) to create the resources specified in the corresponding TriggerTemplate. It also optionally allows an external service to pre-process the event payload via the interceptor field.
+
 	* Triggers
-	* Template
-	* Binding
+		> in conjunction with pipelines enable us to hook our Pipelines to respond to external github events (push events, pull requests etc). It combines TriggerTemplate, TriggerBindings and interceptors.
+
+	* TriggerTemplate
+		> Templates resources to be created (e.g. Create PipelineResources and PipelineRun that uses them).
+
+	* TriggerBinding
+		> validates events and extracts payload fields
+
 	* Tasks
+		> a collection of Steps that you define and arrange in a specific order of execution as part of your continuous integration flow. A Task executes as a Pod on your Kubernetes cluster.
+
 	* Pipeline
+		> a collection of Tasks that you define and arrange in a specific order of execution as part of your continuous integration flow. Each Task in a Pipeline executes as a Pod on your Kubernetes cluster. You can configure various execution conditions to fit your business needs.
 
 If you open the Pipelines view in the Openshift Developer Dashboard you should see the `ba-cicd-pipeline`
 ![Pipeline View	](docs/pipelines-view.png)
