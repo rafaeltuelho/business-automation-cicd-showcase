@@ -38,9 +38,9 @@ class SettingsForm extends React.Component {
     
     // initialize the containers select list
     let savedKieContainers = [ {value: DEMO_CONTAINER_ID, label: DEMO_CONTAINER_ID, disabled: false} ];
-    kieSettings.jbpm?.containerId && savedKieContainers.push({ value: kieSettings.jbpm.containerId, label: kieSettings.jbpm.containerId, disabled: false });
-    kieSettings.drools?.containerId && savedKieContainers.push({ value: kieSettings.drools.containerId, label: kieSettings.drools.containerId, disabled: false });
-    kieSettings.dmn?.containerId && savedKieContainers.push({ value: kieSettings.dmn.containerId, label: kieSettings.dmn.containerId, disabled: false });
+    kieSettings?.jbpm?.containerId && savedKieContainers.push({ value: kieSettings.jbpm.containerId, label: kieSettings.jbpm.containerId, disabled: false });
+    kieSettings?.drools?.containerId && savedKieContainers.push({ value: kieSettings.drools.containerId, label: kieSettings.drools.containerId, disabled: false });
+    kieSettings?.dmn?.containerId && savedKieContainers.push({ value: kieSettings.dmn.containerId, label: kieSettings.dmn.containerId, disabled: false });
 
     this.state = {
       common: {
