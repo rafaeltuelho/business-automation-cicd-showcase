@@ -3,6 +3,7 @@ package com.redhat.demos.rules;
 import java.time.LocalDate;
 
 rule "Hello"
+enabled false
 when
    //
 then
