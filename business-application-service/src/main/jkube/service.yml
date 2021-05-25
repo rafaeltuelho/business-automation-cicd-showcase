@@ -1,0 +1,8 @@
+metadata:
+  name: ${project.artifactId}-svc
+spec:
+  ports:
+    - name: http
+      port: 8090
+  selector:
+    app: business-application-service

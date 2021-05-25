@@ -1,3 +1,0 @@
-spec:
-  ports:
-    - name: http # required by istio service mesh
