@@ -6,10 +6,10 @@ spec:
   serviceAccountName: pipeline
   triggers:
     - name: pipeline-trigger
-      # use when you need to apply some filter in the git webhook payload
+      # use when you need to apply some filter on the git webhook payload
       # interceptors:
       #   - cel:
-      #       filter: "body.ref.split('/')[2].startsWith('v')"
+      #       filter: "body.ref.split('/')[2].startsWith('v')" //v2.0
       #       filter: "body.head_commit.message.indexOf('release') > -1"
       serviceAccountName: pipeline  
       bindings:
