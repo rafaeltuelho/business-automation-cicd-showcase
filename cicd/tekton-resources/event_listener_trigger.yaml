@@ -10,6 +10,7 @@ spec:
       # interceptors:
       #   - cel:
       #       filter: "body.ref.split('/')[2].startsWith('v')"
+      #       filter: "body.head_commit.message.indexOf('release') > -1"
       serviceAccountName: pipeline  
       bindings:
         - kind: TriggerBinding

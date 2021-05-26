@@ -1,7 +1,7 @@
 metadata:
   name: ${project.artifactId}-d
 spec:
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       annotations:
