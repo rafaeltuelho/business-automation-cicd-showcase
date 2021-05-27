@@ -1,7 +1,7 @@
 metadata:
   name: ${project.artifactId}-d
 spec:
-  replicas: 2
+  replicas: 3
   template:
     metadata:
       annotations:
@@ -35,6 +35,8 @@ spec:
               scheme: HTTP
             initialDelaySeconds: 30
             failureThreshold: 3
-          env:
-            - name: NEXUS_REPO
-              value: http://nexus-cicd.apps.cluster.com  
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+      maxSurge: 50%
