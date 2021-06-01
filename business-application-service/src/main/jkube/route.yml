@@ -1,10 +1,12 @@
 apiVersion: route.openshift.io/v1
 kind: Route
+metadata:
+  name: ${project.artifactId}-route
 spec:
   port:
     targetPort: 8090
   to:
     kind: Service
-    name: business-application-service
+    name: ${project.artifactId}-svc
     weight: 100
   wildcardPolicy: None
