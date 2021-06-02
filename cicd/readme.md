@@ -96,7 +96,7 @@ http://el-ba-cicd-event-listener-rhpam-sandbox.your.cluster.domain.com
    * Set the **Payload URL** with the **Pipeline EventListener** URL copied previously. 
    * Set the Content type as `application/json`
    * Once finished, click on the green button "Add Webhook".
-   * ![Git webhook setup](docs/github-webhook.png) 
+     ![Git webhook setup](docs/github-webhook.png) 
 
 ## Testing your environment
 
@@ -149,7 +149,7 @@ At the end of the Pipeline execution you should have two instances of your Kie S
 You should see the sample Business Application Service home page
 ![Kie Server home page](docs/business-service-app.png)
 
-exposing the standard Kie Server API
+exposing the standard Kie Server API *(user: wbadmin, passwd: wbadmin)*
 ![Kie Server API](docs/kie-server-swagger.png)
 
 ## Build a custom Tekton Maven Task image
