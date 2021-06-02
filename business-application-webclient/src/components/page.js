@@ -20,9 +20,9 @@ import {
   TextContent,
   Text,
 } from '@patternfly/react-core';
-// make sure you've installed @patternfly/patternfly
-import CarInsuranceForm from './carInsuranceForm'
-import TrafficViolationForm from './trafficViolationForm'
+
+import DroolsDynamicForm from './droolsDynamicForm'
+import GenericDecisionModelForm from './genericDmnForm'
 import SettingsForm from './settings'
 import AppHeader from "./header";
 
@@ -56,14 +56,14 @@ class AppPagelayout extends React.Component {
               isActive={activeItem === 'grp-1_itm-1'}
               onClick={this.handleItemOnclick}
               >
-              <Link to="/carInsurance">Car Insurance</Link>
+              <Link to="/droolsDynamicForm">Business Rules (Drools)</Link>
             </NavItem>
             <NavItem groupId="grp-1" itemId="grp-1_itm-2" 
               isActive={activeItem === 'grp-1_itm-2'}
               onClick={this.handleItemOnclick}
               >
-              <Link to="/trafficViolation">Traffic Violation</Link>
-            </NavItem>
+              <Link to="/genericDmn">Decision Models (DMN)</Link>
+            </NavItem>            
           </NavExpandable>
         </NavList>
       </Nav>
@@ -82,25 +82,15 @@ class AppPagelayout extends React.Component {
         >
               {/* A <Switch> looks through its children <Route>s and
                   renders the first one that matches the current URL. */}
-              <Switch>
-                <Route path="/carInsurance">
+              <Switch>           
+                <Route path="/droolsDynamicForm">
                   <PageSection variant={PageSectionVariants.light}>
-                    <TextContent>
-                      <Text component="h1">Insurance Application Form</Text>
-                    </TextContent>
+                    <DroolsDynamicForm />
                   </PageSection>
+                </Route>                
+                <Route path="/genericDmn">
                   <PageSection variant={PageSectionVariants.light}>
-                    <CarInsuranceForm />
-                  </PageSection>
-                </Route>
-                <Route path="/trafficViolation">
-                  <PageSection variant={PageSectionVariants.light}>
-                    <TextContent>
-                      <Text component="h1">Traffic Violation</Text>
-                    </TextContent>
-                  </PageSection>
-                  <PageSection variant={PageSectionVariants.light}>
-                    <TrafficViolationForm />
+                    <GenericDecisionModelForm />
                   </PageSection>
                 </Route>                
                 <Route path="/settings">
@@ -117,6 +107,7 @@ class AppPagelayout extends React.Component {
                   <PageSection variant={PageSectionVariants.light}>
                     <TextContent>
                       <Text component="h1">Welcome to Decision Manager Show Case app!</Text>
+                      <Text component="h3">Select an option from the left menu.</Text>
                     </TextContent>
                   </PageSection>
                 </Route>

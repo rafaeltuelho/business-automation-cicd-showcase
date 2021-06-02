@@ -17,7 +17,7 @@
   </dmn:itemDefinition>
   <dmn:inputData id="_891BFB62-4CFD-46DB-8495-A4CB381A9F8D" name="Credit Score">
     <dmn:extensionElements/>
-    <dmn:variable id="_9802320E-4DD5-4A3E-9C60-6C7192A695C5" name="Credit Score"/>
+    <dmn:variable id="_9802320E-4DD5-4A3E-9C60-6C7192A695C5" name="Credit Score" typeRef="number"/>
   </dmn:inputData>
   <dmn:decision id="_C970A1A1-83F1-4590-BE74-EF1E46558069" name="Loan Approval">
     <dmn:extensionElements/>
@@ -115,7 +115,7 @@
   </dmn:decision>
   <dmn:inputData id="_C4EA4AAD-E677-49E4-94A3-0AF40926F1B3" name="DTI">
     <dmn:extensionElements/>
-    <dmn:variable id="_34A2A7BF-50FE-4460-821A-23624B7E0243" name="DTI"/>
+    <dmn:variable id="_34A2A7BF-50FE-4460-821A-23624B7E0243" name="DTI" typeRef="number"/>
   </dmn:inputData>
   <dmndi:DMNDI>
     <dmndi:DMNDiagram id="_CDD0E5E5-B3EA-4446-B595-5F8FE615D064" name="DRG">

@@ -8,11 +8,17 @@ export function loadFromLocalStorage(key, parseJson = false) {
       console.debug(strObj);
     }
     else {
-      console.warn(key + ' not found in the Browser\'s local storage!');
+      console.info(key + ' not found in the Browser\'s local storage!');
     }
 
     console.debug('return JSON parsed? ' + parseJson)
     return parseJson ? strObj : rawObj;
 }
+
+// export function stringifyValue(rawValue) {
+//   let str = '';
+
+//   return str;
+// }
 
 export default { loadFromLocalStorage }

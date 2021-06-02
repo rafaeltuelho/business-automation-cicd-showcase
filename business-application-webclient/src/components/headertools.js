@@ -11,12 +11,9 @@ import {
   PageHeaderToolsGroup,
   PageHeaderToolsItem,
 } from '@patternfly/react-core';
-import accessibleStyles from '@patternfly/react-styles/css/utilities/Accessibility/accessibility';
-import spacingStyles from '@patternfly/react-styles/css/utilities/Spacing/spacing';
-import { css } from '@patternfly/react-styles';
 import { BellIcon, CogIcon, HelpIcon } from '@patternfly/react-icons';
 import imgAvatar from './imgAvatar.svg';
-import {withRouter} from 'react-router';
+import { withRouter } from 'react-router';
 
 class HeaderTools extends React.Component {
   state = {

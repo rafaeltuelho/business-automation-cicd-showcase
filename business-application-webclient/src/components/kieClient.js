@@ -1,5 +1,7 @@
 import fetch from 'isomorphic-fetch';
 import { getReasonPhrase } from 'http-status-codes' 
+import SwaggerClient from "swagger-client";
+import _ from 'lodash';
 
 // EAP runtime
 //const KIE_SERVER_API_BASE_URL='http://localhost:8080/kie-server/services/rest/server';
@@ -7,8 +9,6 @@ import { getReasonPhrase } from 'http-status-codes'
 const KIE_SERVER_API_BASE_URL='http://localhost:8090/rest/server';
 const KIE_SERVER_CLIENT_USER='kieserver';
 const KIE_SERVER_CLIENT_PWD='kieserver1!';
-// const KIE_SERVER_AUTH_BASE64=btoa(KIE_SERVER_CLIENT_USER + ':' + KIE_SERVER_CLIENT_PWD);
-const KIE_SESSION_NAME = 'default';
 
 /**
  * Client for the Remote KIE Sever API
@@ -29,7 +29,7 @@ export default class KieClient {
       },
       drools: {
         containerId: props?.drools?.containerId,
-        kieSessionName: props?.drools?.kieSessionName ? props.drools.kieSessionName : KIE_SESSION_NAME,
+        kieSessionName: (props?.drools?.kieSessionName && !_.isEmpty(props.drools.kieSessionName)) ? props.drools.kieSessionName : null,
       },
       dmn: {
         containerId: props?.dmn?.containerId,
@@ -43,7 +43,26 @@ export default class KieClient {
     console.debug('KieClient initialized!', this.settings);
   }
 
-  buildDroolsRequestBody(facts, kieSessionName) {
+  getKieContainers() {
+    console.log('\n\n--------------------------------');
+    console.log('retrieving deployment units (kie containers) from the connected kie server [' + 
+                  this.settings.common.kieServerBaseUrl + ']...');
+
+    const url = this.settings.common.kieServerBaseUrl + '/containers';
+    return fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization':'Basic ' + this.settings.common.kieServerAuthBase64,
+        },
+      }).then(this.checkHttpStatus)
+          .then(this.parseJson)
+            .then(this.checkKieResponse);
+  }
+
+  buildDroolsRequestBody(facts, kieSessionName = null) {
+    // console.debug('kieSessionName: ', kieSessionName);
     const requestBody = {
       "lookup": kieSessionName,
       "commands": [
@@ -51,7 +70,7 @@ export default class KieClient {
           {
               "fire-all-rules": {
                 "max": -1,
-                "out-identifier": "rules fired"                  
+                "out-identifier": "fired rules"                  
               }
           }
       ]
@@ -80,19 +99,58 @@ export default class KieClient {
 
   // kie API call functions
   fireRules(facts) {
-    const endpoint = (
-        this.settings.common.kieServerBaseUrl + '/containers/instances/' + this.settings.drools.containerId
-    );
-    const payload = this.buildDroolsRequestBody(facts);
+    const endpoint =
+        this.settings.common.kieServerBaseUrl + '/containers/instances/' + 
+        this.settings.drools.containerId;
+    const payload = this.buildDroolsRequestBody(facts, this.settings.drools.kieSessionName);
     return this.callKieServer(endpoint, payload); 
   }
 
   executeDecision(context) {
     const endpoint = this.settings.dmn.kogitoRuntime ?
         this.settings.dmn.endpointUrl :
-          this.settings.common.kieServerBaseUrl + '/containers/' + this.settings.drools.containerId + '/dmn';
+          this.settings.common.kieServerBaseUrl + '/containers/' + this.settings.dmn.containerId + '/dmn';
     const payload = this.buildDmnRequestBody(context);
     return this.callKieServer(endpoint, payload); 
+  }
+
+  executeDecisionOpenApi(endpointPath, payload) {
+    const endpointUrl = this.settings.common.kieServerBaseUrl + endpointPath;
+    return this.callKieServer(endpointUrl, payload); 
+  }
+
+  // OpenAPI client functions
+  async getOpenApiDecisionEndpoints() {
+    let openApiURL = '';
+    if (this.settings.dmn.kogitoRuntime){
+      openApiURL = this.settings.common.kieServerBaseUrl + '/q/openapi';      
+    }
+    else {
+      openApiURL = this.settings.common.kieServerBaseUrl + '/containers/' + 
+                    this.settings.dmn.containerId + '/dmn/openapi.json';
+    }
+
+    const api = await SwaggerClient.resolve({url: openApiURL});
+    let endpoints = [];
+    const paths = api.spec.paths;
+    for (const url in paths) {
+      try {
+        const schema = paths[url]["post"]["requestBody"]["content"]["application/json"]["schema"];
+        console.debug("Endpoint & Schema: ", url, schema);
+
+        if (schema != null) {
+          const patchedSchema = this.patchSchema(schema);
+          endpoints.push({url : url, schema : patchedSchema}); //schema
+        }
+      } catch (err) {
+        console.warn("the path url does not define any post for json, compatible with this app.");
+        console.debug(err);
+        const error = new Error(`HTTP Error [${err}]`);
+        throw error;            
+      }
+    }
+
+    return endpoints;
   }
 
   // helper functions
@@ -123,10 +181,19 @@ export default class KieClient {
 
   testConnection() {
     console.log('\n\n--------------------------------');
-    console.log('calling kie server...');
+    console.log('testing kie server...');
+    // console.debug('btoa: ' + this.settings.common.kieServerAuthBase64);
 
-    const url = this.settings.common.kieServerBaseUrl;
+    let url = '';
+    if (this.settings.dmn.kogitoRuntime || this.settings.drools.kogitoRuntime) {
+      url = this.settings.common.kieServerBaseUrl + '/q/openapi';
+    }
+    else {
+      url = this.settings.common.kieServerBaseUrl;
+    }
+    
     return fetch(url, {
+        mode: 'cors',
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -160,12 +227,37 @@ export default class KieClient {
 
     if(factWrapper){
         // as the wrapper object has only one property which is the FQDN for the Fact Class Type
-        // we'are interest in the enclosing object which represents the Fact Type structure
+        // we're interest in the enclosing object which represents the Fact Type structure
         return Object.entries(factWrapper.value)[0][1];
     } else {
         const error = new Error(`Fact Object with identifier ${factId} not found on response`);
         error.status = 'FACT NOT FOUND';
         error.response = `Fact Object with identifier ${factId} not found on response`;
+        console.debug(error);
+        throw error;        
+    }
+  }
+
+  extractFactsFromKieResponse(serverResponse) {
+    let facts = { };
+    
+    if (serverResponse.result) {
+        serverResponse.result['execution-results'].results.forEach(f => {
+          // console.debug('is Object? ', _.isObjectLike(f.value), f.value);
+          if (_.isObjectLike(f.value)) {
+            // console.debug('Result object: ', Object.entries(f.value)[0][1]);
+            facts[f.key] = Object.entries(f.value)[0][1];
+          }
+          else {
+            facts[f.key] = f.value;
+          }
+        });
+        console.debug('extracted facts: ', facts);
+        return facts;
+    } else {
+        const error = new Error(`Fact results not found on response`);
+        error.status = 'FACT NOT FOUND';
+        error.response = 'Fact results not found on response';
         console.debug(error);
         throw error;        
     }
@@ -202,4 +294,45 @@ export default class KieClient {
   parseJson(response) {
     return response.json();
   }
+
+  patchSchema(originalSchema) {
+    const obj = originalSchema;
+    let clone = Object.assign({}, obj);
+    if (obj['properties']) {
+      Object.getOwnPropertyNames(obj['properties']).forEach(p => {
+        const childProp = obj['properties'][p];
+        console.debug('patchSchema() \n\t traversing obj property [' + p + ']');
+        
+        if (childProp instanceof Object) {
+          if (childProp['properties']) { //deep/recursive
+            clone['properties'][p] = this.patchSchema(childProp);
+          }
+          // else if (Object.hasOwnProperty.call(childProp, 'format') && childProp['format'] === 'date') { //fix date format
+          //   console.debug('prop with date format detected: ', childProp);
+          //   clone['properties'][p]['format'] = 'date-time';
+          // }
+          else if (Object.hasOwnProperty.call(childProp, 'format')) { //fix date format
+            if (childProp['format'] === 'days and time duration' || childProp['format'] === 'years and months duration') {
+              console.debug('prop DMN duration format detected: ', childProp);
+              clone['properties'][p]['format'] = 'duration';
+              clone['properties'][p]['type'] = 'string';
+            }
+          }
+          else if (!Object.hasOwnProperty.call(childProp, 'type')) { //fix props with no type defined
+            console.debug('prop with no type detected: ', childProp);
+            clone['properties'][p]['type'] = 'string';
+          }
+          else if (Object.hasOwnProperty.call(childProp, 'enum')) { //fix props with no type defined
+            console.debug('prop with enum type detected: ', childProp);
+            clone['properties'][p]['placeholder'] = '>>> Select <<<';
+          }
+          // Set the title prop as the same name as the property key
+          clone['properties'][p]['title'] = p;
+        }
+      });
+    }
+    //console.debug('patchSchema().patched: ', clone);
+    return clone;
+  }
+
 }
