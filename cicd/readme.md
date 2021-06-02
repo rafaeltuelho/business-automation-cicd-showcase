@@ -1,18 +1,38 @@
-# CICD Demo script
+# CICD Demo Provisioning and testing
 
-## Setup
+## Pre-requisites
 
- 1. Create an Openshift Project
+* OpenShift 4.6+ (with admin access to install operators)
+* Git client on your local machine ( download at https://git-scm.com/downloads)
+* GitHub account ( http://github.com/) 
+* OpenShift oc client ([Where to download oc client](https://developers.redhat.com/openshift/command-line-tools))
 
- 2. Install Tekton/Pipeline Operator in your Cluster
+## Demo Provisioning
 
- 3. Fork and Clone this repo
+### Preparing the environment
 
- 4. Apply the Openshift Pipelines (Tekton) Resources
+1. Log in to your OpenShift cluster in your terminal. You can copy the login command by using the option below in your OpenShift web UI.
+	![Log in to OpenShift using CLI](docs/ocp-login.png)
+2. Create an Openshift Project
+   `oc new-project rhpam-sandbox`
+3. Install OpenShift Pipelines Operator in your Cluster. 
+   1. To install it, using the **Administrator View**, navigate to **Operators** -> **Operator** Hub menu. 
+   2. In the text field, search for OpenShift Pipelines, select the Operator that will show up. 
+       ![Installing OpenShift Pipelines](docs/tekton-operator-install.png)
+   3. Click **Install**. On the next screen you can use the default values, and click on **Install** again.
+4. While the operator is installing, fork and clone this repo to your local machine. Access the folder directory so we can start deploying the pipeline definitions.
 
-### 4.1 Create Tekton resources into your project namespace
 ```
-oc create -f tekton-resources/
+$ git clone https://github.com/${yourgithubuser}/my-business-automation-showcase.git
+$ cd my-business-automation-showcase
+```
+
+### Creating the Tekton resources into your project namespace
+
+1. Run the following oc command to create the pipeline resources:
+
+```
+$ oc create -f ./cicd/tekton-resources/ -n rhpam-sandbox
 
 configmap/custom-maven-settings created
 eventlistener.triggers.tekton.dev/ba-cicd-event-listener created
@@ -39,80 +59,89 @@ The following resources should be created in your namespace:
 	* Tasks
 	* Pipeline
 
-If you open the Pipelines view in the Openshift Developer Dashboard you should see the `ba-cicd-pipeline`
+You can confirm this by opening the OpenShift Console using the Developer perspective, and accessing Pipelines menu. You should see the `ba-cicd-pipeline`
 ![Pipeline View	](docs/pipelines-view.png)
 
 Click the `ba-cicd-pipeline` to see its details with a graphical representation.
 ![Pipeline View](docs/pipeline-details.png)
 
-### 4.2 Expose the Pipeline Event Listener
-In order to trigger a *Pipeline Run* with a *Git Push event* you need to expose your Pipeline **EventListener**
+### Creating the webhook to trigger pipelines automatically
+
+1. Expose the `Pipeline Event Listener`. In order to trigger a *Pipeline Run* with a *Git Push event* you need to expose your `Pipeline EventListener`:
 
 ```
-oc expose svc el-ba-cicd-event-listener
+$ oc expose svc el-ba-cicd-event-listener -n rhpam-sandbox
 route.route.openshift.io/el-ba-cicd-event-listener exposed	
 ```
 
-Open the Topology view in the Developer Dashboard to see the Trigger Event Listener POD
+2. Open the Topology view in the Developer Dashboard to see the Trigger Event Listener POD
+
 <p align="center">
   <img src="docs/pipeline-trigger-event-listener.png">
 </p>
 
 
-This is the service that listen to your git hook events (via webhooks)!
+This is the service that listens to your git hook events (via webhooks)!
 
-### 4.3 Create the Git Webhook to trigger your Pipeline
-Get the EventListener URL:
+3. Get your EventListener URL using the following command:
 
 ```
-echo "$(oc  get route el-ba-cicd-event-listener --template='http://{{.spec.host}}')"
+$ echo "$(oc  get route el-ba-cicd-event-listener --template='http://{{.spec.host}}')"
 http://el-ba-cicd-event-listener-rhpam-sandbox.your.cluster.domain.com
 ```
 
-### 4.4 Go to the (forked) Project Settings in your github and add a Webhook. 
-* Set the Payload URL with the Pipeline EventListener URL copied previously.
-* Set the Content type as `application/json`
+#### Configuring GitHub Webhooks 
+1. Open the your project's setting in GitHub and access the Webhooks menu.
+2. Click on the. "Add Webhook" button and enter your password if requested.
+   * Set the **Payload URL** with the **Pipeline EventListener** URL copied previously. 
+   * Set the Content type as `application/json`
+   * Once finished, click on the green button "Add Webhook".
+     ![Git webhook setup](docs/github-webhook.png) 
 
-![Git webhook setup](docs/github-webhook.png) 
-
+## Testing your environment
 
 ### Trigger the Pipeline execution
- Open the [decisions-showcase](../decisions-showcase) project and make some changes in your Business Assets (eg: change a rule/decision definition) and push it to your git repo.
-> **Remember** to change the artifact version in the `pom.xml`
+
+Let's do some changes on the project and push it to the git repository to see the pipeline in action. You can use VSCode and the Business Automation extension to support these next steps.
+
+1. Open your decision service project in VSCode:
+   `$ code decisions-showcase/`
+3. Open a decision asset and change one of the values. For example, you can open the `Loan Approval.dmn` or the  `rulebase.drl` file under the resources folder, and update one of the rules' or decision's values. Save the file.
+4. Adjust any unit tests accordingly to the changes below.
+5. Back to the terminal (or using VScode Git extension), commit and push.
 
 ```
-  <groupId>com.redhat.demos</groupId>
-  <artifactId>decisions-showcase</artifactId>
-  <version>1.1.0-SNAPSHOT</version>
+$ git add .
+$ git commit -am "applying some changes"
+$ git push origin master
 ```
 
-Commit and push
-```
-git commit -am "applying some changes"
-git push origin master
-```
+5. Open GitHub UI, and in the project's **Settings**, under the **Webhooks** menu, you can confirm the **git push webhook** previously configured for your repo is activated. Click on your webhook and scroll down to see the recent deliveries. 
+   ![Git Webhook activated](docs/github-webhook-payload.png)
 
-At this point the **git push webhook** previously configured for your repo should be activated...
-![Git Webhook activated](docs/github-webhook-payload.png)
 
-And consequently a new **Pipeline Run** should be triggered in the Openshift as well...
-![Pipeline Event triggered](docs/pipeline-run-status.png)
 
-Click the `Pipeline Runs` tab to see your Pipeline executions
-![Pipeline Runs](docs/pipeline-run-status-2.png)
+6. In OpenShift, you can confirm that consequently a new **Pipeline Run** was be triggered as well.
+   ![Pipeline Event triggered](docs/pipeline-run-status.png)
 
-Click on the active execution to follow the run status
-![Pipeline Event triggered](docs/pipeline-status-3.png)
+7. Using the Administrator Perspective, you can access **Pipelines** -> **Pipelines** ->**ba-cicd-pipeline**  ->  **Pipeline Runs** tab to see your Pipeline executions
+   ![Pipeline Runs](docs/pipeline-run-status-2.png)
 
-Click on the `Logs` tab to see the output of each individual task execution
-![Pipeline task logs](docs/pipeline-run-task-logs.png)
+8. Click on the active execution to follow the run status:
+	![Pipeline Event triggered](docs/pipeline-status-3.png)
 
-## Access the Business Application Service
+9. Click on the `Logs` tab to see the output of each individual task execution
+	![Pipeline task logs](docs/pipeline-run-task-logs.png)
+
+
+
+## Accessing the Business Application Service
 
 At the end of the Pipeline execution you should have two instances of your Kie Server running on Spring Boot containers.
 ![Kie Server SB POD](docs/kie-server-pods-topology.png)
 
-click on the POD edge arrow to open the public App Route URL
+1. Click on the POD edge arrow to open the public App Route URL
+
 <p align="center">
   <img src="docs/kie-server-pod.png">
 </p>
@@ -120,7 +149,7 @@ click on the POD edge arrow to open the public App Route URL
 You should see the sample Business Application Service home page
 ![Kie Server home page](docs/business-service-app.png)
 
-exposing the standard Kie Server API
+exposing the standard Kie Server API *(user: wbadmin, passwd: wbadmin)*
 ![Kie Server API](docs/kie-server-swagger.png)
 
 ## Build a custom Tekton Maven Task image
