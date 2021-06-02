@@ -119,8 +119,6 @@ $ git push origin master
 5. Open GitHub UI, and in the project's **Settings**, under the **Webhooks** menu, you can confirm the **git push webhook** previously configured for your repo is activated. Click on your webhook and scroll down to see the recent deliveries. 
    ![Git Webhook activated](docs/github-webhook-payload.png)
 
-
-
 6. In OpenShift, you can confirm that consequently a new **Pipeline Run** was be triggered as well.
    ![Pipeline Event triggered](docs/pipeline-run-status.png)
 

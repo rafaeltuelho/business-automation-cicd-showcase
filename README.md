@@ -12,7 +12,7 @@ At the moment there are 5 projects in this repository:
 * [business-application-service](business-application-service/): Spring Boot runtime based Kie Server exposing the API for Decisions and Processes
 * [business-application-webclient](business-application-webclient/): ReactJS Web client App UI used to interact with the Kie Server API to exercise the Use Cases provided with this Showcase demo
 * [cicd](cicd/): Tekton Pipeline resources to implement a fully automated CI/CD pipeline for your Business Application Services
-* [monitoring] (monitoring/): currently working in progress...
+* [monitoring](monitoring/): working in progress...
 
 See below a short guide on how to provision.
 

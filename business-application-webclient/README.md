@@ -40,15 +40,10 @@ docker run -d --name business-application-webclient -p 3000:8080 rafaeltuelho/bu
 ## Deploying on Openshift
 
 ```
-npx nodeshift --strictSSL=false --dockerImage=nodeshift/ubi8-s2i-web-app --imageTag=14.x --build.env YARN_ENABLED=true --expose
-Need to install the following packages:
-  nodeshift
-Ok to proceed? (y) y
+   $ oc new-app quay.io/rafaeltuelho/business-application-webclient -n rhpam-sandbox 
+   $ oc expose service/business-application-webclient
+   $ echo "$(oc  get route business-application-webclient --template='http://{{.spec.host}}')"
 ```
-
-A new NodeJS S2I Build should be created in your Openshift Project. Wait until this build finishes. After a while you should see your NodeJS Web App POD in the Openshift Developer Dashboad.
-
-For more details about how to deploy React and Angular JS apps on Openshift see this post: https://developers.redhat.com/blog/2018/10/04/modern-web-apps-openshift-part-1/
 
 ## Demo the Sample Use Cases
 The first thing you need to do is enter the connection settings to your Kie Server service.
