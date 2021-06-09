@@ -9,11 +9,8 @@ import org.kie.api.builder.Message;
 import org.kie.api.builder.Results;
 import org.kie.api.runtime.ClassObjectFilter;
 import org.kie.api.runtime.KieContainer;
-import org.kie.api.runtime.KieRuntimeFactory;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.StatelessKieSession;
-import org.kie.dmn.api.core.DMNModel;
-import org.kie.dmn.api.core.DMNRuntime;
 
 public class RulesBaseTest {
     protected KieSession createDefaultSession() {
@@ -55,8 +52,8 @@ public class RulesBaseTest {
         return ksession;
     }
 
-    protected <T> Collection<T> getFactsFromKieSession(KieSession ksession, Class<T> classType) {
-        return (Collection<T>) ksession.getObjects(new ClassObjectFilter(classType));
+    protected <T> Collection<? extends Object> getFactsFromKieSession(KieSession ksession, Class<T> classType) {
+        return ksession.getObjects(new ClassObjectFilter(classType));
     }
 
     private KieContainer createContainer(){

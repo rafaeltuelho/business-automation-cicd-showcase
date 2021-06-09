@@ -69,12 +69,11 @@ public class RulesTest extends RulesBaseTest {
         //now create some test data
         Driver driver = new Driver();
         Policy policy = new Policy();
-        List<Command> cmds = new ArrayList<>();
+        List<Command<?>> cmds = new ArrayList<>();
         cmds.add(CommandFactory.newInsert(driver, "driver"));
         cmds.add(CommandFactory.newInsert(policy, "policy"));
         cmds.add(CommandFactory.newFireAllRules(10));
         ExecutionResults results = kSession.execute(CommandFactory.newBatchExecution(cmds));
-        // kSession.execute( Arrays.asList( new Object[]{driver, policy} ) );
 
         Policy policyFact = (Policy)results.getValue("policy");
         System.out.println(policyFact);
