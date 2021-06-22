@@ -6,24 +6,22 @@
   <groupId>com.redhat.demos</groupId>
   <artifactId>decisions-showcase</artifactId>
   <version>1.0.0-SNAPSHOT</version>
+  <packaging>kjar</packaging>
 
   <properties>
-    <!-- General Properties -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <!-- Java Properties -->
-    <java.version>11</java.version>
-    <maven.compiler.target>11</maven.compiler.target>
-    <maven.compiler.source>11</maven.compiler.source>
+    <java.version>1.8</java.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
     <!-- Red Hat Business Automation -->
-    <ba-platform.version>7.11.0.redhat-00005</ba-platform.version> <!-- BOM version for RHPAM 7.11.0 -->
+    <ba-platform.version>7.11.0.redhat-00005</ba-platform.version>
     <kie.version>7.52.0.Final-redhat-00007</kie.version>
     <!-- <kie.version>7.54.0.Final</kie.version> -->
   </properties>
 
   <dependencyManagement>
     <dependencies>
-      <!-- -->
+      <!--
       <dependency>
           <groupId>com.redhat.ba</groupId>
           <artifactId>ba-platform-bom</artifactId>
@@ -31,9 +29,9 @@
           <scope>import</scope>
           <type>pom</type>
       </dependency>
-      <!-- -->
+      -->
        
-      <dependency>
+      <!-- <dependency>
         <groupId>org.kie</groupId>
         <artifactId>kie-bom</artifactId>
         <type>pom</type>
@@ -53,60 +51,79 @@
         <type>pom</type>
         <version>${kie.version}</version>
         <scope>import</scope>
-      </dependency>            
-    </dependencies>
+      </dependency> -->           
+    </dependencies> 
   </dependencyManagement>
 
+
   <dependencies>
+    <!-- kie -->
     <dependency>
       <groupId>org.kie</groupId>
       <artifactId>kie-api</artifactId>
+      <version>${kie.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.kie</groupId>
       <artifactId>kie-internal</artifactId>
+      <version>${kie.version}</version>
       <scope>provided</scope>
+    </dependency>
+
+    <!-- drools -->
+    <dependency>
+      <groupId>org.drools</groupId>
+      <artifactId>drools-scenario-simulation-api</artifactId>
+      <version>${kie.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.drools</groupId>
-      <artifactId>drools-mvel</artifactId>
-      <scope>provided</scope>
+      <artifactId>drools-scenario-simulation-backend</artifactId>
+      <version>${kie.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.drools</groupId>
       <artifactId>drools-compiler</artifactId>
-      <scope>provided</scope>
+      <version>${kie.version}</version>
+      <scope>test</scope>
     </dependency>
-    <dependency>
+    <!-- <dependency>
       <groupId>org.drools</groupId>
       <artifactId>drools-model-compiler</artifactId>
+      <version>${kie.version}</version>
       <scope>provided</scope>
-    </dependency>
+    </dependency>     -->
     <dependency>
       <groupId>org.drools</groupId>
       <artifactId>drools-decisiontables</artifactId>
-      <scope>provided</scope>
+      <version>${kie.version}</version>
+      <scope>test</scope>
     </dependency>
     
-    <!-- DMN -->
-    <dependency>
-      <groupId>org.kie</groupId>
-      <artifactId>kie-dmn-core</artifactId>
-      <scope>provided</scope>
-    </dependency>    
+    <!-- dmn -->
     <dependency>
       <groupId>org.kie</groupId>
       <artifactId>kie-dmn-feel</artifactId>
-      <scope>provided</scope>
+      <version>${kie.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.kie</groupId>
       <artifactId>kie-dmn-api</artifactId>
-      <scope>provided</scope>
-    </dependency>    
+      <version>${kie.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>kie-dmn-core</artifactId>
+      <version>${kie.version}</version>
+      <scope>test</scope>
+    </dependency>
 
-    <!-- Logging -->
+    <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -117,39 +134,34 @@
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-core</artifactId>
       <version>1.2.3</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
       <version>1.2.3</version>
-      <scope>test</scope>
     </dependency>
 
-    <!-- Test -->
+    <!-- test -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.13.1</version>
-      <!-- <scope>test</scope> -->
+      <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.drools</groupId>
-      <artifactId>drools-scenario-simulation-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.drools</groupId>
-      <artifactId>drools-scenario-simulation-backend</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <!-- used by Business Central build system -->
+
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
       <artifactId>xstream</artifactId>
-      <version>1.4.17</version>
+      <version>1.4.12</version>
       <scope>test</scope>
-    </dependency>    
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.11.2</version>
+      <scope>provided</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -162,5 +174,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>

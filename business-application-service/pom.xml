@@ -17,12 +17,11 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <!-- Java Properties -->
-    <java.version>11</java.version>
-    <maven.compiler.target>11</maven.compiler.target>
-    <maven.compiler.source>11</maven.compiler.source>
-
+    <java.version>1.8</java.version>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
     <!-- Red Hat Business Automation -->
-    <ba-platform.version>7.11.0.redhat-00005</ba-platform.version> <!-- BOM version for RHPAM 7.11.0 -->
+    <ba-platform.version>7.11.0.redhat-00005</ba-platform.version>
     <kie.version>7.52.0.Final-redhat-00007</kie.version>
     <!-- <kie.version>7.54.0.Final</kie.version> -->
 
@@ -33,21 +32,21 @@
 
   <dependencyManagement>
     <dependencies>
-        <dependency>
+        <!-- <dependency>
             <groupId>com.redhat.ba</groupId>
             <artifactId>ba-platform-bom</artifactId>
             <version>${ba-platform.version}</version>
             <scope>import</scope>
             <type>pom</type>
-        </dependency>
+        </dependency> -->
 
-        <!-- <dependency>
+        <dependency>
           <groupId>org.kie</groupId>
           <artifactId>kie-bom</artifactId>
           <type>pom</type>
           <version>${kie.version}</version>
           <scope>import</scope>
-        </dependency>         -->
+        </dependency>        
     </dependencies>
   </dependencyManagement>
 
@@ -69,12 +68,6 @@
       <groupId>org.kie.server</groupId>
       <artifactId>kie-server-rest-prometheus</artifactId>
       <!-- <version>${kie.version}</version> -->
-      <!-- <exclusions>
-        <exclusion>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-databind</artifactId>
-        </exclusion>
-      </exclusions> -->
     </dependency>
 
     <dependency>
@@ -137,6 +130,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring.version}</version>
       </plugin>
     </plugins>
   </build>
@@ -202,7 +196,6 @@
           <name>docker</name>
         </property>
       </activation>
-
       <build>
         <plugins>
           <plugin>
@@ -230,11 +223,11 @@
                             <outputDirectory>deployments</outputDirectory>
                             <destName>${project.build.finalName}.${project.packaging}</destName>
                           </file>
-                          <file>
+                          <!-- <file>
                             <source>${project.artifactId}.xml</source>
                             <outputDirectory>deployments</outputDirectory>
                             <destName>${project.artifactId}.xml</destName>
-                          </file>
+                          </file> -->
                           <file>
                             <!-- <source>src/main/docker/external-repo-settings.xml</source> -->
                             <source>src/main/docker/offline-repo-settings.xml</source>
@@ -258,9 +251,11 @@
                       <!-- user[:group][:run-user] can use id -->
                       <user>1001:1001:1001</user>
                     </assembly>
+                    
                     <env>
                       <JAVA_OPTIONS>-Dkie.maven.settings.custom=/deployments/.m2/settings.xml</JAVA_OPTIONS>
                     </env>
+                   
                   </build>
                 </image>
               </images>
@@ -286,7 +281,6 @@
           <name>openshift</name>
         </property>
       </activation>
-
       <properties>
         <jkube.mode>openshift</jkube.mode>
         <jkube.build.strategy>docker</jkube.build.strategy>
@@ -302,7 +296,6 @@
         <jkube.enricher.jkube-controller.type>Deployment</jkube.enricher.jkube-controller.type>
         <jkube.deploy.deletePods>false</jkube.deploy.deletePods>
       </properties>
-
       <build>
         <plugins>
           <plugin>
@@ -342,11 +335,11 @@
                             <outputDirectory>deployments</outputDirectory>
                             <destName>${project.build.finalName}.${project.packaging}</destName>
                           </file>
-                          <file>
+                          <!-- <file>
                             <source>${project.artifactId}.xml</source>
                             <outputDirectory>deployments</outputDirectory>
                             <destName>${project.artifactId}.xml</destName>
-                          </file>
+                          </file> -->
                           <file>
                             <!-- <source>src/main/docker/external-repo-settings.xml</source> -->
                             <source>src/main/docker/offline-repo-settings.xml</source>
@@ -370,9 +363,11 @@
                       <!-- user[:group][:run-user] can use id -->
                       <!-- <user>1001:1001:1001</user> -->
                     </assembly>
+                    <!--
                     <env>
                       <JAVA_OPTIONS>-Dkie.maven.settings.custom=/deployments/.m2/settings.xml</JAVA_OPTIONS>
                     </env>
+                    -->
                     <ports>
                       <port>8090</port>
                     </ports>
@@ -389,29 +384,6 @@
                 </goals>
               </execution>
             </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.kie</groupId>
-            <artifactId>kie-maven-plugin</artifactId>
-            <version>${kie.version}</version>
-            <executions>
-              <execution>
-                <id>copy</id>
-                <phase>prepare-package</phase>
-                <goals>
-                  <goal>package-dependencies-kjar</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>com.redhat.demos</groupId>
-                  <artifactId>decisions-showcase</artifactId>
-                  <version>1.0.0-SNAPSHOT</version>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
           </plugin>
         </plugins>
       </build>
