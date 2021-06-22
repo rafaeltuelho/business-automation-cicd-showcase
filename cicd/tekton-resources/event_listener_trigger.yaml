@@ -9,7 +9,7 @@ spec:
       # use when you need to apply some filter on the git webhook payload
       #interceptors:
         #- cel: #https://bigkevmcd.github.io/kubernetes/tekton/pipeline/2020/02/05/cel-interception.html
-            # filter: "body.head_commit.message.indexOf('release') > -1"
+            #filter: "body.head_commit.message.indexOf('release') > -1"
             #filter: "body.ref.split('/')[1] == 'tags' && body.ref.split('/')[2].startsWith('v')" #e.g: "ref": "refs/tags/v2.0.0",
       serviceAccountName: pipeline  
       bindings:
