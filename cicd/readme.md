@@ -70,7 +70,7 @@ The following resources should be created in your namespace:
 	* Pipeline
 		> a collection of Tasks that you define and arrange in a specific order of execution as part of your continuous integration flow. Each Task in a Pipeline executes as a Pod on your Kubernetes cluster. You can configure various execution conditions to fit your business needs.
 
-You can confirm this by opening the OpenShift Console using the Developer perspective, and accessing Pipelines menu. You should see the `ba-cicd-pipeline`
+You can confirm this by opening the OpenShift Console using the Developer perspective, and accessing Pipelines menu. From the **Project** dropdown list, select `rhpam-sandbox`, then you should see the `ba-cicd-pipeline`:
 ![Pipeline View	](docs/pipelines-view.png)
 
 Click the `ba-cicd-pipeline` to see its details with a graphical representation.
@@ -102,11 +102,11 @@ http://el-ba-cicd-event-listener-rhpam-sandbox.your.cluster.domain.com
 ```
 
 #### Configuring GitHub Webhooks 
-1. Open the your project's setting in GitHub and access the Webhooks menu.
-2. Click on the. "Add Webhook" button and enter your password if requested.
+1. Open the your project's **Settings** in GitHub and access the **Webhooks** menu.
+2. Click on the **Add Webhook** button and enter your password if requested.
    * Set the **Payload URL** with the **Pipeline EventListener** URL copied previously. 
-   * Set the Content type as `application/json`
-   * Once finished, click on the green button "Add Webhook".
+   * Set the **Content type** as `application/json`
+   * Once finished, click on the green button **Add Webhook**.
      ![Git webhook setup](docs/github-webhook.png) 
 
 ## Testing your environment
