@@ -21,7 +21,7 @@ mvn archetype:generate \
 > 
 > note that the Scanner is configured to scan the kjar every 60secs. In this way you can change your rules, rebuild and install the kjar for demo purposes.
 
-## Self contained Immutable uberjar
+## Self contained Immutable Fatjar
 
 Starting with version `7.44.0.Final` you can use the `kie-maven-plugin` to package your kjar in the spring boot uberjar. Add these props in your Spring Boot `application.properties`:
 ```
@@ -107,6 +107,19 @@ For more details on how customize and configure the Kie Server on Spring Boot ch
 mvn clean install
 ```
 
+## Run the service locally
+
+```
+java -jar target/business-application-service-1.0-SNAPSHOT.jar
+```
+
+## Access the Kie Server (Swagger) API Docs
+
+http://localhost:8090/rest/api-docs?url=http://localhost:8090/rest/swagger.json
+
+you can authenticate with `kieserver/kieserver1!`
+
+
 ## Docker Image build
 A Docker Image can be built using the [jKube **Kubernates** Maven Plugin](https://www.eclipse.org/jkube/docs/kubernetes-maven-plugin)
 
@@ -175,12 +188,6 @@ to create the DeploymentConfig, Service and Route resources.
 ```
 java -jar target/business-application-service-1.0-SNAPSHOT.jar
 ```
-
-## Access the Kie Server (Swagger) API Docs
-
-http://localhost:8090/rest/api-docs?url=http://localhost:8090/rest/swagger.json
-
-you can authenticate with `kieserver/kieserver1!`
 
 ## Note about KieScanner
 
