@@ -157,7 +157,8 @@ class GenericDecisionModelForm extends React.Component {
     console.debug('GenericDecisionModelForm ->>> componentDidMount...');
     const decisionEndpoints = await this.kieClient.getOpenApiDecisionEndpoints();
     // console.debug(decisionEndpoints);
-    const filteredEndpoints = decisionEndpoints.filter(e => e.url.split('/').pop() !== 'dmnresult');
+    const filteredEndpoints = decisionEndpoints.filter(e => e.url.split('/').pop() === 'dmnresult');
+    console.debug('filteredEndpoints: ', filteredEndpoints);
     this.setState({ decisionEndpoints : filteredEndpoints });
   }
   
@@ -206,7 +207,7 @@ class GenericDecisionModelForm extends React.Component {
       validator(model);
       return validator.errors?.length ? { details: validator.errors } : null;
     };
-  }  
+  }
 
   render() {
     const schemaValidator = this.createValidator(this.state.selectedDecisionEndpoint?.schema);
@@ -264,14 +265,17 @@ class GenericDecisionModelForm extends React.Component {
                     label='>>> Select a Decision <<<'
                   />
                   {
-                  this.state.decisionEndpoints.map((option, index) => (
+                  this.state.decisionEndpoints.map((option, index) => { 
+                    const arr = option.url.split('/');
+                    return (
                       <FormSelectOption 
                         isDisabled={false} 
                         key={index+1}
                         value={option.url} 
-                        label={option.url.split('/').pop()} 
+                        label={arr[arr.length -2]} // get the name of the model
                       />
-                    ))
+                      )}
+                    )
                   }
                 </FormSelect>
               </FormGroup>

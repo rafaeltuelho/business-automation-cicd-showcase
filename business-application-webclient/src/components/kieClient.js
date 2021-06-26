@@ -122,8 +122,9 @@ export default class KieClient {
   // OpenAPI client functions
   async getOpenApiDecisionEndpoints() {
     let openApiURL = '';
+    let dmnDefinitionsSchema = '';
     if (this.settings.dmn.kogitoRuntime){
-      openApiURL = this.settings.common.kieServerBaseUrl + '/q/openapi';      
+      openApiURL = this.settings.common.kieServerBaseUrl + '/q/openapi';
     }
     else {
       openApiURL = this.settings.common.kieServerBaseUrl + '/containers/' + 
@@ -132,15 +133,24 @@ export default class KieClient {
 
     const api = await SwaggerClient.resolve({url: openApiURL});
     let endpoints = [];
+    console.debug("api: ", api);
+    
     const paths = api.spec.paths;
     for (const url in paths) {
       try {
-        const schema = paths[url]["post"]["requestBody"]["content"]["application/json"]["schema"];
-        console.debug("Endpoint & Schema: ", url, schema);
+        if (paths[url]["post"]) { // only interested in POST endpoints
+          let schema = paths[url]["post"]["requestBody"]["content"]["application/json"]["schema"];
+          console.debug("Endpoint & Schema: ", url, schema);
 
-        if (schema != null) {
-          const patchedSchema = this.patchSchema(schema);
-          endpoints.push({url : url, schema : patchedSchema}); //schema
+          if (schema != null) {
+            if (schema["x-dmn-type"] && schema["x-dmn-type"].indexOf('InputSetDS') > -1){
+              continue; // ignore DecisionServices
+            }
+            else {
+              const patchedSchema = this.patchSchema(schema);
+              endpoints.push({url : url, schema : patchedSchema}); //schema
+            }
+          }
         }
       } catch (err) {
         console.warn("the path url does not define any post for json, compatible with this app.");
@@ -292,15 +302,20 @@ export default class KieClient {
   }
 
   parseJson(response) {
+    console.debug('response: ', response);
     return response.json();
   }
 
   patchSchema(originalSchema) {
-    const obj = originalSchema;
-    let clone = Object.assign({}, obj);
-    if (obj['properties']) {
-      Object.getOwnPropertyNames(obj['properties']).forEach(p => {
-        const childProp = obj['properties'][p];
+    // const obj = originalSchema;
+    let clone = Object.assign({}, originalSchema);
+    // clone['properties'] = _.remove(clone['properties'], (value, index, array) => value.startsWith ('p_'));
+    if (originalSchema['properties']) {
+      const props = Object.getOwnPropertyNames(originalSchema['properties']);
+      // _.remove(props, (value, index, array) => value.startsWith ('p_'));
+      // console.debug('uniqueSchemaProperties: ', props);
+      props.forEach(p => {
+        const childProp = originalSchema['properties'][p];
         console.debug('patchSchema() \n\t traversing obj property [' + p + ']');
         
         if (childProp instanceof Object) {
@@ -326,6 +341,14 @@ export default class KieClient {
             console.debug('prop with enum type detected: ', childProp);
             clone['properties'][p]['placeholder'] = '>>> Select <<<';
           }
+          // see https://json-schema.org/understanding-json-schema/reference/numeric.html#number
+          else if (Object.hasOwnProperty.call(childProp, 'exclusiveMaximum') || 
+                    Object.hasOwnProperty.call(childProp, 'exclusiveMinimum')) { //fix Draft-04 number type
+            console.debug('prop with Draft-04 exclusiveMaximum/exclusiveMinimum type detected: ', childProp);
+            clone['properties'][p]['exclusiveMaximum'] = clone['properties'][p]['maximum'];
+            clone['properties'][p]['exclusiveMinimum'] = clone['properties'][p]['minimum'];
+          }
+
           // Set the title prop as the same name as the property key
           clone['properties'][p]['title'] = p;
         }
