@@ -239,8 +239,7 @@
                    -->
                   <name>%a:%l</name>
                   <build>
-                    <!-- <from>fabric8/java-jboss-openjdk8-jdk</from> -->
-                    <from>fabric8/java-ubi-openjdk11-jdk</from>
+                    <from>registry.access.redhat.com/ubi8/openjdk-11:latest</from>
                     <assembly>
                       <targetDir>/</targetDir>
                       <inline>
@@ -356,8 +355,7 @@
                    -->
                   <name>%a:%l</name>
                   <build>
-                    <!-- <from>fabric8/java-jboss-openjdk8-jdk</from> -->
-                    <from>fabric8/java-ubi-openjdk11-jdk</from>
+                    <from>registry.access.redhat.com/ubi8/openjdk-11:latest</from>
                     <assembly>
                       <targetDir>/</targetDir>
                       <inline>
