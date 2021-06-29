@@ -362,13 +362,7 @@
                       <targetDir>/</targetDir>
                       <inline>
                         <files>
-                          <file>
-                            <source>${project.build.directory}/${project.build.finalName}.${project.packaging}</source>
-                            <outputDirectory>deployments</outputDirectory>
-                            <destName>${project.build.finalName}.${project.packaging}</destName>
-                          </file>
-                          <!-- 
-                          <file>
+                          <!-- <file>
                             <source>${project.artifactId}.xml</source>
                             <outputDirectory>deployments</outputDirectory>
                             <destName>${project.artifactId}.xml</destName>
