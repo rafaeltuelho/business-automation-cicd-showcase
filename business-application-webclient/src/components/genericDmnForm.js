@@ -26,6 +26,9 @@ import {
   Spinner,
   Stack,
   StackItem,
+  TextContent,
+  Text,
+  TextVariants,
 } from '@patternfly/react-core';
 import ReactJson from 'react-json-view'
 
@@ -33,9 +36,9 @@ class GenericDecisionModelForm extends React.Component {
   constructor(props) {
     super(props);
 
-    const kieSettings = loadFromLocalStorage('kieSettings', true);
+    this.kieSettings = loadFromLocalStorage('kieSettings', true);
     this.formRef = null; //AutoForm reference
-    this.kieClient = new KieClient(kieSettings);
+    this.kieClient = new KieClient(this.kieSettings);
 
     this.state = {
       decisionEndpoints: [ { url: 'none', schema: { } } ],
@@ -45,8 +48,9 @@ class GenericDecisionModelForm extends React.Component {
       },
       requestPayload: { },
       _apiCallStatus: 'NONE',
+      _viewServerResponse: { },
       _rawServerRequest: { },
-      _rawServerResponse: { },
+      _rawServerResponse: { serverEndpointUrl: this.kieSettings.kieServerBaseUrl },
       _responseErrorAlertVisible: false,
       _responseModalOpen: false,
       _alert: {
@@ -72,11 +76,15 @@ class GenericDecisionModelForm extends React.Component {
       .executeDecisionOpenApi(endpointPath, data)
       .then((response) => {
         console.debug('executeDecisionOpenApi.response: ', response)
+        // if (this.kieSettings.dmn.kogitoRuntime) {
+        //   response
+        // }
 
         this.setState({
           _apiCallStatus: 'COMPLETE',
           _responseModalOpen: true,
-          _rawServerResponse: response?.result ? response.result : response,
+          _viewServerResponse: response?.result ? response.result : response.dmnContext, 
+          _rawServerResponse: response,
           _alert: {
             visible: false,
             variant: 'default',
@@ -158,7 +166,7 @@ class GenericDecisionModelForm extends React.Component {
     const decisionEndpoints = await this.kieClient.getOpenApiDecisionEndpoints();
     // console.debug(decisionEndpoints);
     const filteredEndpoints = decisionEndpoints.filter(e => e.url.split('/').pop() === 'dmnresult');
-    console.debug('filteredEndpoints: ', filteredEndpoints);
+    // console.debug('filteredEndpoints: ', filteredEndpoints);
     this.setState({ decisionEndpoints : filteredEndpoints });
   }
   
@@ -243,7 +251,7 @@ class GenericDecisionModelForm extends React.Component {
               ]}
             >
               {this.state._apiCallStatus === 'WAITING' && (<Spinner isSVG />)}
-              {this.state._apiCallStatus === 'COMPLETE' && (<ObjectAsCard obj={this.state._rawServerResponse} />)}
+              {this.state._apiCallStatus === 'COMPLETE' && (<ObjectAsCard obj={this.state._viewServerResponse} />)}
             </Modal>
           </React.Fragment>
           <Form>
@@ -297,6 +305,11 @@ class GenericDecisionModelForm extends React.Component {
         <StackItem>
           <ExpandableSection toggleText="Debug View">
             <Grid hasGutter>
+              <GridItem span={12}>
+                <TextContent>
+                  <Text component={TextVariants.small}>Server endpoint: {this.state._rawServerResponse.serverEndpointUrl}</Text>
+                </TextContent>
+              </GridItem>              
               <GridItem span={6}>
               <Title headingLevel="h6" size="md">Request Payload</Title>
                 <ReactJson name={false} src={this.state._rawServerRequest} />

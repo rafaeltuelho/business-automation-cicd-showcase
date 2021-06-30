@@ -182,6 +182,10 @@ export default class KieClient {
       }).then(this.checkHttpStatus)
           .then(this.parseJson)
             .then(this.checkKieResponse)
+            .then((response) => {
+              // console.debug('\t adding the called endpoint url...', {...response, serverEndpointUrl: endpoint}, response);
+              return {...response, serverEndpointUrl: endpoint};
+            })            
             .catch(err => {
               console.debug(err);
               const error = new Error(`HTTP Error [${err}]`);
@@ -307,7 +311,6 @@ export default class KieClient {
   }
 
   patchSchema(originalSchema) {
-    // const obj = originalSchema;
     let clone = Object.assign({}, originalSchema);
     // clone['properties'] = _.remove(clone['properties'], (value, index, array) => value.startsWith ('p_'));
     if (originalSchema['properties']) {
@@ -317,44 +320,50 @@ export default class KieClient {
       props.forEach(p => {
         const childProp = originalSchema['properties'][p];
         console.debug('patchSchema() \n\t traversing obj property [' + p + ']');
-        
-        if (childProp instanceof Object) {
-          if (childProp['properties']) { //deep/recursive
-            clone['properties'][p] = this.patchSchema(childProp);
-          }
-          // else if (Object.hasOwnProperty.call(childProp, 'format') && childProp['format'] === 'date') { //fix date format
-          //   console.debug('prop with date format detected: ', childProp);
-          //   clone['properties'][p]['format'] = 'date-time';
-          // }
-          else if (Object.hasOwnProperty.call(childProp, 'format')) { //fix date format
-            if (childProp['format'] === 'days and time duration' || childProp['format'] === 'years and months duration') {
-              console.debug('prop DMN duration format detected: ', childProp);
-              clone['properties'][p]['format'] = 'duration';
+        if (p.startsWith('p_')) { // remove DecisionServices' input parameters from the Calling Model 
+          delete clone['properties'][p];
+        }
+        else {
+          if (childProp instanceof Object) {
+            if (childProp['properties']) { //deep/recursive
+              clone['properties'][p] = this.patchSchema(childProp);
+            }
+            // else if (Object.hasOwnProperty.call(childProp, 'format') && childProp['format'] === 'date') { //fix date format
+            //   console.debug('prop with date format detected: ', childProp);
+            //   clone['properties'][p]['format'] = 'date-time';
+            // }
+            else if (Object.hasOwnProperty.call(childProp, 'format')) { //fix date format
+              if (childProp['format'] === 'days and time duration' || childProp['format'] === 'years and months duration') {
+                console.debug('prop DMN duration format detected: ', childProp);
+                clone['properties'][p]['format'] = 'duration';
+                clone['properties'][p]['type'] = 'string';
+              }
+            }
+            else if (!Object.hasOwnProperty.call(childProp, 'type')) { //fix props with no type defined
+              console.debug('prop with no type detected: ', childProp);
               clone['properties'][p]['type'] = 'string';
             }
-          }
-          else if (!Object.hasOwnProperty.call(childProp, 'type')) { //fix props with no type defined
-            console.debug('prop with no type detected: ', childProp);
-            clone['properties'][p]['type'] = 'string';
-          }
-          else if (Object.hasOwnProperty.call(childProp, 'enum')) { //fix props with no type defined
-            console.debug('prop with enum type detected: ', childProp);
-            clone['properties'][p]['placeholder'] = '>>> Select <<<';
-          }
-          // see https://json-schema.org/understanding-json-schema/reference/numeric.html#number
-          else if (Object.hasOwnProperty.call(childProp, 'exclusiveMaximum') || 
-                    Object.hasOwnProperty.call(childProp, 'exclusiveMinimum')) { //fix Draft-04 number type
-            console.debug('prop with Draft-04 exclusiveMaximum/exclusiveMinimum type detected: ', childProp);
-            clone['properties'][p]['exclusiveMaximum'] = clone['properties'][p]['maximum'];
-            clone['properties'][p]['exclusiveMinimum'] = clone['properties'][p]['minimum'];
-          }
+            else if (Object.hasOwnProperty.call(childProp, 'enum')) { //fix props with no type defined
+              console.debug('prop with enum type detected: ', childProp);
+              clone['properties'][p]['placeholder'] = '>>> Select <<<';
+            }
+            // see https://json-schema.org/understanding-json-schema/reference/numeric.html#number
+            else if (Object.hasOwnProperty.call(childProp, 'exclusiveMaximum') || 
+                      Object.hasOwnProperty.call(childProp, 'exclusiveMinimum')) { //fix Draft-04 number type
+              console.debug('prop with Draft-04 exclusiveMaximum/exclusiveMinimum type detected: ', childProp);
+              clone['properties'][p]['exclusiveMaximum'] = clone['properties'][p]['maximum'];
+              clone['properties'][p]['exclusiveMinimum'] = clone['properties'][p]['minimum'];
+            }
 
-          // Set the title prop as the same name as the property key
-          clone['properties'][p]['title'] = p;
+            // Set the title prop as the same name as the property key
+            clone['properties'][p]['title'] = p;
+          }
         }
       });
     }
     //console.debug('patchSchema().patched: ', clone);
+    // remove DecisionServices' input parameters from the Calling Model from the required list
+    clone['required'] = _.remove(clone['required'], (value, index, array) => value.startsWith ('p_'));
     return clone;
   }
 
