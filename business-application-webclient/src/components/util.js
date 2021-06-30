@@ -1,3 +1,4 @@
+import _ from 'lodash';
 
 export function loadFromLocalStorage(key, parseJson = false) {
     console.debug('loading ' + key + ' from Browser\'s local storage...');
@@ -15,10 +16,28 @@ export function loadFromLocalStorage(key, parseJson = false) {
     return parseJson ? strObj : rawObj;
 }
 
-// export function stringifyValue(rawValue) {
-//   let str = '';
+export function stringifyValue(rawValue) {
+  let str = '';
+  console.debug('util.stringifyValue(rawValue)', rawValue);
+  str = _.toString(rawValue);
+  if (!_.isNull(rawValue)) {
+    if (_.isNumber(rawValue)) {
+      if (_.isInteger(rawValue)) {
+        // try to convert to date/time
+        const integer = _.toInteger(rawValue);
+        // see https://en.wikipedia.org/wiki/Unix_time
+        if (_.toInteger(rawValue) >= 18000000 && _.toInteger(rawValue) <= 2147490000000) {
+          str = _.toString(new Date(integer));
+        }
+      }
+      else {
+        str = _.toNumber(rawValue).toFixed(2);
+      }
+    }
+  }
+  console.debug('util.stringifyValue(str)', str);
 
-//   return str;
-// }
+  return str;
+}
 
-export default { loadFromLocalStorage }
+export default { loadFromLocalStorage, stringifyValue }

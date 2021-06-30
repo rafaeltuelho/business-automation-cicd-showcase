@@ -174,6 +174,7 @@ export default class KieClient {
     return fetch(endpoint, {
         method: 'POST',
         headers: {
+          // mode: 'cors',
           'Accept': 'application/json',
           'Content-Type': 'application/json',
           'Authorization':'Basic ' + this.settings.common.kieServerAuthBase64,
@@ -207,7 +208,7 @@ export default class KieClient {
     }
     
     return fetch(url, {
-        mode: 'cors',
+        // mode: 'cors',
         method: 'GET',
         headers: {
           'Accept': 'application/json',
