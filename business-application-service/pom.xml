@@ -357,44 +357,13 @@
                   <build>
                     <from>registry.access.redhat.com/ubi8/openjdk-11:latest</from>
                     <assembly>
-                      <targetDir>/</targetDir>
-                      <inline>
-                        <files>
-                          <!-- <file>
-                            <source>${project.artifactId}.xml</source>
-                            <outputDirectory>deployments</outputDirectory>
-                            <destName>${project.artifactId}.xml</destName>
-                          </file>
-                          <file>
-                            <source>src/main/docker/offline-repo-settings.xml</source>
-                            <outputDirectory>deployments/.m2</outputDirectory>
-                            <destName>settings.xml</destName>
-                            <fileMode>0766</fileMode>
-                          </file>
-                        -->
-                        </files>
-                        <!--
-                        <fileSets>
-                          <fileSet>
-                            <directory>src/main/docker/repository</directory>
-                            <outputDirectory>deployments/.m2/repository</outputDirectory>
-                            <directoryMode>0777</directoryMode>
-                          </fileSet>
-                          <fileSet>
-                            <directory>/local-repository/maven</directory>
-                            <outputDirectory>/deployments/.m2/repository</outputDirectory>  
-                          </fileSet>
-                        </fileSets>
-                        -->
-                      </inline>
+                      <targetDir>/deployments</targetDir>
                       <!-- user[:group][:run-user] can use id -->
                       <!-- <user>1001:1001:1001</user> -->
                     </assembly>
-                    <!--
                     <env>
-                      <JAVA_OPTIONS>-Dkie.maven.settings.custom=/deployments/.m2/settings.xml</JAVA_OPTIONS>
+                      <GC_MAX_METASPACE_SIZE>512</GC_MAX_METASPACE_SIZE>
                     </env>
-                    -->
                     <ports>
                       <port>8090</port>
                     </ports>
