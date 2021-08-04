@@ -239,9 +239,12 @@
                    -->
                   <name>%a:%l</name>
                   <build>
+                    <!-- <from>fabric8/java-jboss-openjdk8-jdk</from> -->
+                    <!-- from>fabric8/java-ubi-openjdk11-jdk</from -->
                     <from>registry.access.redhat.com/ubi8/openjdk-11:latest</from>
                     <assembly>
-                      <targetDir>/</targetDir>
+                      <targetDir>/deployments</targetDir>
+                      <!--
                       <inline>
                         <files>
                           <file>
@@ -249,7 +252,6 @@
                             <outputDirectory>deployments</outputDirectory>
                             <destName>${project.build.finalName}.${project.packaging}</destName>
                           </file>
-                          <!-- 
                           <file>
                             <source>${project.artifactId}.xml</source>
                             <outputDirectory>deployments</outputDirectory>
@@ -261,9 +263,7 @@
                             <destName>settings.xml</destName>
                             <fileMode>0766</fileMode>
                           </file>                             
-                          -->
                         </files>
-                        <!--
                         <fileSets>
                           <fileSet>
                             <directory>src/main/docker/repository</directory>
@@ -275,16 +275,15 @@
                             <outputDirectory>/deployments/.m2/repository</outputDirectory>  
                           </fileSet>
                         </fileSets>
-                        -->
                       </inline>
-                      <!-- user[:group][:run-user] can use id -->
-                      <user>1001:1001:1001</user>
-                    </assembly>
-                    <!-- 
-                    <env>
-                      <JAVA_OPTIONS>-Dkie.maven.settings.custom=/deployments/.m2/settings.xml</JAVA_OPTIONS>
-                    </env>
                     -->
+                      <!-- user[:group][:run-user] can use id -->
+                      <!-- user>1001:1001:1001</user -->
+                    </assembly>
+                    <env>
+                      <!-- JAVA_OPTIONS>-Dkie.maven.settings.custom=/deployments/.m2/settings.xml</JAVA_OPTIONS -->
+                      <GC_MAX_METASPACE_SIZE>512</GC_MAX_METASPACE_SIZE>
+                    </env>
                   </build>
                 </image>
               </images>

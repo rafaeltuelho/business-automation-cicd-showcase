@@ -165,7 +165,7 @@ class GenericDecisionModelForm extends React.Component {
     console.debug('GenericDecisionModelForm ->>> componentDidMount...');
     const decisionEndpoints = await this.kieClient.getOpenApiDecisionEndpoints();
     // console.debug(decisionEndpoints);
-    const filteredEndpoints = decisionEndpoints.filter(e => e.url.split('/').pop() === 'dmnresult');
+    const filteredEndpoints = decisionEndpoints;//.filter(e => e.url.split('/').pop() === 'dmnresult');
     // console.debug('filteredEndpoints: ', filteredEndpoints);
     this.setState({ decisionEndpoints : filteredEndpoints });
   }
@@ -307,7 +307,7 @@ class GenericDecisionModelForm extends React.Component {
             <Grid hasGutter>
               <GridItem span={12}>
                 <TextContent>
-                  <Text component={TextVariants.small}>Server endpoint: {this.state._rawServerResponse.serverEndpointUrl}</Text>
+                  <Text component={TextVariants.small}>Server endpoint: {this.state._rawServerResponse?.serverEndpointUrl}</Text>
                 </TextContent>
               </GridItem>              
               <GridItem span={6}>

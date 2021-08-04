@@ -358,7 +358,7 @@ class DroolsDynamicForm extends React.Component {
                       <Grid hasGutter>
                         <GridItem span={12}>
                           <TextContent>
-                            <Text component={TextVariants.small}>Server endpoint: {this.state._rawServerResponse.serverEndpointUrl}</Text>
+                            <Text component={TextVariants.small}>Server endpoint: {this.state._rawServerResponse?.serverEndpointUrl}</Text>
                           </TextContent>
                         </GridItem>                           
                         <GridItem span={6}>
