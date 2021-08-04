@@ -12,18 +12,17 @@ spec:
     description: >-
       The workspace consisting of the custom maven settings
       provided by the user.  
-  inputs:
-    params:
-    - name: NEXUS_REPO
-      description: Nexus repo URL
-      type: string
-    - name: MAVEN_PROJECT_CONTEXT_DIR
-      description: Project/Module directory
-      type: string      
-    - name: GOALS
-      description: The Maven goals to run
-      type: array
-      default: ["clean", "package"]
+  params:
+  - name: NEXUS_REPO
+    description: Nexus repo URL
+    type: string
+  - name: MAVEN_PROJECT_CONTEXT_DIR
+    description: Project/Module directory
+    type: string      
+  - name: GOALS
+    description: The Maven goals to run
+    type: array
+    default: ["clean", "package"]
   steps:
     - name: mvn
       #image: gcr.io/cloud-builders/mvn
