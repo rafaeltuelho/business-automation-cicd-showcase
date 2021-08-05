@@ -1,0 +1,26 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: oc-client
+spec:
+  workspaces:
+    - name: source
+      description: The workspace consisting of maven project.
+  params:
+    - default: oc $@
+      description: The OpenShift CLI arguments to run
+      name: SCRIPT
+      type: string
+    - default:
+        - help
+      description: The OpenShift CLI arguments to run
+      name: ARGS
+      type: array
+  steps:
+    - name: oc
+      image: 'image-registry.openshift-image-registry.svc:5000/openshift/cli:latest'
+      workingDir: $(workspaces.maven-settings.path)
+      resources: {}
+      args:
+        - $(params.ARGS)      
+      script: $(params.SCRIPT)
