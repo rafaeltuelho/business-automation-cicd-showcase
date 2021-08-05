@@ -104,7 +104,7 @@ spec:
     - name: deploy
       params:
         - name: SCRIPT
-          value: 'oc apply -f decisions-service/target/kubernetes/openshift.yaml'
+          value: 'oc apply -f decisions-service/target/kubernetes/openshift.yml'
       runAfter:
         - build
       taskRef:

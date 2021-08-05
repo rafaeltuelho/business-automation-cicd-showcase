@@ -19,7 +19,7 @@ spec:
   steps:
     - name: oc
       image: 'image-registry.openshift-image-registry.svc:5000/openshift/cli:latest'
-      workingDir: $(workspaces.maven-settings.path)
+      workingDir: $(workspaces.source.path)
       resources: {}
       args:
         - $(params.ARGS)      
