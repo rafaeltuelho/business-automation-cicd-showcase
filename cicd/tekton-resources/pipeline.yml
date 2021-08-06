@@ -32,6 +32,7 @@ spec:
       params:
         - name: url
           value: $(params.git-url)
+          #TODO: download only the 'decisions-service' dir...
         - name: subdirectory
           value: ''
         - name: deleteExisting
