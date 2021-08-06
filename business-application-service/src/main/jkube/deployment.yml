@@ -1,5 +1,7 @@
 metadata:
   name: ${project.artifactId}-d
+  labels:
+    app.openshift.io/runtime: spring-boot  
 spec:
   replicas: 3
   template:
