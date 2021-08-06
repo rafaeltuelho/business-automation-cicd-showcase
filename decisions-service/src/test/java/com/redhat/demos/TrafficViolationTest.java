@@ -22,10 +22,10 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.is;
 
-@QuarkusTest
+// @QuarkusTest
 public class TrafficViolationTest {
     
-    @Test
+    // @Test
     public void testEvaluateTrafficViolation() {
         given()
                .body("{\n" +
