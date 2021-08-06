@@ -15,6 +15,6 @@ spec:
       serviceAccountName: pipeline  
       bindings:
         - kind: ClusterTriggerBinding
-          ref: git-push
+          ref: github-push
       template:
         ref: ba-cicd-trigger-template
