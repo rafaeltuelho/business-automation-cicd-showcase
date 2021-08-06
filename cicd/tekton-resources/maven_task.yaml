@@ -18,7 +18,8 @@ spec:
     type: string
   - name: MAVEN_PROJECT_CONTEXT_DIR
     description: Project/Module directory
-    type: string      
+    type: string
+    default: "."
   - name: GOALS
     description: The Maven goals to run
     type: array

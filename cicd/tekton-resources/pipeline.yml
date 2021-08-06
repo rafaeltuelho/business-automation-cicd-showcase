@@ -55,7 +55,7 @@ spec:
           workspace: shared-workspace
         - name: maven-repo
           workspace: maven-local-repo
-    - name: build-kjar
+    - name: run-tests
       params:
         - name: NEXUS_REPO
           value: $(params.maven-repo-url)
@@ -64,8 +64,7 @@ spec:
         - name: GOALS
           value:
             - clean
-            - install
-            - '-DskipTests'
+            - test
       runAfter:
         - prepare
       taskRef:
@@ -78,7 +77,7 @@ spec:
           workspace: maven-settings
         - name: source
           workspace: shared-workspace
-    - name: run-tests
+    - name: build-kjar
       params:
         - name: NEXUS_REPO
           value: $(params.maven-repo-url)
@@ -86,9 +85,10 @@ spec:
           value: decisions-showcase
         - name: GOALS
           value:
-            - test
+            - install
+            - '-DskipTests'
       runAfter:
-        - build-kjar
+        - prepare
       taskRef:
         kind: Task
         name: mvn
@@ -107,9 +107,11 @@ spec:
           value: business-application-service
         - name: GOALS
           value:
+            - clean
             - package
       runAfter:
         - run-tests
+        - build-kjar
       taskRef:
         kind: Task
         name: mvn
