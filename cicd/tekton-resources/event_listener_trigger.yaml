@@ -14,8 +14,7 @@ spec:
       #      filter: "body.ref.split('/')[1] == 'tags' && body.ref.split('/')[2].startsWith('v')" #e.g: "ref": "refs/tags/v2.0.0",
       serviceAccountName: pipeline  
       bindings:
-        - name: push-trigger-1
-          kind: ClusterTriggerBinding
+        - kind: ClusterTriggerBinding
           ref: github-push
       template:
         ref: ba-cicd-trigger-template
