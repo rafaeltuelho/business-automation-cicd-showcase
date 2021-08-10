@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.redhat.demos</groupId>
   <artifactId>business-application-service</artifactId>
-  <version>1.0</version> <!-- to change the springboot container image tag version -->
+  <version>2.0</version> <!-- to change the springboot container image tag version -->
   <packaging>jar</packaging>
   <name>business-application-service</name>
 
