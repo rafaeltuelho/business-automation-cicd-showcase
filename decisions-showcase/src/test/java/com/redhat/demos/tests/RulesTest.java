@@ -43,7 +43,7 @@ import org.kie.internal.io.ResourceFactory;
 
 public class RulesTest extends RulesBaseTest {
 
-    @Test
+    //@Test
     public void rulesTest() {
         KieSession kSession = createSession("rules-session");
         assertNotNull(kSession);
@@ -57,7 +57,7 @@ public class RulesTest extends RulesBaseTest {
         kSession.dispose();
     }
 
-    @Test
+    //@Test
     public void xlsDecisionTableStatelessSessionTest(){
         StatelessKieSession kSession = createStatelessSession("xls-stateless-session");
         assertNotNull(kSession);
@@ -79,7 +79,7 @@ public class RulesTest extends RulesBaseTest {
         System.out.println(policyFact);
     }
 
-    @Test
+    //@Test
     public void dmnTest() {
         KieServices ks = KieServices.Factory.get();
         KieContainer kContainer = ks.getKieClasspathContainer();
