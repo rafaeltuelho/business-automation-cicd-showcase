@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
+import { stringifyValue } from './util'
 
 import { 
   Card, 
@@ -47,7 +48,7 @@ function ObjectAsCard({ obj, parentName = 'Response' }) {
                         <DataListCell key={k}>
                           <span id={k}>{k}</span>
                         </DataListCell>,
-                        <DataListCell key={v}>{_.isNull(v) || v === 'null' ? '' : String(v)}</DataListCell>
+                        <DataListCell key={v}>{stringifyValue(v)}</DataListCell>
                       ]}
                     />
                   </DataListItemRow>

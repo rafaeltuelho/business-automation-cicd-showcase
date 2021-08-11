@@ -5,7 +5,7 @@
 
   <groupId>com.redhat.demos</groupId>
   <artifactId>decisions-showcase</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version> <!-- remember to change the kjar dependency version in the business-application-service (springboot) -->
   <packaging>kjar</packaging>
 
   <properties>
@@ -172,6 +172,11 @@
         <version>${kie.version}</version>
         <extensions>true</extensions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-help-plugin</artifactId>
+        <version>3.2.0</version>
+      </plugin>      
     </plugins>
   </build>
 </project>

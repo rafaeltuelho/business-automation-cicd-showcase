@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.redhat.demos</groupId>
   <artifactId>business-application-service</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>2.1</version> <!-- to change the springboot container image tag version -->
   <packaging>jar</packaging>
   <name>business-application-service</name>
 
@@ -123,6 +123,12 @@
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>    
     <plugins>
       <plugin>
         <groupId>org.kie</groupId>
@@ -159,6 +165,11 @@
           </execution>
       </executions>        
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-help-plugin</artifactId>
+        <version>3.2.0</version>
+      </plugin>      
     </plugins>
   </build>
 
@@ -240,52 +251,15 @@
                   <name>%a:%l</name>
                   <build>
                     <!-- <from>fabric8/java-jboss-openjdk8-jdk</from> -->
-                    <from>fabric8/java-ubi-openjdk11-jdk</from>
+                    <!-- from>fabric8/java-ubi-openjdk11-jdk</from -->
+                    <from>registry.access.redhat.com/ubi8/openjdk-11:latest</from>
                     <assembly>
-                      <targetDir>/</targetDir>
-                      <inline>
-                        <files>
-                          <file>
-                            <source>${project.build.directory}/${project.build.finalName}.${project.packaging}</source>
-                            <outputDirectory>deployments</outputDirectory>
-                            <destName>${project.build.finalName}.${project.packaging}</destName>
-                          </file>
-                          <!-- 
-                          <file>
-                            <source>${project.artifactId}.xml</source>
-                            <outputDirectory>deployments</outputDirectory>
-                            <destName>${project.artifactId}.xml</destName>
-                          </file> 
-                          <file>
-                            <source>src/main/docker/offline-repo-settings.xml</source>
-                            <outputDirectory>deployments/.m2</outputDirectory>
-                            <destName>settings.xml</destName>
-                            <fileMode>0766</fileMode>
-                          </file>                             
-                          -->
-                        </files>
-                        <!--
-                        <fileSets>
-                          <fileSet>
-                            <directory>src/main/docker/repository</directory>
-                            <outputDirectory>deployments/.m2/repository</outputDirectory>
-                            <directoryMode>0777</directoryMode>
-                          </fileSet>
-                          <fileSet>
-                            <directory>/local-repository/maven</directory>
-                            <outputDirectory>/deployments/.m2/repository</outputDirectory>  
-                          </fileSet>
-                        </fileSets>
-                        -->
-                      </inline>
-                      <!-- user[:group][:run-user] can use id -->
-                      <user>1001:1001:1001</user>
+                      <targetDir>/deployments</targetDir>
                     </assembly>
-                    <!-- 
                     <env>
-                      <JAVA_OPTIONS>-Dkie.maven.settings.custom=/deployments/.m2/settings.xml</JAVA_OPTIONS>
+                      <!-- JAVA_OPTIONS>-Dkie.maven.settings.custom=/deployments/.m2/settings.xml</JAVA_OPTIONS -->
+                      <GC_MAX_METASPACE_SIZE>512</GC_MAX_METASPACE_SIZE>
                     </env>
-                    -->
                   </build>
                 </image>
               </images>
@@ -334,11 +308,6 @@
             <version>${jkube.version}</version>
             <configuration>
               <verbose>true</verbose>
-              <!-- 
-              <resources>
-                <controllerName>${project.artifactId}-${project.version}</controllerName>
-              </resources>
-              -->
               <enricher>
                 <config>
                   <jkube-openshift-route>
@@ -356,53 +325,15 @@
                    -->
                   <name>%a:%l</name>
                   <build>
-                    <!-- <from>fabric8/java-jboss-openjdk8-jdk</from> -->
-                    <from>fabric8/java-ubi-openjdk11-jdk</from>
+                    <from>registry.access.redhat.com/ubi8/openjdk-11:latest</from>
                     <assembly>
-                      <targetDir>/</targetDir>
-                      <inline>
-                        <files>
-                          <file>
-                            <source>${project.build.directory}/${project.build.finalName}.${project.packaging}</source>
-                            <outputDirectory>deployments</outputDirectory>
-                            <destName>${project.build.finalName}.${project.packaging}</destName>
-                          </file>
-                          <!-- 
-                          <file>
-                            <source>${project.artifactId}.xml</source>
-                            <outputDirectory>deployments</outputDirectory>
-                            <destName>${project.artifactId}.xml</destName>
-                          </file>
-                          <file>
-                            <source>src/main/docker/offline-repo-settings.xml</source>
-                            <outputDirectory>deployments/.m2</outputDirectory>
-                            <destName>settings.xml</destName>
-                            <fileMode>0766</fileMode>
-                          </file>
-                        -->
-                        </files>
-                        <!--
-                        <fileSets>
-                          <fileSet>
-                            <directory>src/main/docker/repository</directory>
-                            <outputDirectory>deployments/.m2/repository</outputDirectory>
-                            <directoryMode>0777</directoryMode>
-                          </fileSet>
-                          <fileSet>
-                            <directory>/local-repository/maven</directory>
-                            <outputDirectory>/deployments/.m2/repository</outputDirectory>  
-                          </fileSet>
-                        </fileSets>
-                        -->
-                      </inline>
+                      <targetDir>/deployments</targetDir>
                       <!-- user[:group][:run-user] can use id -->
                       <!-- <user>1001:1001:1001</user> -->
                     </assembly>
-                    <!--
                     <env>
-                      <JAVA_OPTIONS>-Dkie.maven.settings.custom=/deployments/.m2/settings.xml</JAVA_OPTIONS>
+                      <GC_MAX_METASPACE_SIZE>512</GC_MAX_METASPACE_SIZE>
                     </env>
-                    -->
                     <ports>
                       <port>8090</port>
                     </ports>

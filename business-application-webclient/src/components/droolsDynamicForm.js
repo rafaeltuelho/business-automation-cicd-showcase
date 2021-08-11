@@ -36,6 +36,9 @@ import {
   DrawerActions,
   DrawerCloseButton,
   Tooltip,
+  TextContent,
+  Text,
+  TextVariants,  
 } from '@patternfly/react-core';
 import ReactJson from 'react-json-view'
 
@@ -353,6 +356,11 @@ class DroolsDynamicForm extends React.Component {
                   <StackItem>
                     <ExpandableSection toggleText="Debug View">
                       <Grid hasGutter>
+                        <GridItem span={12}>
+                          <TextContent>
+                            <Text component={TextVariants.small}>Server endpoint: {this.state._rawServerResponse?.serverEndpointUrl}</Text>
+                          </TextContent>
+                        </GridItem>                           
                         <GridItem span={6}>
                         <Title headingLevel="h6" size="md">Request Payload</Title>
                           {/* <ReactJson name={false} src={this.state._rawServerRequest} */}

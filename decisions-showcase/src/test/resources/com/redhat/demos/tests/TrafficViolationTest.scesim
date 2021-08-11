@@ -277,7 +277,7 @@
               <name>1|12</name>
               <type>EXPECT</type>
             </expressionIdentifier>
-            <rawValue class="string">20</rawValue>
+            <rawValue class="string">7</rawValue>
           </FactMappingValue>
           <FactMappingValue>
             <factIdentifier>
@@ -288,7 +288,7 @@
               <name>1|13</name>
               <type>EXPECT</type>
             </expressionIdentifier>
-            <rawValue class="string">"Yes"</rawValue>
+            <rawValue class="string">"No"</rawValue>
           </FactMappingValue>
           <FactMappingValue>
             <factIdentifier>
