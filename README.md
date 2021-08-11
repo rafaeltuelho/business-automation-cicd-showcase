@@ -1,29 +1,54 @@
-# Red Hat Business Automation Showcase
+# Red Hat Business Automation CI/CD Showcase
 
-This repository contains projects that showcase some capabilities provided by the Red Hat Business Automation Solution Portfolio. Red Hat Process Automation solutions are application development platforms,
-designed to enable business users to participate with IT developers in the creation of modern cloud-native applications. These platforms are called:
+Check how you can use OpenShift Pipelines (a.k.a Tekton) to automate the delivery of decision services implemented with Red Hat PAM (a.k.a. jBPM). In this showcase you can see:
 
-* Red Hat Decision Manager (RHDM) and
-* Red Hat Process Automation Manager (RHPAM)
+* The automation of repeatable decisions using the [DMN](https://www.drools.org/learn/dmn.html) specification;
+* Decision tables implementation using XLS.
+* Usage of the rules engine based on KIE Server and running on top of SpringBoot;
+* CI/CD Pipeline implemented using Tekton;
+* How to configure webhooks in your pipeline to deploy based on changes on a git repository;
+* Automated tests for decisions (with Test Scenarios ) that are considered during the pipeline execution;
+* Deployment with zero downtime with OpenShift rolling deployment strategy;
 
-At the moment there are 5 projects in this repository:
+## How to use this demo
 
-* [decisions-showcase](decisions-showcase/): Decision use cases using Business Rules (Drools) and Decision Logic (DMN)
-* [business-application-service](business-application-service/): Spring Boot runtime based Kie Server exposing the API for Decisions and Processes
-* [business-application-webclient](business-application-webclient/): ReactJS Web client App UI used to interact with the Kie Server API to exercise the Use Cases provided with this Showcase demo
-* [cicd](cicd/): Tekton Pipeline resources to implement a fully automated CI/CD pipeline for your Business Application Services
-* [monitoring](monitoring/): working in progress...
+### Pre-requisites
 
-See below a short guide on how to provision.
+* OpenShift 4.7 
 
-To see a detailed instruction on each service and each deployment processes (with images), check:
+* oc client
 
-* [Provisioning and testing the CI/CD Pipeline](cicd/readme.md)
-* [Provisioning and testing the client application ](business-application-webclient/readme.me)
+* [VSCode](https://code.visualstudio.com/)
+
+* [VSCode Business Automation Extension](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-red-hat-business-automation-bundle)
+
+  
 
 # How to Provision the demo quick steps:
 
-1. Log in to your OpenShift cluster in your terminal, using the oc client.
+1. Fork this repository and clone your fork to your machine
+
+   ```
+   $ git clone https://github.com/${yourgithubuser}/business-automation-showcase.git
+   $ cd my-business-automation-showcase
+   ```
+
+3. Run the provisioning script: 
+
+   ```
+   $ sh provision.sh
+   ```
+
+This provisioning script will:
+
+- Create a new namespace called rhdm-kieserver-cicd
+- Install OpenShift Pipelines
+- Create the pipeline resources
+- Deploy a front-end application that you can use to interact with the decision service once you deploy it.
+
+
+
+1. 
 2. Create a new project
 
 `oc new-project rhpam-sandbox`
@@ -71,3 +96,20 @@ To see a detailed instruction on each service and each deployment processes (wit
    `echo "$(oc  get route business-application-service-route --template='http://{{.spec.host}}')/rest/server"`
 
 10. Test the decision services.
+
+
+
+## Extra information
+
+At the moment there are 5 projects in this repository:
+
+* [decisions-showcase](decisions-showcase/): Decision use cases using Business Rules (Drools) and Decision Logic (DMN)
+* [business-application-service](business-application-service/): Spring Boot runtime based Kie Server exposing the API for Decisions and Processes
+* [business-application-webclient](business-application-webclient/): ReactJS Web client App UI used to interact with the Kie Server API to exercise the Use Cases provided with this Showcase demo
+* [cicd](cicd/): Tekton Pipeline resources to implement a fully automated CI/CD pipeline for your Business Application Services
+* [monitoring](monitoring/): working in progress...
+
+To see a detailed instruction on each service and each deployment processes (with images), check:
+
+* [Provisioning and testing the CI/CD Pipeline](cicd/readme.md)
+* [Provisioning and testing the client application ](business-application-webclient/readme.me)
