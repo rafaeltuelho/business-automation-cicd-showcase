@@ -14,6 +14,8 @@ Check how you can use OpenShift Pipelines (a.k.a Tekton) to automate the deliver
 
 ### Pre-requisites
 
+* Java 8
+
 * OpenShift 4.7 
 
 * oc client
