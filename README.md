@@ -26,13 +26,13 @@ Check how you can use OpenShift Pipelines (a.k.a Tekton) to automate the deliver
 
 1. Fork this repository, in jbossdemocentral.
 
-   ![Alt text](support/docs/images/github-fork-project.png?raw=true "Fork project")
+   ![Fork project](support/docs/images/github-fork-project.png?raw=true "Fork project")
    
 2. Clone your fork to your local machine.
 
    ```
    $ git clone https://github.com/${yourgithubuser}/business-automation-showcase.git
-   $ cd my-business-automation-showcase
+   $ cd business-automation-showcase
    ```
 
 3. Run the provisioning script (Linux/MacOS): 
@@ -55,11 +55,11 @@ http://business-application-webclient-rhdm-kieserver-cicd.apps.cluster- (...)
 ******************************************************************
 ```
 
-#### Configuring the automatic deployment on GitHub
+### Configuring the automatic deployment on GitHub
 
 1. To configure the webhook for automated deployment, open your fork in your GitHub. Next, add a new webhook by opening "**Settings** -> **Webhook** -> **Add webhook** button".
 
-   ![Alt text](support/docs/images/github-new-webhook.png?raw=true "Add GitHub webhook")
+   ![Add GitHub webhook](support/docs/images/github-new-webhook.png?raw=true "Add GitHub webhook")
 
 1. Fill the form with the information below:
    * **Payload URL**:  provided after the provisioning. You can also get it using the command: `$ echo "$(oc  get route el-ba-cicd-event-listener --template='http://{{.spec.host}}')" `
@@ -69,7 +69,7 @@ http://business-application-webclient-rhdm-kieserver-cicd.apps.cluster- (...)
 
 At this point, you should already have a fully automated integration and deployment lifecycle for the business application. Any changes pushed to your repository will trigger the pipeline in your OpenShift cluster.
 
-**Testing GitHub and Pipeline integration**
+### Testing GitHub and Pipeline integration
 
 If you run this test, a new deployment should be triggered. The pipeline will deploy the decision service for the first time.
 
@@ -83,14 +83,27 @@ If you run this test, a new deployment should be triggered. The pipeline will de
    ```
 
 3. In OpenShift, access: "**Pipelines** -> **ba-cicd-pipeline** -> **Pipeline Runs** " and check the progress of your application deployment.
-	![Alt text](support/docs/images/ocp-demo-pipeline-run.png?raw=true "Pipeline progress")
+	![Pipeline progress](support/docs/images/ocp-demo-pipeline-run.png?raw=true "Pipeline progress")
 
-#### Using the web application
+## Using the web application
 
-The web application allows you to interact with the deployed rules and decisions in a specific KIE Server. In order to use it, you need to configure it first.
+The web application allows you to interact with the deployed rules and decisions in a specific KIE Server. To use the deployed web app to interact with the deployed decisions, first you need to set the KIE Server URL in the web app settings.
 
-1. Open the web application. The url was provided during provisioning. You can also obtain it with the command `oc  get route business-application-webclient --template='http://{{.spec.host}}' -n rhdm-kieserver-cicd`.
-2. [#todo]
+1. The deployed decision service is now deployed and accessible. Get your deployed KIE Server route. You can use the command: 
+
+   `echo "http://"$(oc get route business-application-service-route -n rhdm-kieserver-cicd | awk 'FNR > 1 {print $2}')"/rest/server"`
+
+2. Open your web application. The URL was provided in the installation step. If you lost it, use the command 
+
+   `oc get route business-application-webclient --template='http://{{.spec.host}}' -n rhdm-kieserver-cicd`
+
+3. In the web application, click on the settings icon on the top right corner. In the field `Kie Server Base URL`, insert KIE Server URL. 
+4. You can use the "Test Connection" button to validate the communication between the two services, then Save.
+5. You should be able to test the available decisions and rules.
+
+![Decision Result in Web app](support/docs/images/webapplication-dmn-result.png?raw=true "Decision Result in Web app")
+
+With this, the whole demo is now set up and ready to use.
 
 ## Extra information
 
