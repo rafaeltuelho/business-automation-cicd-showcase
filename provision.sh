@@ -98,8 +98,8 @@ oc apply -f ./support/tekton-operator/sub.yaml
 runSpinner 10
 
 oc create -f ./cicd/tekton-resources/ -n $PRJ
-
-# oc expose svc el-ba-cicd-event-listener -n  PRJ[0]
+runSpinner 5
+oc expose svc el-ba-cicd-event-listener -n $PRJ
 
 
 # Front end application
@@ -108,14 +108,17 @@ echo_header "Deploying front-end application"
 oc new-app quay.io/rafaeltuelho/business-application-webclient -n $PRJ
 oc expose service/business-application-webclient -n $PRJ
 
-
-echo "******************************************************************"
 echo ""
-echo "Use this URL to access the front-end application:                *"
-echo "$(oc  get route business-application-webclient --template='http://{{.spec.host}}')"
 echo ""
 echo "******************************************************************"
-echo "$(oc  get route business-application-webclient --template='http://{{.spec.host}}')"
+echo ""
+echo "Use this URL in your GitHub Webhook configuration for automatic deployment"
+echo "$(oc get route el-ba-cicd-event-listener --template='http://{{.spec.host}}' -n $PRJ)"
+echo ""
+echo "Use this URL to access the front-end application:                "
+echo "$(oc  get route business-application-webclient --template='http://{{.spec.host}}' -n $PRJ)"
+echo ""
+echo "******************************************************************"
 
 END=`date +%s`
 echo
