@@ -10,8 +10,6 @@ Check how you can use OpenShift Pipelines (a.k.a Tekton) to automate the deliver
 * Automated tests for decisions (with Test Scenarios ) that are considered during the pipeline execution;
 * Deployment with zero downtime with OpenShift rolling deployment strategy;
 
-## How to use this demo
-
 ### Pre-requisites
 
 * Java 8
@@ -24,52 +22,85 @@ Check how you can use OpenShift Pipelines (a.k.a Tekton) to automate the deliver
 
 * [VSCode Business Automation Extension](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-extension-red-hat-business-automation-bundle)
 
-  
+## Installing on OpenShift:
 
-# How to Provision the demo quick steps:
+1. Fork this repository, in jbossdemocentral.
 
-1. Fork this repository and clone your fork to your machine
+   ![Alt text](support/docs/images/github-fork-project.png?raw=true "Fork project")
+   
+2. Clone your fork to your local machine.
 
    ```
    $ git clone https://github.com/${yourgithubuser}/business-automation-showcase.git
    $ cd my-business-automation-showcase
    ```
 
-3. Run the provisioning script: 
+3. Run the provisioning script (Linux/MacOS): 
 
    ```
    $ sh provision.sh
    ```
 
-This provisioning script will:
+At the end you'll get two URLs: one to a client web application and one to use in the GitHub integration settings. Something like:
+
+```
+******************************************************************
+
+Use this URL in your GitHub Webhook configuration for automatic deployment
+http://el-ba-cicd-event-listener-rhdm-kieserver-cicd.apps.cluster- (...)
+
+Use this URL to access the front-end application:
+http://business-application-webclient-rhdm-kieserver-cicd.apps.cluster- (...)
+
+******************************************************************
+```
+
+#### Configuring the automatic deployment on GitHub
+
+1. To configure the webhook for automated deployment, open your fork in your GitHub. Next, add a new webhook by opening "**Settings** -> **Webhook** -> **Add webhook** button".
+
+   ![Alt text](support/docs/images/github-new-webhook.png?raw=true "Add GitHub webhook")
+
+1. Fill the form with the information below:
+   * **Payload URL**:  provided after the provisioning. You can also get it using the command: `$ echo "$(oc  get route el-ba-cicd-event-listener --template='http://{{.spec.host}}')" `
+   * **Content type**: `application/json`
+   * **Secret**: empty
+   * "**Which events would you like to trigger this webhook?**: `Just the push event`.
+
+At this point, you should already have a fully automated integration and deployment lifecycle for the business application. Any changes pushed to your repository will trigger the pipeline in your OpenShift cluster.
+
+**Testing GitHub and Pipeline integration**
+
+If you run this test, a new deployment should be triggered. The pipeline will deploy the decision service for the first time.
+
+1. In your terminal, access your project folder. 
+
+2. Commit and push. You can use this empty commit sample if you need:
+
+   ```
+   git commit -m "an empty commit to test the pipeline" --allow-empty
+   git push origin master	
+   ```
+
+3. In OpenShift, access: "**Pipelines** -> **ba-cicd-pipeline** -> **Pipeline Runs** " and check the progress of your application deployment.
+	![Alt text](support/docs/images/ocp-demo-pipeline-run.png?raw=true "Pipeline progress")
+
+#### Using the web application
+
+The web application allows you to interact with the deployed rules and decisions in a specific KIE Server. In order to use it, you need to configure it first.
+
+1. Open the web application. The url was provided during provisioning. You can also obtain it with the command `oc  get route business-application-webclient --template='http://{{.spec.host}}' -n rhdm-kieserver-cicd`.
+2. [#todo]
+
+## Extra information
+
+The provisioning script `provision.sh` will:
 
 - Create a new namespace called rhdm-kieserver-cicd
 - Install OpenShift Pipelines
 - Create the pipeline resources
 - Deploy a front-end application that you can use to interact with the decision service once you deploy it.
-
-4. Now, we'll configure the git hook for automated deployment. In your GitHub project settings, locate "Webhook" in the side, and click on the "Add webhook" button. 
-5. Fill the form with the information below:
-   * **Payload URL**:  you can get URL to the `Pipeline Event Listener` using the command:
-     * `$ echo "$(oc  get route el-ba-cicd-event-listener --template='http://{{.spec.host}}')" `
-   * **Content type**: `application/json`
-   * **Secret**: empty
-   * "**Which events would you like to trigger this webhook?**: `Just the push event`.
-
-With this, you should already have a fully automated integration and deployment lifecycle for the application [#TODO link here]. 
-
-### Testing this application
-
-This is a general guide on how to test it: 
-
-1. Trigger the first deployment
-2. Test the decision service using the client application. You can try the DMN use case. Check the results of the decision.
-3. Open the application [#TODO link here] in vscode and edit the DMN file. Remember to adjust the test scenario or your pipeline might fail in the test phase.
-4. Commit and push to your repository (your fork).
-5. Monitor the pipeline and deployment. Use the client application to validate the new rules deployment.
-
-## Extra information
-
+- 
 At the moment there are 5 projects in this repository:
 
 * [decisions-showcase](decisions-showcase/): Decision use cases using Business Rules (Drools) and Decision Logic (DMN)
