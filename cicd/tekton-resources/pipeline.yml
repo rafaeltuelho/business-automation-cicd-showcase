@@ -88,7 +88,7 @@ spec:
             - install
             - '-DskipTests'
       runAfter:
-        - prepare
+        - run-tests
       taskRef:
         kind: Task
         name: mvn
@@ -110,7 +110,6 @@ spec:
             - clean
             - package
       runAfter:
-        - run-tests
         - build-kjar
       taskRef:
         kind: Task
