@@ -16,10 +16,6 @@ mvn archetype:generate \
 ```
 
 > NOTE: remember to update the `application.properties` or configure the `kie-maven-plugin` to properly add your decision/rules `kjar` artifact as a dependency.
->
-> The Kie Server **state file** used to start the Kie Container for the Decision Showcase project **KJAR** is: `src/business-application-service.xml`.
-> 
-> note that the Scanner is configured to scan the kjar every 60secs. In this way you can change your rules, rebuild and install the kjar for demo purposes.
 
 ## Self contained Immutable Fatjar
 
@@ -187,16 +183,4 @@ to create the DeploymentConfig, Service and Route resources.
 
 ```
 java -jar target/business-application-service-1.0-SNAPSHOT.jar
-```
-
-## Note about KieScanner
-
-ref: https://docs.jboss.org/drools/release/7.49.0.Final/drools-docs/html_single/#_kiescanner
-```
-The settings.xml file can be located in 3 locations, the actual settings used is a merge of those 3 locations.
-    The Maven install: $M2_HOME/conf/settings.xml
-
-    A user’s install: ${user.home}/.m2/settings.xml
-
-    Folder location specified by the system property kie.maven.settings.custom
 ```
