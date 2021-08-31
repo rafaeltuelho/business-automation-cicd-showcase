@@ -30,7 +30,7 @@ spec:
       workingDir: /workspace/source
       script: | 
         echo "Deploy to OCP using jKube"
-        mvn $(inputs.params.GOALS) -P openshift -f "$(inputs.params.MAVEN_PROJECT_CONTEXT_DIR)" -s $(workspaces.maven-settings.path)/settings.xml -Dmaven.repo.local=$(workspaces.maven-repo.path)
+        mvn $(inputs.params.GOALS) -P openshift -f "$(inputs.params.MAVEN_PROJECT_CONTEXT_DIR)" -e -s $(workspaces.maven-settings.path)/settings.xml -Dmaven.repo.local=$(workspaces.maven-repo.path)
       env:
         - name: NEXUS_REPO
           value: "$(inputs.params.NEXUS_REPO)"

@@ -32,6 +32,7 @@ spec:
       command: ["/usr/bin/mvn"]
       args:
         - -s
+        - -e
         - $(workspaces.maven-settings.path)/settings.xml
         - -f
         - $(inputs.params.MAVEN_PROJECT_CONTEXT_DIR)
