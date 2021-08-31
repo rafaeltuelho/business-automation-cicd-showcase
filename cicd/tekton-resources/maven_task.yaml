@@ -32,8 +32,8 @@ spec:
       command: ["/usr/bin/mvn"]
       args:
         - -s
-        - -e
         - $(workspaces.maven-settings.path)/settings.xml
+        - -e
         - -f
         - $(inputs.params.MAVEN_PROJECT_CONTEXT_DIR)
         - -Dmaven.repo.local=$(workspaces.maven-repo.path)
