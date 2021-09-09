@@ -9,23 +9,23 @@ data:
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
       <servers>
         <server>
-          <id>nexus-ocp</id>
-          <username>rhpam</username>
-          <password>Nexus@ocp</password>
+          <id>${env.MAVEN_SERVER_ID}</id>
+          <username>${env.MAVEN_USERNAME}</username>
+          <password>${env.MAVEN_PASSWORD}</password>
         </server>
       </servers>
 
       <profiles>
         <!-- Nexus -->
         <profile>
-          <id>ocp-nexus</id>
+          <id>${env.MAVEN_SERVER_ID}</id>
           <activation>
             <activeByDefault>false</activeByDefault>
           </activation>      
           <repositories>
             <repository>
               <id>nexus-repository</id>
-              <url>${env.NEXUS_REPO}/repository/maven-all-public/</url>
+              <url>${env.MAVEN_SERVER_URL}/repository/maven-public/</url>
               <releases>
                 <enabled>true</enabled>
               </releases>
@@ -36,7 +36,7 @@ data:
             <repository>
                 <id>maven-releases</id>
                 <name>maven-releases</name>
-                <url>${env.NEXUS_REPO}/repository/maven-releases/</url>
+                <url>${env.MAVEN_SERVER_URL}/repository/maven-releases/</url>
                 <layout>default</layout>
                 <releases>
                   <enabled>true</enabled>
@@ -50,7 +50,7 @@ data:
             <repository>
                 <id>maven-snapshots</id>
                 <name>maven-snapshots</name>
-                <url>${env.NEXUS_REPO}/repository/maven-snapshots/</url>
+                <url>${env.MAVEN_SERVER_URL}/repository/maven-snapshots/</url>
                 <layout>default</layout>
                 <releases>
                   <enabled>true</enabled>
@@ -65,7 +65,7 @@ data:
           <pluginRepositories>
             <pluginRepository>
               <id>nexus-plugin-repository</id>
-              <url>${env.NEXUS_REPO}/repository/maven-all-public/</url>
+              <url>${env.MAVEN_SERVER_URL}/repository/maven-public/</url>
               <releases>
                 <enabled>true</enabled>
               </releases>
@@ -207,11 +207,13 @@ data:
       </profiles>
 
       <activeProfiles>
+        <!-- 
         <activeProfile>redhat-maven-TP-repository</activeProfile>
         <activeProfile>redhat-maven-EA-repository</activeProfile>
         <activeProfile>redhat-maven-GA-repository</activeProfile>
-        <!-- activeProfile>ocp-nexus</activeProfile -->
         <activeProfile>maven-central-repository</activeProfile>
+        -->
+        <activeProfile>${env.MAVEN_SERVER_ID}</activeProfile>
       </activeProfiles>
 
     </settings>

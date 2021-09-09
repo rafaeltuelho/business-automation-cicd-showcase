@@ -13,9 +13,21 @@ spec:
       The workspace consisting of the custom maven settings
       provided by the user.  
   params:
-  - name: NEXUS_REPO
-    description: Nexus repo URL
+  - name: MAVEN_SERVER_URL
+    description: Maven Server URL
     type: string
+  - name: MAVEN_USERNAME
+    description: Nexus server auth username
+    type: string
+    default: "admin"
+  - name: MAVEN_PASSWORD
+    description: Nexus server auth password
+    type: string
+    default: "admin123"
+  - name: MAVEN_SERVER_ID
+    description: Nexus Server ID
+    type: string
+    default: "nexus-server"
   - name: MAVEN_PROJECT_CONTEXT_DIR
     description: Project/Module directory
     type: string
@@ -26,20 +38,25 @@ spec:
     default: ["clean", "package"]
   steps:
     - name: mvn
-      #image: gcr.io/cloud-builders/mvn
       image: registry.access.redhat.com/ubi8/openjdk-11:latest
       workingDir: /workspace/source
       command: ["/usr/bin/mvn"]
       args:
         - -s
         - $(workspaces.maven-settings.path)/settings.xml
-        - -e
         - -f
         - $(inputs.params.MAVEN_PROJECT_CONTEXT_DIR)
+        - -e
         - -Dmaven.repo.local=$(workspaces.maven-repo.path)
         - "$(inputs.params.GOALS)"
       env:
-        - name: NEXUS_REPO
-          value: "$(inputs.params.NEXUS_REPO)"
+        - name: MAVEN_SERVER_URL
+          value: "$(inputs.params.MAVEN_SERVER_URL)"
+        - name: MAVEN_USERNAME
+          value: "$(inputs.params.MAVEN_USERNAME)"
+        - name: MAVEN_PASSWORD
+          value: "$(inputs.params.MAVEN_PASSWORD)"
+        - name: MAVEN_SERVER_ID
+          value: "$(inputs.params.MAVEN_SERVER_ID)"
         - name: MAVEN_OPTS
           value: "-Xms1024m -Xmx2048m -XX:+ExitOnOutOfMemoryError"

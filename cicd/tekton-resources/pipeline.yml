@@ -15,18 +15,22 @@ spec:
     type: string
     description: revision to be used from repo of the code for deployment
     default: "master"
-  - name: maven-repo-url
+  - name: maven-server-id
+    type: string
+    description: maven server id
+    default: "ocp-nexus"
+  - name: maven-server-url
     type: string
     description: maven repository url
-    default: "http://nexus-cicd.apps.cluster.example.com"
+    default: "http://my-nexusrepo-sonatype-nexus-service-kogito-cicd.apps.cluster-n2b7m.n2b7m.sandbox1190.opentlc.com"
   - name: maven-username
     type: string
     description: maven repo username
-    default: "admin"
+    default: "rhpam"
   - name: maven-password
     type: string
     description: maven repo password
-    default: "admin123" 
+    default: "Nexus@ocp"
   tasks:
     - name: git-clone
       params:
@@ -57,8 +61,8 @@ spec:
           workspace: maven-local-repo
     - name: run-tests
       params:
-        - name: NEXUS_REPO
-          value: $(params.maven-repo-url)
+        - name: MAVEN_SERVER_URL
+          value: $(params.maven-server-url)
         - name: MAVEN_PROJECT_CONTEXT_DIR
           value: "decisions-service"
         - name: GOALS
@@ -79,8 +83,8 @@ spec:
           workspace: shared-workspace
     - name: build
       params:
-        - name: NEXUS_REPO
-          value: $(params.maven-repo-url)
+        - name: MAVEN_SERVER_URL
+          value: $(params.maven-server-url)
         - name: MAVEN_PROJECT_CONTEXT_DIR
           value: "decisions-service"
         - name: GOALS

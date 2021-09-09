@@ -13,7 +13,7 @@ spec:
       The workspace consisting of the custom maven settings
       provided by the user.  
   params:
-  - name: NEXUS_REPO
+  - name: MAVEN_SERVER_URL
     description: Nexus repo URL
     type: string
   - name: MAVEN_PROJECT_CONTEXT_DIR
@@ -29,10 +29,10 @@ spec:
       image: quay.io/rafaeltuelho/mvn-kube-oc:openjdk-11
       workingDir: /workspace/source
       script: | 
-        echo "Deploy to OCP using jKube"
-        mvn $(inputs.params.GOALS) -P openshift -f "$(inputs.params.MAVEN_PROJECT_CONTEXT_DIR)" -e -s $(workspaces.maven-settings.path)/settings.xml -Dmaven.repo.local=$(workspaces.maven-repo.path)
+        echo "Deploy to OCP using jKube maven plugin"
+        mvn $(inputs.params.GOALS) -e -P openshift -f "$(inputs.params.MAVEN_PROJECT_CONTEXT_DIR)" -s $(workspaces.maven-settings.path)/settings.xml -Dmaven.repo.local=$(workspaces.maven-repo.path)
       env:
-        - name: NEXUS_REPO
-          value: "$(inputs.params.NEXUS_REPO)"
+        - name: MAVEN_SERVER_URL
+          value: "$(inputs.params.MAVEN_SERVER_URL)"
         - name: MAVEN_OPTS
           value: "-Xms1024m -Xmx2048m -XX:+ExitOnOutOfMemoryError"          
