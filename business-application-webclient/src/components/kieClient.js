@@ -343,7 +343,7 @@ export default class KieClient {
               clone['properties'][p]['type'] = 'string';
             }
             else if (Object.hasOwnProperty.call(childProp, 'enum')) { //fix props with no type defined
-              console.debug('prop with enum type detected: ', childProp);
+              // console.debug('prop with enum type detected: ', childProp);
               clone['properties'][p]['placeholder'] = '>>> Select <<<';
             }
             // see https://json-schema.org/understanding-json-schema/reference/numeric.html#number

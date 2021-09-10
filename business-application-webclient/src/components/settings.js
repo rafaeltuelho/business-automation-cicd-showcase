@@ -20,6 +20,7 @@ import {
   ExpandableSection,
   Alert, 
   AlertActionCloseButton,
+  Tooltip,
 } from '@patternfly/react-core';
 import { loadFromLocalStorage } from './util'
 
@@ -294,6 +295,7 @@ class SettingsForm extends React.Component {
               label="Runtime type"
               fieldId="common.kogitoRuntime"
               helperText="Check if it is Kogito">
+              <Tooltip content={<div>Make sure your Kogito backend has CORS enabled! On Quarkus you need <pre>quarkus.http.cors=true</pre></div>} >
               <Checkbox
                 label="Kogito?"
                 isChecked={this.state.common.kogitoRuntime}
@@ -301,7 +303,8 @@ class SettingsForm extends React.Component {
                 aria-label="Kogito Runtime?"
                 id="common.kogitoRuntime"
                 name="common.kogitoRuntime"
-              />              
+                />
+              </Tooltip>
           </FormGroup>
           <FormGroup
             label="Server Base URL"

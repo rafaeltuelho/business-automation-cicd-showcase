@@ -15,7 +15,9 @@ import {
 } from '@patternfly/react-core';
 
 function ObjectAsCard({ obj }) {
+  console.debug('ObjectAsCard: obj: ', obj);
   if (_.isArray(obj) && obj.length > 0){
+    console.debug('is array: ', obj.length);
     return (
       <Card>
         {
@@ -32,6 +34,8 @@ function ObjectAsCard({ obj }) {
         {
           _.map(obj, (v, k, o) => {// for each object
             if (_.isObjectLike(v)) {
+              console.debug('is obj');
+              console.debug('v, k, o', k, v);
               return (
                 <GalleryItem>
                   <Card isHoverable>
@@ -40,7 +44,7 @@ function ObjectAsCard({ obj }) {
                       <DescriptionList>
                       {
                         _.map( v, (ov, ok, oo) => {
-                          console.debug('k, v, o', ok, ov, oo);
+                          console.debug('ok, ov, oo', ok, ov);
                           return (
                             <DescriptionListGroup>
                               <DescriptionListTerm key={ok}>
@@ -60,6 +64,8 @@ function ObjectAsCard({ obj }) {
               )
             }
             else {
+              console.debug('not obj');
+              console.debug('v, k, o', k, v);
               return (
                 <GalleryItem>
                   <Card isHoverable>

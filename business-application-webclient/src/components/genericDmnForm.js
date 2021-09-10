@@ -6,7 +6,7 @@ import './fonts.css';
 import { AutoForm } from 'uniforms-patternfly';
 import Ajv from 'ajv';
 import { JSONSchemaBridge } from 'uniforms-bridge-json-schema';
-// import ObjectAsCard  from './objectCardRenderer'
+import ObjectAsCard  from './objectCardRenderer'
 import DMNResultsAsCards  from './dmnResultsCardRenderer'
 
 import React from 'react';
@@ -16,6 +16,7 @@ import {
   FormSection,
   FormSelect,
   FormSelectOption,
+  FormSelectOptionGroup,
   Button,
   Alert, 
   AlertActionCloseButton,
@@ -45,7 +46,9 @@ class GenericDecisionModelForm extends React.Component {
     this.kieClient = new KieClient(this.kieSettings);
 
     this.state = {
-      decisionEndpoints: [ { url: 'none', schema: { } } ],
+      // decisionEndpoints: [ { url: 'none', schema: { } } ],
+      dmnEndpoints: [ { url: 'none', schema: { } } ],
+      droolsEndpoints: [ { url: 'none', schema: { } } ],
       selectedDecisionEndpoint: { 
         url: '/',
         schema: { },
@@ -64,6 +67,8 @@ class GenericDecisionModelForm extends React.Component {
       },
       _isDebugExpanded: false,
       _renderForm: false,
+      _droolsResult: false,
+      _dmnResult: false,
     };
   }
 
@@ -80,15 +85,27 @@ class GenericDecisionModelForm extends React.Component {
       .executeDecisionOpenApi(endpointPath, data)
       .then((response) => {
         console.debug('executeDecisionOpenApi.response: ', response)
-        // if (this.kieSettings.common.kogitoRuntime) {
-        //   response
-        // }
+        const serverResponse = response;
+        let dmnResult = false, droolsResult = false;
+        if (response.result) {
+          serverResponse = response.result;
+          dmnResult = true;
+        }
+        else if (response.decisionResults) {
+          serverResponse = response.decisionResults;
+          dmnResult = true;
+        }
+        else{ 
+          droolsResult = true;
+        }
 
         this.setState({
           _apiCallStatus: 'COMPLETE',
           _responseModalOpen: true,
-          _viewServerResponse: response?.result ? response.result : response.decisionResults, 
+          _viewServerResponse: serverResponse, //response?.result ? response.result : response.decisionResults, 
           _rawServerResponse: response,
+          _dmnResult: dmnResult,
+          _droolsResult: droolsResult,
           _alert: {
             visible: false,
             variant: 'default',
@@ -145,7 +162,7 @@ class GenericDecisionModelForm extends React.Component {
     let renderForm = false;
     let selected = {url: 'none', schema: { } };
     if (value !== 'none') {
-      selected = this.state.decisionEndpoints.find(e => e.url === value);
+      selected = this.state.dmnEndpoints.find(e => e.url === value) || this.state.droolsEndpoints.find(e => e.url === value);
       renderForm = true;
     }
 
@@ -168,10 +185,16 @@ class GenericDecisionModelForm extends React.Component {
   async componentDidMount() {
     console.debug('GenericDecisionModelForm ->>> componentDidMount...');
     const decisionEndpoints = await this.kieClient.getOpenApiDecisionEndpoints();
-    // console.debug(decisionEndpoints);
-    const filteredEndpoints = decisionEndpoints.filter(e => e.url.split('/').pop() === 'dmnresult');
-    // console.debug('filteredEndpoints: ', filteredEndpoints);
-    this.setState({ decisionEndpoints : filteredEndpoints });
+    // console.debug('decisionsEndpoints: ', decisionEndpoints);
+    const dmnFilteredEndpoints = decisionEndpoints.filter(e => e.schema.$$ref.indexOf('dmn') > 0 && e.url.split('/').pop() === 'dmnresult');
+    const droolsFilteredEndpoints = decisionEndpoints.filter(e => e.schema.$$ref.indexOf('dmn') < 0);
+    // console.debug('dmnFilteredEndpoints: ', dmnFilteredEndpoints);
+    // console.debug('droolsFilteredEndpoints: ', droolsFilteredEndpoints);
+    this.setState(
+      {
+        dmnEndpoints: dmnFilteredEndpoints,
+        droolsEndpoints : droolsFilteredEndpoints 
+      });
   }
   
   componentWillUnmount() {
@@ -247,7 +270,8 @@ class GenericDecisionModelForm extends React.Component {
               onClose={this.handleModalToggle}
             >
               {this.state._apiCallStatus === 'WAITING' && (<Spinner isSVG />)}
-              {this.state._apiCallStatus === 'COMPLETE' && (<DMNResultsAsCards decisionResults={this.state._viewServerResponse} />)}
+              {this.state._apiCallStatus === 'COMPLETE' && this.state._dmnResult && (<DMNResultsAsCards decisionResults={this.state._viewServerResponse} />)}
+              {this.state._apiCallStatus === 'COMPLETE' && this.state._droolsResult && (<ObjectAsCard obj={this.state._viewServerResponse} />)}
             </Modal>
           </React.Fragment>
           <Form>
@@ -260,7 +284,6 @@ class GenericDecisionModelForm extends React.Component {
                   id="decisionEndpoint" 
                   value={this.state.selectedDecisionEndpoint.url} 
                   onChange={this.handleSelectInputChange}
-                  // validated={}
                   >
                   <FormSelectOption
                     isDisabled={false} 
@@ -268,8 +291,9 @@ class GenericDecisionModelForm extends React.Component {
                     value='none' 
                     label='>>> Select a Decision <<<'
                   />
+                  <FormSelectOptionGroup isDisabled={this.state.dmnEndpoints.length < 1} key={1} label="DMN">
                   {
-                  this.state.decisionEndpoints.map((option, index) => { 
+                  this.state.dmnEndpoints.map((option, index) => { 
                     const arr = option.url.split('/');
                     return (
                       <FormSelectOption 
@@ -281,6 +305,23 @@ class GenericDecisionModelForm extends React.Component {
                       )}
                     )
                   }
+                  </FormSelectOptionGroup>
+                  <FormSelectOptionGroup isDisabled={this.state.droolsEndpoints.length < 1} key={2} label="Drools">
+                  {
+                  this.state.droolsEndpoints.map((option, index) => { 
+                    const arr = option.url.split('/');
+                    const queryName = arr[2] ? arr[1] + '(' + arr[2] + ')' : arr[1];
+                    return (
+                      <FormSelectOption 
+                        isDisabled={false} 
+                        key={index+1}
+                        value={option.url} 
+                        label={queryName} // get the name of the model
+                      />
+                      )}
+                    )
+                  }
+                  </FormSelectOptionGroup>
                 </FormSelect>
               </FormGroup>
             </FormSection>
