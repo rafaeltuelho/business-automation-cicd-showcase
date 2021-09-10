@@ -36,3 +36,8 @@
     transform: rotate(360deg);
   }
 }
+
+:root{
+  --pf-c-modal-box--BackgroundColor: #F0F0F0
+}
+

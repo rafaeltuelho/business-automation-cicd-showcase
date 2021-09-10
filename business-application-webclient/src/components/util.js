@@ -18,7 +18,7 @@ export function loadFromLocalStorage(key, parseJson = false) {
 
 export function stringifyValue(rawValue) {
   let str = '';
-  console.debug('util.stringifyValue(rawValue)', rawValue);
+  // console.debug('util.stringifyValue(rawValue)', rawValue);
   str = _.toString(rawValue);
   if (!_.isNull(rawValue)) {
     if (_.isNumber(rawValue)) {
@@ -35,9 +35,13 @@ export function stringifyValue(rawValue) {
       }
     }
   }
-  console.debug('util.stringifyValue(str)', str);
+  //console.debug('util.stringifyValue(str)', str);
 
   return str;
 }
 
-export default { loadFromLocalStorage, stringifyValue }
+export function removeLastSlash(str) {
+  return str.endsWith('/') ? str.substr(0, str.length-1) : str;
+}
+
+export default { loadFromLocalStorage, stringifyValue, removeLastSlash }

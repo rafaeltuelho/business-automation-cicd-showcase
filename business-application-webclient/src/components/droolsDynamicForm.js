@@ -13,6 +13,7 @@ import React from 'react';
 import {
   Button,
   Modal,
+  ModalVariant,
   Title,
   ExpandableSection,
   Grid,
@@ -323,18 +324,10 @@ class DroolsDynamicForm extends React.Component {
                   <StackItem>
                     <React.Fragment>
                       <Modal
-                        variant="small"
-                        title="Request submitted!"
+                        variant={ModalVariant.medium}
+                        title="Decision Results"
                         isOpen={this.state._responseModalOpen}
                         onClose={this.handleModalToggle}
-                        actions={[
-                          <Button key="confirm" variant="primary" onClick={this.handleModalToggle}>
-                            Confirm
-                          </Button>,
-                          <Button key="cancel" variant="link" onClick={this.handleModalToggle}>
-                            Cancel
-                          </Button>
-                        ]}
                       >
                         {this.state._apiCallStatus === 'WAITING' && (<Spinner isSVG />)}
                         {this.state._apiCallStatus === 'COMPLETE' && (<ObjectAsCard obj={this.state._serverResponse} />)}

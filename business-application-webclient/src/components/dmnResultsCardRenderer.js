@@ -6,48 +6,38 @@ import {
   Card, 
   CardTitle, 
   CardBody, 
-  Gallery,
-  GalleryItem,
   DescriptionList,
   DescriptionListGroup,
   DescriptionListTerm,
-  DescriptionListDescription, 
+  DescriptionListDescription,
+  Gallery,
+  GalleryItem, 
 } from '@patternfly/react-core';
 
-function ObjectAsCard({ obj }) {
-  if (_.isArray(obj) && obj.length > 0){
-    return (
-      <Card>
-        {
-          _.map(obj, (v, i) => {
-            return <ObjectAsCard obj={v} />;
-          })
-        }
-      </Card>
-    );
-  }
-  else if (_.isObjectLike(obj) && !_.isEmpty(obj)) {
+function DMNResultsAsCards( { decisionResults } ) {
+  // console.debug(decisionResults);
+  if (_.isArray(decisionResults) && decisionResults.length > 0){
     return (
       <Gallery hasGutter>
         {
-          _.map(obj, (v, k, o) => {// for each object
-            if (_.isObjectLike(v)) {
+          _.map(decisionResults, (v, i) => {// for each decision result
+            if (_.isObjectLike(v.result)) {
               return (
                 <GalleryItem>
                   <Card isHoverable>
-                    <CardTitle>{k}</CardTitle>
+                    <CardTitle>{v.decisionName}</CardTitle>
                     <CardBody>
                       <DescriptionList>
                       {
-                        _.map( v, (ov, ok, oo) => {
-                          console.debug('k, v, o', ok, ov, oo);
+                        _.map( v.result, (v, k, o) => {
+                          console.debug('k, v', k, v);
                           return (
                             <DescriptionListGroup>
-                              <DescriptionListTerm key={ok}>
-                                {ok}
+                              <DescriptionListTerm key={k}>
+                                {k}
                               </DescriptionListTerm>
                               <DescriptionListDescription>
-                                {stringifyValue(ov)}
+                                {stringifyValue(v)}
                               </DescriptionListDescription>
                             </DescriptionListGroup>
                           );
@@ -63,12 +53,12 @@ function ObjectAsCard({ obj }) {
               return (
                 <GalleryItem>
                   <Card isHoverable>
-                    <CardTitle>{k}</CardTitle>
+                    <CardTitle>{v.decisionName}</CardTitle>
                     <CardBody>
                       <DescriptionList>
                         <DescriptionListGroup>
                           <DescriptionListDescription>
-                            {stringifyValue(v)}
+                            {stringifyValue(v.result)}
                           </DescriptionListDescription>
                         </DescriptionListGroup>
                       </DescriptionList>
@@ -81,7 +71,7 @@ function ObjectAsCard({ obj }) {
         }
       </Gallery>
     );
-  }  
+  }
 }
 
-export default ObjectAsCard;
+export default DMNResultsAsCards;

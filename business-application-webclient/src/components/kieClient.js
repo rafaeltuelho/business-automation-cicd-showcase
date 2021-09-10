@@ -1,5 +1,6 @@
 import fetch from 'isomorphic-fetch';
 import { getReasonPhrase } from 'http-status-codes' 
+import { removeLastSlash } from './util'
 import SwaggerClient from "swagger-client";
 import _ from 'lodash';
 
@@ -18,10 +19,11 @@ export default class KieClient {
     
     this.settings = {
       common: {
-        kieServerBaseUrl: props?.common?.kieServerBaseUrl ? props.common.kieServerBaseUrl : KIE_SERVER_API_BASE_URL,
+        kieServerBaseUrl: props?.common?.kieServerBaseUrl ? removeLastSlash(props.common.kieServerBaseUrl) : KIE_SERVER_API_BASE_URL,
         kieServerUser: props?.common?.kieServerUser ? props.common.kieServerUser : KIE_SERVER_CLIENT_USER,
         kieServerPassword: props?.common?.kieServerPassword ? props.common.kieServerPassword : KIE_SERVER_CLIENT_PWD,
         kieServerAuthBase64: btoa(props?.common?.kieServerUser + ':' + props?.common?.kieServerPassword),
+        kogitoRuntime: props?.common?.kogitoRuntime ? props.common.kogitoRuntime : false,
       },
       jbpm: {
         containerId: props?.jbpm?.containerId,
@@ -35,7 +37,6 @@ export default class KieClient {
         containerId: props?.dmn?.containerId,
         modelNamespace: props?.dmn?.modelNamespace,
         modelName: props?.dmn?.modelName,
-        kogitoRuntime: props?.dmn?.kogitoRuntime ? props.dmn.kogitoRuntime : false,
         endpointUrl: props?.dmn ? props.dmn.endpointUrl : '',
       }
     };
@@ -81,7 +82,7 @@ export default class KieClient {
 
   buildDmnRequestBody(context) {
     let requestBody = {};
-    if (this.settings.dmn.kogitoRuntime) {
+    if (this.settings.common.kogitoRuntime) {
       requestBody = context;
     }
     else {
@@ -107,7 +108,7 @@ export default class KieClient {
   }
 
   executeDecision(context) {
-    const endpoint = this.settings.dmn.kogitoRuntime ?
+    const endpoint = this.settings.common.kogitoRuntime ?
         this.settings.dmn.endpointUrl :
           this.settings.common.kieServerBaseUrl + '/containers/' + this.settings.dmn.containerId + '/dmn';
     const payload = this.buildDmnRequestBody(context);
@@ -123,7 +124,7 @@ export default class KieClient {
   async getOpenApiDecisionEndpoints() {
     let openApiURL = '';
     let dmnDefinitionsSchema = '';
-    if (this.settings.dmn.kogitoRuntime){
+    if (this.settings.common.kogitoRuntime){
       openApiURL = this.settings.common.kieServerBaseUrl + '/q/openapi';
     }
     else {
@@ -199,12 +200,9 @@ export default class KieClient {
     console.log('testing kie server...');
     // console.debug('btoa: ' + this.settings.common.kieServerAuthBase64);
 
-    let url = '';
-    if (this.settings.dmn.kogitoRuntime || this.settings.drools.kogitoRuntime) {
-      url = this.settings.common.kieServerBaseUrl + '/q/openapi';
-    }
-    else {
-      url = this.settings.common.kieServerBaseUrl;
+    let url = this.settings.common.kieServerBaseUrl;
+    if (this.settings.common.kogitoRuntime) {
+      url += '/q/openapi';
     }
     
     return fetch(url, {
@@ -320,7 +318,7 @@ export default class KieClient {
       // console.debug('uniqueSchemaProperties: ', props);
       props.forEach(p => {
         const childProp = originalSchema['properties'][p];
-        console.debug('patchSchema() \n\t traversing obj property [' + p + ']');
+        // console.debug('patchSchema() \n\t traversing obj property [' + p + ']');
         if (p.startsWith('p_')) { // remove DecisionServices' input parameters from the Calling Model 
           delete clone['properties'][p];
         }
@@ -335,13 +333,13 @@ export default class KieClient {
             // }
             else if (Object.hasOwnProperty.call(childProp, 'format')) { //fix date format
               if (childProp['format'] === 'days and time duration' || childProp['format'] === 'years and months duration') {
-                console.debug('prop DMN duration format detected: ', childProp);
+                // console.debug('prop DMN duration format detected: ', childProp);
                 clone['properties'][p]['format'] = 'duration';
                 clone['properties'][p]['type'] = 'string';
               }
             }
             else if (!Object.hasOwnProperty.call(childProp, 'type')) { //fix props with no type defined
-              console.debug('prop with no type detected: ', childProp);
+              // console.debug('prop with no type detected: ', childProp);
               clone['properties'][p]['type'] = 'string';
             }
             else if (Object.hasOwnProperty.call(childProp, 'enum')) { //fix props with no type defined
@@ -351,7 +349,7 @@ export default class KieClient {
             // see https://json-schema.org/understanding-json-schema/reference/numeric.html#number
             else if (Object.hasOwnProperty.call(childProp, 'exclusiveMaximum') || 
                       Object.hasOwnProperty.call(childProp, 'exclusiveMinimum')) { //fix Draft-04 number type
-              console.debug('prop with Draft-04 exclusiveMaximum/exclusiveMinimum type detected: ', childProp);
+              // console.debug('prop with Draft-04 exclusiveMaximum/exclusiveMinimum type detected: ', childProp);
               clone['properties'][p]['exclusiveMaximum'] = clone['properties'][p]['maximum'];
               clone['properties'][p]['exclusiveMinimum'] = clone['properties'][p]['minimum'];
             }

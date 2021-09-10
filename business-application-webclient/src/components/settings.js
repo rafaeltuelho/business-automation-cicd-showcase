@@ -47,22 +47,20 @@ class SettingsForm extends React.Component {
         kieServerBaseUrl: kieSettings?.common?.kieServerBaseUrl ? kieSettings.common.kieServerBaseUrl : DEMO_KIE_SERVER_BASE_URL,
         kieServerUser: kieSettings?.common?.kieServerUser ? kieSettings.common.kieServerUser : DEMO_KIE_SERVER_USER,
         kieServerPassword: kieSettings?.common?.kieServerPassword ? kieSettings.common.kieServerPassword : DEMO_KIE_SERVER_PASSWORD,
+        kogitoRuntime: kieSettings?.common?.kogitoRuntime ? kieSettings.common.kogitoRuntime : false,
       },
       jbpm: {
         containerId: kieSettings?.jbpm ? kieSettings.jbpm.containerId : undefined,
         processId: kieSettings?.jbpm ? kieSettings.jbpm.processId : undefined,
-        kogitoRuntime: kieSettings?.jbpm ? kieSettings.jbpm.kogitoRuntime : false,
         endpointUrl: kieSettings?.jbpm ? kieSettings.jbpm.endpointUrl : undefined,
       },
       drools: {
         containerId: kieSettings?.drools?.containerId ? kieSettings.drools.containerId : DEMO_CONTAINER_ID,
         kieSessionName: (kieSettings?.drools?.kieSessionName && !_.isEmpty(kieSettings.drools.kieSessionName)) ? kieSettings.drools.kieSessionName : undefined,
-        kogitoRuntime: kieSettings?.drools?.kogitoRuntime ? kieSettings.drools.kogitoRuntime : undefined,
         endpointUrl: kieSettings?.drools ? kieSettings.drools.endpointUrl : undefined,
       },
       dmn: {
         containerId: kieSettings?.dmn?.containerId ? kieSettings.dmn.containerId : DEMO_CONTAINER_ID,
-        kogitoRuntime: kieSettings?.dmn?.kogitoRuntime ? kieSettings.dmn.kogitoRuntime : false,
       },
       fieldsValidation: {
         common: {
@@ -170,7 +168,7 @@ class SettingsForm extends React.Component {
       .then((response) => {
 
         // retrieve Kie Containers
-        if (!this.state.dmn.kogitoRuntime && !this.state.drools.kogitoRuntime) {
+        if (!this.state.common.kogitoRuntime && !this.state.common.kogitoRuntime) {
           this.updateKieContainersList(kieClient);
         }
 
@@ -293,11 +291,24 @@ class SettingsForm extends React.Component {
         {/** Common fields */}
         <FormSection>
           <FormGroup
-            label="Kie Server Base URL"
+              label="Runtime type"
+              fieldId="common.kogitoRuntime"
+              helperText="Check if it is Kogito">
+              <Checkbox
+                label="Kogito?"
+                isChecked={this.state.common.kogitoRuntime}
+                onChange={this.handleCheckboxChange}
+                aria-label="Kogito Runtime?"
+                id="common.kogitoRuntime"
+                name="common.kogitoRuntime"
+              />              
+          </FormGroup>
+          <FormGroup
+            label="Server Base URL"
             isRequired
             fieldId="common.kieServerBaseUrl"
-            helperText="Enter the URL for the Kie Server"
-            helperTextInvalid="URL must not be empty">
+            helperText="Enter the base URL for the Decision Server"
+            helperTextInvalid="URL must not be empty. Enter host and port.">
             <TextInput
               isRequired
               type="url"
@@ -307,13 +318,13 @@ class SettingsForm extends React.Component {
               onChange={ this.handleTextInputChange } />
           </FormGroup>
           <FormGroup
-            label="Kie Server Username"
+            label="Username"
             isRequired
             fieldId="common.kieServerUser"
             helperText="Enter the Username for the Kie Server"
             helperTextInvalid="User must not be empty">
             <TextInput
-              isRequired
+              isRequired={!this.state.common.kogitoRuntime}
               type="text"
               id="common.kieServerUser"
               validated={this.state.fieldsValidation.common['kieServerUser'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
@@ -321,8 +332,8 @@ class SettingsForm extends React.Component {
               onChange={ this.handleTextInputChange } />
           </FormGroup>
           <FormGroup
-            label="Kie Server Password"
-            isRequired
+            label="Password"
+            isRequired={!this.state.common.kogitoRuntime}
             fieldId="common.kieServerPassword"
             helperText="Enter the Password for the Kie Server"
             helperTextInvalid="Password must not be empty">
@@ -338,7 +349,7 @@ class SettingsForm extends React.Component {
         <ExpandableSection toggleText="Drools">
           <FormSection>
             <FormGroup
-                label="Decision Kie Container Id"
+                label="Kie ContainerId"
                 isRequired
                 fieldId="drools.containerId"
                 helperText="Press Test Connection button to update the containers list..."
@@ -346,7 +357,7 @@ class SettingsForm extends React.Component {
                 
                 <FormSelect
                   isRequired
-                  isDisabled={this.state.drools.kogitoRuntime}
+                  isDisabled={this.state.common.kogitoRuntime}
                   id="drools.containerId"
                   validated={this.state.fieldsValidation.drools['containerId'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
                   value={this.state.drools.containerId} 
@@ -361,12 +372,13 @@ class SettingsForm extends React.Component {
                 </FormSelect>
             </FormGroup>
             <FormGroup
-                label="Kie Session Name"
+                label="KieSession Name"
                 isRequired={false}
                 fieldId="drools.kieSessionName"
                 helperText="Enter the specific Session Name">
                 <TextInput
                   isRequired={false}
+                  isDisabled={this.state.common.kogitoRuntime}
                   type="text"
                   id="drools.kieSessionName"
                   validated={this.state.fieldsValidation.drools['kieSessionName'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
@@ -377,16 +389,6 @@ class SettingsForm extends React.Component {
         </ExpandableSection>
         <ExpandableSection toggleText="DMN">
           <FormSection>
-          <FormGroup>
-              <Checkbox
-                label="Kogito Runtime?"
-                isChecked={this.state.dmn.kogitoRuntime}
-                onChange={this.handleCheckboxChange}
-                aria-label="Kogito Runtime?"
-                id="dmn.kogitoRuntime"
-                name="dmn.kogitoRuntime"
-              />              
-            </FormGroup>            
             <FormGroup
                 label="Decision Kie Container Id"
                 // isRequired
@@ -396,7 +398,7 @@ class SettingsForm extends React.Component {
                 
                 <FormSelect
                   isRequired
-                  isDisabled={this.state.dmn.kogitoRuntime}
+                  isDisabled={this.state.common.kogitoRuntime}
                   id="dmn.containerId"
                   validated={this.state.fieldsValidation.dmn['containerId'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
                   value={this.state.dmn.containerId} 
@@ -414,7 +416,7 @@ class SettingsForm extends React.Component {
         <ExpandableSection toggleText="jBPM">
           <FormSection>
             <FormGroup
-                label="Process Kie Continer Id"
+                label="Process ContainerId"
                 // isRequired
                 fieldId="jbpm.containerId"
                 helperText="Press Test Connection button to update the containers list..."
@@ -422,7 +424,6 @@ class SettingsForm extends React.Component {
                 
                 <FormSelect
                   isRequired
-                  // isDisabled={this.state.kieContainers.length === 0}
                   id="jbpm.containerId"
                   validated={this.state.fieldsValidation.jbpm['containerId'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
                   value={this.state.jbpm.containerId} 

@@ -6,7 +6,8 @@ import './fonts.css';
 import { AutoForm } from 'uniforms-patternfly';
 import Ajv from 'ajv';
 import { JSONSchemaBridge } from 'uniforms-bridge-json-schema';
-import ObjectAsCard  from './objectCardRenderer'
+// import ObjectAsCard  from './objectCardRenderer'
+import DMNResultsAsCards  from './dmnResultsCardRenderer'
 
 import React from 'react';
 import {
@@ -19,6 +20,7 @@ import {
   Alert, 
   AlertActionCloseButton,
   Modal,
+  ModalVariant,
   Title,
   ExpandableSection,
   Grid,
@@ -29,6 +31,8 @@ import {
   TextContent,
   Text,
   TextVariants,
+  PageSection,
+  PageSectionVariants,
 } from '@patternfly/react-core';
 import ReactJson from 'react-json-view'
 
@@ -76,14 +80,14 @@ class GenericDecisionModelForm extends React.Component {
       .executeDecisionOpenApi(endpointPath, data)
       .then((response) => {
         console.debug('executeDecisionOpenApi.response: ', response)
-        // if (this.kieSettings.dmn.kogitoRuntime) {
+        // if (this.kieSettings.common.kogitoRuntime) {
         //   response
         // }
 
         this.setState({
           _apiCallStatus: 'COMPLETE',
           _responseModalOpen: true,
-          _viewServerResponse: response?.result ? response.result : response.dmnContext, 
+          _viewServerResponse: response?.result ? response.result : response.decisionResults, 
           _rawServerResponse: response,
           _alert: {
             visible: false,
@@ -165,7 +169,7 @@ class GenericDecisionModelForm extends React.Component {
     console.debug('GenericDecisionModelForm ->>> componentDidMount...');
     const decisionEndpoints = await this.kieClient.getOpenApiDecisionEndpoints();
     // console.debug(decisionEndpoints);
-    const filteredEndpoints = decisionEndpoints;//.filter(e => e.url.split('/').pop() === 'dmnresult');
+    const filteredEndpoints = decisionEndpoints.filter(e => e.url.split('/').pop() === 'dmnresult');
     // console.debug('filteredEndpoints: ', filteredEndpoints);
     this.setState({ decisionEndpoints : filteredEndpoints });
   }
@@ -237,21 +241,13 @@ class GenericDecisionModelForm extends React.Component {
               )
             }
             <Modal
-              variant="small"
-              title="Request submitted!"
+              variant={ModalVariant.medium}
+              title="Decision Results"
               isOpen={this.state._responseModalOpen}
               onClose={this.handleModalToggle}
-              actions={[
-                <Button key="confirm" variant="primary" onClick={this.handleModalToggle}>
-                  Confirm
-                </Button>,
-                <Button key="cancel" variant="link" onClick={this.handleModalToggle}>
-                  Cancel
-                </Button>
-              ]}
             >
               {this.state._apiCallStatus === 'WAITING' && (<Spinner isSVG />)}
-              {this.state._apiCallStatus === 'COMPLETE' && (<ObjectAsCard obj={this.state._viewServerResponse} />)}
+              {this.state._apiCallStatus === 'COMPLETE' && (<DMNResultsAsCards decisionResults={this.state._viewServerResponse} />)}
             </Modal>
           </React.Fragment>
           <Form>
