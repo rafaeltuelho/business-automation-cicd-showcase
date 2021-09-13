@@ -1,5 +1,6 @@
 import "@patternfly/react-core/dist/styles/base.css";
 import isEmpty from 'validator/lib/isEmpty';
+import isUrl from 'validator/lib/isURL';
 import KieClient from './kieClient';
 import { formValidate } from './formValidation';
 import _ from 'lodash';
@@ -66,7 +67,16 @@ class SettingsForm extends React.Component {
       fieldsValidation: {
         common: {
           kieServerBaseUrl:  {
-            valid: () => !isEmpty(this.state.common.kieServerBaseUrl),
+            valid: () => isUrl(this.state.common.kieServerBaseUrl, 
+              { 
+                protocols: ['http','https'], 
+                require_protocol: true, 
+                require_host: true,
+                require_port: false,
+                require_tld: false,
+                require_valid_protocol: true, 
+                allow_underscores: true,             
+              }),
           },
           kieServerUser:  {
             valid: () => !isEmpty(this.state.common.kieServerUser),
@@ -295,7 +305,6 @@ class SettingsForm extends React.Component {
               label="Runtime type"
               fieldId="common.kogitoRuntime"
               helperText="Check if it is Kogito">
-              <Tooltip content={<div>Make sure your Kogito backend has CORS enabled! On Quarkus you need <pre>quarkus.http.cors=true</pre></div>} >
               <Checkbox
                 label="Kogito?"
                 isChecked={this.state.common.kogitoRuntime}
@@ -304,7 +313,6 @@ class SettingsForm extends React.Component {
                 id="common.kogitoRuntime"
                 name="common.kogitoRuntime"
                 />
-              </Tooltip>
           </FormGroup>
           <FormGroup
             label="Server Base URL"
@@ -312,13 +320,15 @@ class SettingsForm extends React.Component {
             fieldId="common.kieServerBaseUrl"
             helperText="Enter the base URL for the Decision Server"
             helperTextInvalid="URL must not be empty. Enter host and port.">
-            <TextInput
-              isRequired
-              type="url"
-              id="common.kieServerBaseUrl"
-              validated={this.state.fieldsValidation.common['kieServerBaseUrl'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
-              value={this.state.common.kieServerBaseUrl}
-              onChange={ this.handleTextInputChange } />
+            <Tooltip content={<div>Make sure your backend server has CORS enabled!</div>} >
+              <TextInput
+                isRequired
+                type="url"
+                id="common.kieServerBaseUrl"
+                validated={this.state.fieldsValidation.common['kieServerBaseUrl'].valid() ? ValidatedOptions.default : ValidatedOptions.error}
+                value={this.state.common.kieServerBaseUrl}
+                onChange={ this.handleTextInputChange } />
+            </Tooltip>
           </FormGroup>
           <FormGroup
             label="Username"

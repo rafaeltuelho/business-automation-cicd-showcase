@@ -3,7 +3,7 @@ import "@patternfly/react-core/dist/styles/base.css";
 import KieClient from './kieClient';
 import { loadFromLocalStorage } from './util'
 import { AutoForm } from 'uniforms-patternfly';
-import ObjectAsCard from './objectCardRenderer'
+import ObjectAsGallery from './objectCardRenderer'
 import JSCodeEditor from './codeEditor';
 import _ from 'lodash';
 import './fonts.css';
@@ -330,7 +330,7 @@ class DroolsDynamicForm extends React.Component {
                         onClose={this.handleModalToggle}
                       >
                         {this.state._apiCallStatus === 'WAITING' && (<Spinner isSVG />)}
-                        {this.state._apiCallStatus === 'COMPLETE' && (<ObjectAsCard obj={this.state._serverResponse} />)}
+                        {this.state._apiCallStatus === 'COMPLETE' && (<ObjectAsGallery obj={this.state._serverResponse} />)}
                       </Modal>
                     </React.Fragment>
                   </StackItem>

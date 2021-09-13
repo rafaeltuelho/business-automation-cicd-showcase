@@ -5,14 +5,14 @@ export function loadFromLocalStorage(key, parseJson = false) {
     const rawObj = localStorage.getItem(key);
     const strObj = JSON.parse(rawObj);
     if (rawObj) {
-      console.log(key + ' loaded!');
+      console.log(key + ' loaded from local storage!');
       console.debug(strObj);
     }
     else {
       console.info(key + ' not found in the Browser\'s local storage!');
     }
 
-    console.debug('return JSON parsed? ' + parseJson)
+    // console.debug('return JSON parsed? ' + parseJson)
     return parseJson ? strObj : rawObj;
 }
 

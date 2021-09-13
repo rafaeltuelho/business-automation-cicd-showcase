@@ -6,7 +6,7 @@ import './fonts.css';
 import { AutoForm } from 'uniforms-patternfly';
 import Ajv from 'ajv';
 import { JSONSchemaBridge } from 'uniforms-bridge-json-schema';
-import ObjectAsCard  from './objectCardRenderer'
+import ObjectAsGallery  from './objectCardRenderer'
 import DMNResultsAsCards  from './dmnResultsCardRenderer'
 
 import React from 'react';
@@ -85,7 +85,7 @@ class GenericDecisionModelForm extends React.Component {
       .executeDecisionOpenApi(endpointPath, data)
       .then((response) => {
         console.debug('executeDecisionOpenApi.response: ', response)
-        const serverResponse = response;
+        let serverResponse = response;
         let dmnResult = false, droolsResult = false;
         if (response.result) {
           serverResponse = response.result;
@@ -271,7 +271,7 @@ class GenericDecisionModelForm extends React.Component {
             >
               {this.state._apiCallStatus === 'WAITING' && (<Spinner isSVG />)}
               {this.state._apiCallStatus === 'COMPLETE' && this.state._dmnResult && (<DMNResultsAsCards decisionResults={this.state._viewServerResponse} />)}
-              {this.state._apiCallStatus === 'COMPLETE' && this.state._droolsResult && (<ObjectAsCard obj={this.state._viewServerResponse} />)}
+              {this.state._apiCallStatus === 'COMPLETE' && this.state._droolsResult && (<ObjectAsGallery obj={this.state._viewServerResponse} />)}
             </Modal>
           </React.Fragment>
           <Form>

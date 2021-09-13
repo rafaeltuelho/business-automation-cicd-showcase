@@ -22,9 +22,10 @@ import {
 } from '@patternfly/react-core';
 
 import DroolsDynamicForm from './droolsDynamicForm'
-import GenericDecisionModelForm from './genericDmnForm'
+import GenericDecisionModelForm from './genericOpenApiForm'
 import SettingsForm from './settings'
 import AppHeader from "./header";
+import { loadFromLocalStorage } from './util'
 
 class AppPagelayout extends React.Component {
   state = {
@@ -62,8 +63,8 @@ class AppPagelayout extends React.Component {
               isActive={activeItem === 'grp-1_itm-2'}
               onClick={this.handleItemOnclick}
               >
-              <Link to="/genericDmn">Decision Models (DMN)</Link>
-            </NavItem>            
+              <Link to="/genericDmn">Decision Forms</Link>
+            </NavItem>
           </NavExpandable>
         </NavList>
       </Nav>
