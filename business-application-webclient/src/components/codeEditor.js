@@ -1,7 +1,7 @@
 import React from 'react';
 import SimpleSchema from 'simpl-schema';
 import { SimpleSchema2Bridge } from 'uniforms-bridge-simple-schema-2';
-import { DEMO_SIMPLE_SCHEMA_CODE } from './demoFormSchema';
+import { DEMO_SIMPLE_SCHEMA_CODE, DEMO_SIMPLE_SCHEMA_MORTGAGE_CODE, DEMO_SIMPLE_SCHEMA_QLB_CODE } from './demoFormSchema';
 import { CodeEditor, CodeEditorControl, Language } from '@patternfly/react-code-editor';
 import PlayIcon from '@patternfly/react-icons/dist/js/icons/play-icon';
 import BlueprintIcon from '@patternfly/react-icons/dist/js/icons/blueprint-icon';
@@ -29,6 +29,14 @@ class JSCodeEditor extends React.Component {
 
     this.onDemoCode = () => {
       this.setState({ code: DEMO_SIMPLE_SCHEMA_CODE })
+    };
+
+    this.onMortgageDemoCode = () => {
+      this.setState({ code: DEMO_SIMPLE_SCHEMA_MORTGAGE_CODE })
+    };
+
+    this.onQLBDemoCode = () => {
+      this.setState({ code: DEMO_SIMPLE_SCHEMA_QLB_CODE })
     };
     
     this.onExecuteCode = (code) => {
@@ -77,16 +85,33 @@ class JSCodeEditor extends React.Component {
     const customControlLoadDemoCode = (
       <CodeEditorControl 
         icon={<BlueprintIcon/>}
-        aria-label="Load demo code"
-        toolTipText="Load demo code"
+        aria-label="Load Policy/Driver demo code"
+        toolTipText="Load Policy/Driver demo code"
         onClick={this.onDemoCode}
+        isVisible={true}
+      />
+    );
+    const customControlLoadMortgageDemoCode = (
+      <CodeEditorControl 
+        icon={<BlueprintIcon/>}
+        aria-label="Load Mortgage demo code"
+        toolTipText="Load Mortgage demo code"
+        onClick={this.onMortgageDemoCode}
+        isVisible={true}
+      />
+    );
+    const customControlLoadQLBDemoCode = (
+      <CodeEditorControl 
+        icon={<BlueprintIcon/>}
+        aria-label="Load Mortgage demo code"
+        toolTipText="Load Mortgage demo code"
+        onClick={this.onQLBDemoCode}
         isVisible={true}
       />
     );
     
     return (
       <>
-        <span hidden={true}>oi</span>
         <CodeEditor
           isDownloadEnabled
           isCopyEnabled
@@ -96,7 +121,7 @@ class JSCodeEditor extends React.Component {
           isLanguageLabelVisible
           language={Language.javascript}
           height='600px'
-          customControls={[customControlApplyCode, customControlLoadDemoCode]}
+          customControls={[customControlApplyCode, customControlLoadDemoCode, customControlLoadMortgageDemoCode, customControlLoadQLBDemoCode]}
           code={this.state.code}
           onChange={this.onChange}
         />

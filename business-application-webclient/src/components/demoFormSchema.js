@@ -125,3 +125,20 @@ export const DEMO_SIMPLE_SCHEMA_MORTGAGE_CODE =
     'Bankruptcy.amountOwed': { type: Number, required: false },
     'Bankruptcy.yearOfOccurrence': { type: SimpleSchema.Integer, min: 1970, required: false },
   }))`;
+
+  export const DEMO_SIMPLE_SCHEMA_QLB_CODE = 
+  `new SimpleSchema2Bridge(
+    new SimpleSchema({
+      Applicant: { type: Object },
+      'Applicant.name': { type: String, min: 3, required: true},
+      'Applicant.age': { type: SimpleSchema.Integer, min: 16, required: false},
+      'Applicant.creditScore': { type: SimpleSchema.Integer, min: 0, max: 900, required: false},
+      //'Applicant.eligible': { type: Boolean, defaultValue: false, required: false },
+      'Applicant.yearlyIncome': { type: Number, defaultValue: 0, required: true },
+      'Applicant.monthlyIncome': { type: Number, defaultValue: 0, required: true },
+  
+      Loan: { type: Object },
+      'Loan.amount': { type: Number, required: false },
+      'Loan.duration': { type: SimpleSchema.Integer, min: 1, required: false },
+      //'Loan.interestRate': { type: SimpleSchema.Integer, min: 0, required: false },
+    }))`;
