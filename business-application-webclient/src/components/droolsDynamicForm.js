@@ -4,6 +4,7 @@ import KieClient from './kieClient';
 import { loadFromLocalStorage } from './util'
 import { AutoForm } from 'uniforms-patternfly';
 import ObjectAsGallery from './objectCardRenderer'
+import { DroolsResultsAsCards }  from './dmnResultsCardRenderer'
 import JSCodeEditor from './codeEditor';
 import _ from 'lodash';
 import './fonts.css';
@@ -113,7 +114,8 @@ class DroolsDynamicForm extends React.Component {
           _apiCallStatus: 'COMPLETE',
           _responseModalOpen: true,
           _rawServerResponse: response,
-          _serverResponse: this.kieClient.extractFactsFromKieResponse(response),
+          // _serverResponse: this.kieClient.extractFactsFromKieResponse(response),
+          _serverResponse: response.result['execution-results'].results,
         });
 
         // scroll the page to make alert visible
@@ -330,7 +332,7 @@ class DroolsDynamicForm extends React.Component {
                         onClose={this.handleModalToggle}
                       >
                         {this.state._apiCallStatus === 'WAITING' && (<Spinner isSVG />)}
-                        {this.state._apiCallStatus === 'COMPLETE' && (<ObjectAsGallery obj={this.state._serverResponse} />)}
+                        {this.state._apiCallStatus === 'COMPLETE' && (<DroolsResultsAsCards decisionResults={this.state._serverResponse} />)}
                       </Modal>
                     </React.Fragment>
                   </StackItem>

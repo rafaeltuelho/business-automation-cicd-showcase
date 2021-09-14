@@ -7,7 +7,7 @@ import { AutoForm } from 'uniforms-patternfly';
 import Ajv from 'ajv';
 import { JSONSchemaBridge } from 'uniforms-bridge-json-schema';
 import ObjectAsGallery  from './objectCardRenderer'
-import DMNResultsAsCards  from './dmnResultsCardRenderer'
+import { DMNResultsAsCards, DroolsResultsAsCards }  from './dmnResultsCardRenderer'
 
 import React from 'react';
 import {
@@ -87,15 +87,15 @@ class GenericDecisionModelForm extends React.Component {
         console.debug('executeDecisionOpenApi.response: ', response)
         let serverResponse = response;
         let dmnResult = false, droolsResult = false;
-        if (response.result) {
-          serverResponse = response.result;
+        if (response.result) { // kie-server (v7) DMN standard API
+          serverResponse = response.result['decision-results'];
           dmnResult = true;
         }
-        else if (response.decisionResults) {
+        else if (response.decisionResults) { // kogito and kie-server DMN openApi
           serverResponse = response.decisionResults;
           dmnResult = true;
         }
-        else{ 
+        else { // kogito drools openapi
           droolsResult = true;
         }
 

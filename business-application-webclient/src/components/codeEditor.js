@@ -103,8 +103,8 @@ class JSCodeEditor extends React.Component {
     const customControlLoadQLBDemoCode = (
       <CodeEditorControl 
         icon={<BlueprintIcon/>}
-        aria-label="Load Mortgage demo code"
-        toolTipText="Load Mortgage demo code"
+        aria-label="Load QLB demo code"
+        toolTipText="Load QLB demo code"
         onClick={this.onQLBDemoCode}
         isVisible={true}
       />

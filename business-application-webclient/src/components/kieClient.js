@@ -185,7 +185,13 @@ export default class KieClient {
           .then(this.parseJson)
             .then(this.checkKieResponse)
             .then((response) => {
-              // console.debug('\t adding the called endpoint url...', {...response, serverEndpointUrl: endpoint}, response);
+              console.debug('\t adding the called endpoint url...', {...response, serverEndpointUrl: endpoint}, response);
+              if (!response.result && !response.decisionResults) {
+                //TODO: patch Drools response to be consistent with DMN response
+                //note: findFirst returns {} and findAll returns an []
+                console.debug('patch Drools response to be consistent with DMN response');
+              }
+
               return {...response, serverEndpointUrl: endpoint};
             })            
             .catch(err => {
@@ -262,7 +268,7 @@ export default class KieClient {
             facts[f.key] = Object.entries(f.value)[0][1];
           }
           else {
-            facts[f.key] = f.value;
+            facts[f.key] = f.value; //TODO: convert "fired rules" into an object...
           }
         });
         console.debug('extracted facts: ', facts);
