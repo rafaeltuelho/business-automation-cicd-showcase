@@ -3,8 +3,7 @@ import "@patternfly/react-core/dist/styles/base.css";
 import KieClient from './kieClient';
 import { loadFromLocalStorage } from './util'
 import { AutoForm } from 'uniforms-patternfly';
-import ObjectAsGallery from './objectCardRenderer'
-import { DroolsResultsAsCards }  from './dmnResultsCardRenderer'
+import { DroolsResultsRenderer }  from './dmnResultsCardRenderer'
 import JSCodeEditor from './codeEditor';
 import _ from 'lodash';
 import './fonts.css';
@@ -113,16 +112,14 @@ class DroolsDynamicForm extends React.Component {
         this.setState({
           _apiCallStatus: 'COMPLETE',
           _responseModalOpen: true,
-          _rawServerResponse: response,
-          // _serverResponse: this.kieClient.extractFactsFromKieResponse(response),
-          _serverResponse: response.result['execution-results'].results,
+          _rawServerResponse: response.response,
+          _serverResponse: response.response.result['execution-results'].results,
         });
 
         // scroll the page to make alert visible
         this.scrollToTop();
       })
       .catch(err => {
-        // console.error(err);
         this.setState({
           _apiCallStatus: 'ERROR',
           _responseModalOpen: false,
@@ -332,7 +329,7 @@ class DroolsDynamicForm extends React.Component {
                         onClose={this.handleModalToggle}
                       >
                         {this.state._apiCallStatus === 'WAITING' && (<Spinner isSVG />)}
-                        {this.state._apiCallStatus === 'COMPLETE' && (<DroolsResultsAsCards decisionResults={this.state._serverResponse} />)}
+                        {this.state._apiCallStatus === 'COMPLETE' && (<DroolsResultsRenderer decisionResults={this.state._serverResponse} />)}
                       </Modal>
                     </React.Fragment>
                   </StackItem>

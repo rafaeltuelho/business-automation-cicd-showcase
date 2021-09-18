@@ -141,7 +141,7 @@ export default class KieClient {
       try {
         if (paths[url]["post"]) { // only interested in POST endpoints
           let schema = paths[url]["post"]["requestBody"]["content"]["application/json"]["schema"];
-          console.debug("Endpoint & Schema: ", url, schema);
+          // console.debug("Endpoint & Schema: ", url, schema);
 
           if (schema != null) {
             if (schema["x-dmn-type"] && schema["x-dmn-type"].indexOf('InputSetDS') > -1){
@@ -185,14 +185,21 @@ export default class KieClient {
           .then(this.parseJson)
             .then(this.checkKieResponse)
             .then((response) => {
-              console.debug('\t adding the called endpoint url...', {...response, serverEndpointUrl: endpoint}, response);
+              // console.debug('\t adding the called endpoint url...', {response, serverEndpointUrl: endpoint}, response);
               if (!response.result && !response.decisionResults) {
-                //TODO: patch Drools response to be consistent with DMN response
+                //TODO: patch Kogito Drools response to be consistent with DMN response
                 //note: findFirst returns {} and findAll returns an []
-                console.debug('patch Drools response to be consistent with DMN response');
+                // console.debug('patch Drools response to be consistent with DMN response');
+                // console.debug('\t response: ', response);
+
+                if (!_.isArray(response)) { // wrap the response object into an []
+                  // console.debug('wrap the response object into an []');
+                  response = [response];
+                }
               }
 
-              return {...response, serverEndpointUrl: endpoint};
+              // return {...response, serverEndpointUrl: endpoint};
+              return {response: response, serverEndpointUrl: endpoint};
             })            
             .catch(err => {
               console.debug(err);
@@ -271,7 +278,7 @@ export default class KieClient {
             facts[f.key] = f.value; //TODO: convert "fired rules" into an object...
           }
         });
-        console.debug('extracted facts: ', facts);
+        // console.debug('extracted facts: ', facts);
         return facts;
     } else {
         const error = new Error(`Fact results not found on response`);
@@ -311,7 +318,7 @@ export default class KieClient {
   }
 
   parseJson(response) {
-    console.debug('response: ', response);
+    // console.debug('response: ', response);
     return response.json();
   }
 

@@ -6,8 +6,7 @@ import './fonts.css';
 import { AutoForm } from 'uniforms-patternfly';
 import Ajv from 'ajv';
 import { JSONSchemaBridge } from 'uniforms-bridge-json-schema';
-import ObjectAsGallery  from './objectCardRenderer'
-import { DMNResultsAsCards, DroolsResultsAsCards }  from './dmnResultsCardRenderer'
+import { DMNResultsRenderer, KogitoDroolsResultsRenderer }  from './dmnResultsCardRenderer'
 
 import React from 'react';
 import {
@@ -84,25 +83,26 @@ class GenericDecisionModelForm extends React.Component {
     this.kieClient
       .executeDecisionOpenApi(endpointPath, data)
       .then((response) => {
-        console.debug('executeDecisionOpenApi.response: ', response)
+        console.debug('genericOpenApiForm: kieClient.executeDecisionOpenApi.response: ', response)
         let serverResponse = response;
         let dmnResult = false, droolsResult = false;
-        if (response.result) { // kie-server (v7) DMN standard API
-          serverResponse = response.result['decision-results'];
+        if (serverResponse.response.result) { // kie-server (v7) DMN standard API
+          serverResponse = serverResponse.response.result['decision-results'];
           dmnResult = true;
         }
-        else if (response.decisionResults) { // kogito and kie-server DMN openApi
-          serverResponse = response.decisionResults;
+        else if (serverResponse.response.decisionResults) { // kogito and kie-server DMN openApi
+          serverResponse = serverResponse.response.decisionResults;
           dmnResult = true;
         }
         else { // kogito drools openapi
+          serverResponse = response.response;
           droolsResult = true;
         }
 
         this.setState({
           _apiCallStatus: 'COMPLETE',
           _responseModalOpen: true,
-          _viewServerResponse: serverResponse, //response?.result ? response.result : response.decisionResults, 
+          _viewServerResponse: serverResponse,
           _rawServerResponse: response,
           _dmnResult: dmnResult,
           _droolsResult: droolsResult,
@@ -132,9 +132,7 @@ class GenericDecisionModelForm extends React.Component {
         this.scrollToTop();
       })
       .finally(() => {
-        // this.setState({
-        //   _rawServerRequest: rawServerRequest,
-        // })
+
       });
 
   };
@@ -247,7 +245,6 @@ class GenericDecisionModelForm extends React.Component {
   render() {
     const schemaValidator = this.createValidator(this.state.selectedDecisionEndpoint?.schema);
     const bridgeSchema = new JSONSchemaBridge(this.state.selectedDecisionEndpoint?.schema, schemaValidator);
-    // console.debug('bridgeSchema ', bridgeSchema, this.state.selectedDecisionEndpoint);
 
     return (
       <Stack hasGutter>
@@ -270,8 +267,8 @@ class GenericDecisionModelForm extends React.Component {
               onClose={this.handleModalToggle}
             >
               {this.state._apiCallStatus === 'WAITING' && (<Spinner isSVG />)}
-              {this.state._apiCallStatus === 'COMPLETE' && this.state._dmnResult && (<DMNResultsAsCards decisionResults={this.state._viewServerResponse} />)}
-              {this.state._apiCallStatus === 'COMPLETE' && this.state._droolsResult && (<ObjectAsGallery obj={this.state._viewServerResponse} />)}
+              {this.state._apiCallStatus === 'COMPLETE' && this.state._dmnResult && (<DMNResultsRenderer decisionResults={this.state._viewServerResponse} />)}
+              {this.state._apiCallStatus === 'COMPLETE' && this.state._droolsResult && (<KogitoDroolsResultsRenderer decisionResults={this.state._viewServerResponse} />)}
             </Modal>
           </React.Fragment>
           <Form>
