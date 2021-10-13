@@ -320,7 +320,20 @@ class SettingsForm extends React.Component {
             fieldId="common.kieServerBaseUrl"
             helperText="Enter the base URL for the Decision Server"
             helperTextInvalid="URL must not be empty. Enter host and port.">
-            <Tooltip content={<div>Make sure your backend server has CORS enabled!</div>} >
+            <Tooltip content={
+              <div>
+                Make sure your backend server has CORS enabled!<br/>
+                <strong>Examples:</strong>
+                <pre>
+                EAP:        'http://host:port/kie-server/services/rest/server'<br/>
+                SpringBoot: 'http://host:port/rest/server'<br/>
+                Kogito:     'http://host:port'
+                </pre>
+              </div>
+            }
+            enableFlip={true}
+            isContentLeftAligned={true}
+            maxWidth="50rem">
               <TextInput
                 isRequired
                 type="url"

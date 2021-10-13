@@ -132,7 +132,15 @@ export default class KieClient {
                     this.settings.dmn.containerId + '/dmn/openapi.json';
     }
 
-    const api = await SwaggerClient.resolve({url: openApiURL});
+    // OpenApi resource on KieServer is a secured resource that requires auth
+    const requestInterceptor = request => {
+      if (request.loadSpec) {
+        request.headers['Authorization'] = 'Basic ' + this.settings.common.kieServerAuthBase64;
+      }
+    
+      return request;
+    };    
+    const api = await SwaggerClient.resolve({url: openApiURL, requestInterceptor});
     let endpoints = [];
     console.debug("api: ", api);
     
