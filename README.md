@@ -50,7 +50,7 @@ Use this URL in your GitHub Webhook configuration for automatic deployment
 http://el-ba-cicd-event-listener-rhdm-kieserver-cicd.apps.cluster- (...)
 
 Use this URL to access the front-end application:
-http://business-application-webclient-rhdm-kieserver-cicd.apps.cluster- (...)
+http://decision-service-webclient-rhdm-kieserver-cicd.apps.cluster- (...)
 
 ******************************************************************
 ```
@@ -95,7 +95,7 @@ The web application allows you to interact with the deployed rules and decisions
 
 2. Open your web application. The URL was provided in the installation step. If you lost it, use the command 
 
-   `oc get route business-application-webclient --template='http://{{.spec.host}}' -n rhdm-kieserver-cicd`
+   `oc get route decision-service-webclient --template='http://{{.spec.host}}' -n rhdm-kieserver-cicd`
 
 3. In the web application, click on the settings icon on the top right corner. In the field `Kie Server Base URL`, insert KIE Server URL. 
 4. You can use the "Test Connection" button to validate the communication between the two services, then Save.
@@ -126,4 +126,4 @@ At the moment there are 4 projects in this repository:
 To see a detailed instruction on each service and each deployment processes (with images), check:
 
 * [Provisioning and testing the CI/CD Pipeline](cicd/readme.md)
-* [Provisioning and testing the webclient application ]([business-application-webclient/readme.me](https://github.com/rafaeltuelho/decision-service-webclient/blob/main/README.md))
+* [Provisioning and testing the webclient application ]([decision-service-webclient/readme.me](https://github.com/rafaeltuelho/decision-service-webclient/blob/main/README.md))

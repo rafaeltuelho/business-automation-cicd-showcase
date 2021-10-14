@@ -105,8 +105,8 @@ oc expose svc el-ba-cicd-event-listener -n $PRJ
 # Front end application
 echo_header "Deploying front-end application"
 
-oc new-app quay.io/rafaeltuelho/business-application-webclient -n $PRJ
-oc expose service/business-application-webclient -n $PRJ
+oc new-app quay.io/rafaeltuelho/decision-service-webclient -n $PRJ
+oc expose service/decision-service-webclient -n $PRJ
 
 echo ""
 echo ""
@@ -116,7 +116,7 @@ echo "Use this URL in your GitHub Webhook configuration for automatic deployment
 echo "$(oc get route el-ba-cicd-event-listener --template='http://{{.spec.host}}' -n $PRJ)"
 echo ""
 echo "Use this URL to access the front-end application:                "
-echo "$(oc  get route business-application-webclient --template='http://{{.spec.host}}' -n $PRJ)"
+echo "$(oc  get route decision-service-webclient --template='http://{{.spec.host}}' -n $PRJ)"
 echo ""
 echo "******************************************************************"
 
