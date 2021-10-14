@@ -87,7 +87,7 @@ If you run this test, a new deployment should be triggered. The pipeline will de
 
 ## Using the web application
 
-The web application allows you to interact with the deployed rules and decisions in a specific KIE Server. To use the deployed web app to interact with the deployed decisions, first you need to set the KIE Server URL in the web app settings.
+The web application allows you to interact with the deployed rules and decisions in a specific Decision Server (KieServer or Kogito runtime). To use the deployed web app to interact with the deployed decisions, first you need to set the KIE Server URL in the web app settings.
 
 1. The deployed decision service is now deployed and accessible. Get your deployed KIE Server route. You can use the command: 
 
@@ -105,6 +105,8 @@ The web application allows you to interact with the deployed rules and decisions
 
 With this, the whole demo is now set up and ready to use.
 
+> NOTE: If you get interested in see how this webapp was developed the src code is available [here](https://github.com/rafaeltuelho/decision-service-webclient)
+
 ## Extra information
 
 The provisioning script `provision.sh` will:
@@ -114,15 +116,14 @@ The provisioning script `provision.sh` will:
 - Create the pipeline resources
 - Deploy a front-end application that you can use to interact with the decision service once you deploy it.
 - 
-At the moment there are 5 projects in this repository:
+At the moment there are 4 projects in this repository:
 
 * [decisions-showcase](decisions-showcase/): Decision use cases using Business Rules (Drools) and Decision Logic (DMN)
-* [business-application-service](business-application-service/): Spring Boot runtime based Kie Server exposing the API for Decisions and Processes
-* [business-application-webclient](business-application-webclient/): ReactJS Web client App UI used to interact with the Kie Server API to exercise the Use Cases provided with this Showcase demo
+* [business-application-service](business-application-service/): Spring Boot runtime based Kie Server exposing the API for Decisions provided with this Showcase demo
 * [cicd](cicd/): Tekton Pipeline resources to implement a fully automated CI/CD pipeline for your Business Application Services
 * [monitoring](monitoring/): working in progress...
 
 To see a detailed instruction on each service and each deployment processes (with images), check:
 
 * [Provisioning and testing the CI/CD Pipeline](cicd/readme.md)
-* [Provisioning and testing the client application ](business-application-webclient/readme.me)
+* [Provisioning and testing the webclient application ]([business-application-webclient/readme.me](https://github.com/rafaeltuelho/decision-service-webclient/blob/main/README.md))
