@@ -14,7 +14,7 @@ spec:
   - name: git-revision
     type: string
     description: revision to be used from repo of the code for deployment
-    default: "master"
+    default: "kogito-quarkus"
   - name: maven-server-id
     type: string
     description: maven server id
@@ -22,15 +22,15 @@ spec:
   - name: maven-server-url
     type: string
     description: maven repository url
-    default: "http://my-nexusrepo-sonatype-nexus-service-kogito-cicd.apps.cluster-n2b7m.n2b7m.sandbox1190.opentlc.com"
+    default: "http://nexus3-cicd-kogito-demo.apps.cluster-9f6dt.9f6dt.sandbox251.opentlc.com"
   - name: maven-username
     type: string
     description: maven repo username
-    default: "rhpam"
+    default: "admin"
   - name: maven-password
     type: string
     description: maven repo password
-    default: "Nexus@ocp"
+    default: "admin123"
   tasks:
     - name: git-clone
       params:

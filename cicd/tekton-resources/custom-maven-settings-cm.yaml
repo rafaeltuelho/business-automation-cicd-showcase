@@ -28,9 +28,11 @@ data:
               <url>${env.MAVEN_SERVER_URL}/repository/maven-public/</url>
               <releases>
                 <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
               </releases>
               <snapshots>
                 <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
               </snapshots>
             </repository>
             <repository>
@@ -68,9 +70,11 @@ data:
               <url>${env.MAVEN_SERVER_URL}/repository/maven-public/</url>
               <releases>
                 <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
               </releases>
               <snapshots>
                 <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
               </snapshots>
             </pluginRepository>
           </pluginRepositories>
@@ -149,11 +153,11 @@ data:
               <layout>default</layout>
               <releases>
                 <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
+                <updatePolicy>always</updatePolicy>
               </releases>
               <snapshots>
                 <enabled>false</enabled>
-                <updatePolicy>never</updatePolicy>
+                <updatePolicy>always</updatePolicy>
               </snapshots>
             </repository>
           </repositories>
