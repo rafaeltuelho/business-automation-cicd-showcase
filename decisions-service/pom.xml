@@ -11,7 +11,7 @@
     <kogito.version>1.12.0.Final</kogito.version>
     <maven.compiler.release>11</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <quarkus.version>2.1.0.Final</quarkus.version>
+    <quarkus.version>2.3.1.Final</quarkus.version>
     <surefire.version>3.0.0-M5</surefire.version>
   </properties>
   <dependencyManagement>
@@ -108,6 +108,25 @@
         <artifactId>maven-help-plugin</artifactId>
         <version>3.2.0</version>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+            <execution>
+                <id>make-assembly</id>
+                <phase>package</phase>
+                <goals>
+                    <goal>single</goal>
+                </goals>
+            </execution>
+        </executions>
+        <configuration>
+            <appendAssemblyId>false</appendAssemblyId>
+            <updateOnly>false</updateOnly>
+            <!-- <descriptor>${project.basedir}/src/assembly/assembly.xml</descriptor> -->
+            <tarLongFileMode>posix</tarLongFileMode>
+        </configuration>
+    </plugin>      
     </plugins>
   </build>
   <profiles>
