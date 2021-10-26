@@ -92,7 +92,6 @@ spec:
             - package
             - '-DskipTests'
             - '-Dquarkus.container-image.build=true'
-            - '-Dquarkus.container-image.builder=s2i'
             - '-Dquarkus.kubernetes.deploy=false'
       runAfter:
         - run-tests
