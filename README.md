@@ -127,3 +127,6 @@ To see a detailed instruction on each service and each deployment processes (wit
 
 * [Provisioning and testing the CI/CD Pipeline](cicd/readme.md)
 * [Provisioning and testing the webclient application ]([decision-service-webclient/readme.me](https://github.com/rafaeltuelho/decision-service-webclient/blob/main/README.md))
+
+### Interested in Kogito?
+Check out the [kogito-quarkus](https://github.com/jbossdemocentral/business-automation-cicd-showcase/tree/kogito-quarkus) branch to see this same demo but using Kogito based Decision Services instead of KieServer.
