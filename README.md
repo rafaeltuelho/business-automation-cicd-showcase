@@ -95,11 +95,11 @@ The web application allows you to interact with the deployed rules and decisions
 
 1. The deployed decision service is now deployed and accessible. Get your deployed KIE Server route. You can use the command: 
 
-   `echo "http://"$(oc get route business-application-service-route -n rhdm-kieserver-cicd | awk 'FNR > 1 {print $2}')"/rest/server"`
+   `echo "http://"$(oc get route business-application-service-route -n rhdm-kogito-cicd | awk 'FNR > 1 {print $2}')"/rest/server"`
 
 2. Open your web application. The URL was provided in the installation step. If you lost it, use the command 
 
-   `oc get route decision-service-webclient --template='http://{{.spec.host}}' -n rhdm-kieserver-cicd`
+   `oc get route decision-service-webclient --template='http://{{.spec.host}}' -n rhdm-kogito-cicd`
 
 3. In the web application, click on the settings icon on the top right corner. In the field `Kie Server Base URL`, insert KIE Server URL. 
 4. You can use the "Test Connection" button to validate the communication between the two services, then Save.
@@ -115,18 +115,17 @@ With this, the whole demo is now set up and ready to use.
 
 The provisioning script `provision.sh` will:
 
-- Create a new namespace called rhdm-kieserver-cicd
+- Create a new namespace called rhdm-kogito-cicd
 - Install OpenShift Pipelines
 - Create the pipeline resources
 - Deploy a front-end application that you can use to interact with the decision service once you deploy it.
-- 
-At the moment there are 4 projects in this repository:
+
+At the moment there are 2 projects in this branch:
 
 * [decisions-service](decisions-service/): Kogito App using Quarkus runtime exposing the API for Decisions provided with this Showcase demo
 * [cicd](cicd/): Tekton Pipeline resources to implement a fully automated CI/CD pipeline for your Business Application Services
-* [monitoring](monitoring/): working in progress...
 
 To see a detailed instruction on each service and each deployment processes (with images), check:
 
 * [Provisioning and testing the CI/CD Pipeline](cicd/readme.md)
-* [Provisioning and testing the webclient application]([decision-service-webclient/readme.me](https://github.com/rafaeltuelho/decision-service-webclient/blob/main/README.md))
+* [Provisioning and testing the webclient application](https://github.com/rafaeltuelho/decision-service-webclient/blob/main/README.md)

@@ -94,10 +94,6 @@ create_projects
 echo_header "Installing OpenShift Pipelines (Tekton) and pipeline resources"
 ## Install OpenShift Pipelines Operator
 oc apply -f ./support/tekton-operator/sub.yaml 
-
-# Dumb timer. Needs to be replaced by a test on the subscription state: oc describe sub openshift-pipelines-operator -n openshift-operators | grep State
-# runSpinner 10
-#oc get ClusterServiceVersion | grep redhat-openshift-pipelines | grep -i succeed
 wait_while_empty "Openshift Pipelines Operator" 100 "oc get ClusterServiceVersion | grep redhat-openshift-pipelines | grep -i succeed | awk '{ printf \$8 }'"
 
 runSpinner 10
