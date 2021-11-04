@@ -115,7 +115,8 @@ The provisioning script `provision.sh` will:
 - Install OpenShift Pipelines
 - Create the pipeline resources
 - Deploy a front-end application that you can use to interact with the decision service once you deploy it.
-- 
+
+
 At the moment there are 4 projects in this repository:
 
 * [decisions-showcase](decisions-showcase/): Decision use cases using Business Rules (Drools) and Decision Logic (DMN)
@@ -126,7 +127,7 @@ At the moment there are 4 projects in this repository:
 To see a detailed instruction on each service and each deployment processes (with images), check:
 
 * [Provisioning and testing the CI/CD Pipeline](cicd/readme.md)
-* [Provisioning and testing the webclient application ]([decision-service-webclient/readme.me](https://github.com/rafaeltuelho/decision-service-webclient/blob/main/README.md))
+* [Provisioning and testing the webclient application ](https://github.com/rafaeltuelho/decision-service-webclient/blob/main/README.md)
 
 ### Interested in Kogito?
 Check out the [kogito-quarkus](https://github.com/jbossdemocentral/business-automation-cicd-showcase/tree/kogito-quarkus) branch to see this same demo but using Kogito based Decision Services instead of KieServer.
