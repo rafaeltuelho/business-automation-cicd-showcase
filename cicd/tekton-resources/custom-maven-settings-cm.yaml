@@ -214,10 +214,10 @@ data:
         <!-- 
         <activeProfile>redhat-maven-TP-repository</activeProfile>
         <activeProfile>redhat-maven-EA-repository</activeProfile>
+        <activeProfile>${env.MAVEN_SERVER_ID}</activeProfile>
+        -->
         <activeProfile>redhat-maven-GA-repository</activeProfile>
         <activeProfile>maven-central-repository</activeProfile>
-        -->
-        <activeProfile>${env.MAVEN_SERVER_ID}</activeProfile>
       </activeProfiles>
 
     </settings>
