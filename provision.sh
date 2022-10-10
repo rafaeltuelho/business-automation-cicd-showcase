@@ -1,4 +1,7 @@
 LOGGEDIN_USER=$(oc whoami)
+echo Input a namespace root - first letter lowercase
+read -p 'namespace: ' namespace
+
 ## Validate if user is logged in OCP
 if [ "$LOGGEDIN_USER" = *"Unable to connect to the server"* ]; then
     echo "You need to login to an OpenShift cluster first."
@@ -33,6 +36,7 @@ function create_projects() {
   echo_header "Creating project..."
 
   echo "Creating project ${PRJ[0]}"
+  echo  "Running oc new-project "${PRJ[0]}" --display-name="${PRJ[1]}" --description="${PRJ[2]}" >/dev/null"
   oc new-project "${PRJ[0]}" --display-name="${PRJ[1]}" --description="${PRJ[2]}" >/dev/null
 }
 
@@ -79,7 +83,7 @@ START=`date +%s`
 ################################################################################
 # Configuration                                                                #
 ################################################################################
-PRJ=("rhdm-kieserver-cicd" "Decision Services CI/CD Demo" "Red Hat Decision Manager deployment automation demo")
+PRJ=("$namespace-rhdm-kieserver-cicd" "Decision Services CI/CD Demo" "Red Hat Decision Manager deployment automation demo")
 
 ################################################################################
 # Provisioning                                                                 #
@@ -100,6 +104,10 @@ oc create -f ./cicd/tekton-resources/ -n $PRJ
 runSpinner 5
 oc expose svc el-ba-cicd-event-listener -n $PRJ
 
+##### Deploy Sonatype Nexus 3 for a Maven Repository
+oc new-app sonatype/nexus3 name=Nexus3
+oc expose svc/nexus3
+
 
 # Front end application
 echo_header "Deploying front-end application"
@@ -107,6 +115,7 @@ echo_header "Deploying front-end application"
 oc new-app quay.io/rafaeltuelho/decision-service-webclient -n $PRJ
 oc expose service/decision-service-webclient -n $PRJ
 
+runSpinner 100
 echo ""
 echo ""
 echo "******************************************************************"
@@ -116,6 +125,12 @@ echo "$(oc get route el-ba-cicd-event-listener --template='http://{{.spec.host}}
 echo ""
 echo "Use this URL to access the front-end application:                "
 echo "$(oc  get route decision-service-webclient --template='http://{{.spec.host}}' -n $PRJ)"
+echo ""
+echo "Use this URL to access the Nexus Repository:                "
+echo "$(oc  get route nexus3 --template='http://{{.spec.host}}' -n $PRJ)"
+echo "" 
+echo "Use this password for admin access to Nexus 3:                "
+echo "$(oc exec $(oc get pod -o template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep nexus) -- cat /nexus-data/admin.password)"
 echo ""
 echo "******************************************************************"
 

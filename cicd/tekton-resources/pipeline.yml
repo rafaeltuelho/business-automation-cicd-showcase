@@ -3,41 +3,48 @@ kind: Pipeline
 metadata:
   name: ba-cicd-pipeline
 spec:
-  workspaces:
-  - name: maven-local-repo
-  - name: maven-settings
-  - name: shared-workspace
   params:
-  - name: git-url
-    type: string
-    description: url of the git repo for the code of deployment
-  - name: git-revision
-    type: string
-    description: revision to be used from repo of the code for deployment
-    default: "master"
-  - name: maven-repo-url
-    type: string
-    description: maven repository url
-    default: "http://nexus-cicd.apps.cluster.example.com"
-  - name: maven-username
-    type: string
-    description: maven repo username
-    default: "admin"
-  - name: maven-password
-    type: string
-    description: maven repo password
-    default: "admin123" 
+    - default: 'https://github.com/timwuthenow/business-automation-cicd-showcase.git'
+      description: url of the git repo for the code of deployment
+      name: git-url
+      type: string
+    - default: master
+      description: revision to be used from repo of the code for deployment
+      name: git-revision
+      type: string
+    - default: >-
+        https://nexus3-rhdm-kieserver-cicd.itzroks-550006ua4k-mvj0v8-6ccd7f378ae819553d37d5f2ee142bd6-0000.us-south.containers.appdomain.cloud/repository/maven-snapshots/
+      description: maven repository url
+      name: maven-repo-url
+      type: string
+    - default: admin
+      description: maven repo username
+      name: maven-username
+      type: string
+    - default: T!m0thyj22!
+      description: maven repo password
+      name: maven-password
+      type: string
   tasks:
+    - name: clean
+      taskRef:
+        kind: Task
+        name: fix-repo-permission
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+        - name: maven-repo
+          workspace: maven-local-repo
     - name: git-clone
       params:
         - name: url
           value: $(params.git-url)
-        - name: subdirectory
-          value: ''
         - name: deleteExisting
           value: 'true'
         - name: revision
           value: $(params.git-revision)
+      runAfter:
+        - clean
       taskRef:
         kind: ClusterTask
         name: git-clone
@@ -161,3 +168,12 @@ spec:
           workspace: maven-settings
         - name: source
           workspace: shared-workspace
+  workspaces:
+    - name: maven-local-repo
+      optional: false
+    - name: maven-settings
+      optional: false
+    - name: shared-workspace
+      optional: false
+  resources: []
+  finally: []
