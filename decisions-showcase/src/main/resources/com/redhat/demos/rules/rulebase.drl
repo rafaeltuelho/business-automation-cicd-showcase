@@ -2,6 +2,8 @@ package com.redhat.demos.rules;
 
 import java.time.LocalDate;
 
+// This file is marked for removal
+
 rule "Hello"
 enabled false
 when
