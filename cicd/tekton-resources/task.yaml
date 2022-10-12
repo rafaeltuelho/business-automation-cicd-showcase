@@ -1,0 +1,31 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: clean
+spec:
+  steps:
+    - image: registry.redhat.io/ubi8/ubi-minimal
+      name: clean
+      resources: {}
+      script: >
+        # ensure the Arbitrary User used by tekton/openshift pipelines will be
+        able write into the repo
+
+        ls -al
+
+        cd workspace
+
+        ls -al
+
+        rm -rf workspace/source
+
+        #rm -rf workspace/maven-repo
+
+        # mkdir workspace/source
+
+        # mkdir workspace/maven-repo
+  workspaces:
+    - description: The .m2 repo volume
+      name: maven-repo
+    - description: The workspace consisting of maven project.
+      name: source

@@ -14,5 +14,5 @@ spec:
     image: registry.redhat.io/ubi8/ubi-minimal
     script: | 
       # ensure the Arbitrary User used by tekton/openshift pipelines will be able write into the repo
-      chgrp -R 0 source/ maven-repo/
-      chmod -R g+rwX source/ maven-repo/
+      chgrp -R 0 workspace/source/ workspace/maven-repo/
+      chmod -R g+rwX workspace/source workspace/maven-repo/

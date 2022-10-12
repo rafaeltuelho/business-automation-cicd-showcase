@@ -13,7 +13,7 @@ spec:
       name: git-revision
       type: string
     - default: >-
-        https://nexus3-rhdm-kieserver-cicd.itzroks-550006ua4k-mvj0v8-6ccd7f378ae819553d37d5f2ee142bd6-0000.us-south.containers.appdomain.cloud/repository/maven-snapshots/
+        http://nexus3:8081/
       description: maven repository url
       name: maven-repo-url
       type: string
@@ -21,7 +21,7 @@ spec:
       description: maven repo username
       name: maven-username
       type: string
-    - default: T!m0thyj22!
+    - default: password
       description: maven repo password
       name: maven-password
       type: string
@@ -29,7 +29,7 @@ spec:
     - name: clean
       taskRef:
         kind: Task
-        name: fix-repo-permission
+        name: clean
       workspaces:
         - name: source
           workspace: shared-workspace

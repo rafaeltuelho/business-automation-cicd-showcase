@@ -1,0 +1,30 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: ba-cicd-pipeline-run
+spec:
+  params:
+    - name: git-url
+      value: 'https://github.com/timwuthenow/business-automation-cicd-showcase.git'
+    - name: git-revision
+      value: master
+    - name: maven-repo-url
+      value: 'http://nexus3:8081/'
+    - name: maven-username
+      value: admin
+    - name: maven-password
+      value: password
+  pipelineRef:
+    name: ba-cicd-pipeline
+  serviceAccountName: pipeline
+  timeout: 1h0m0s
+  workspaces:
+    - name: maven-local-repo
+      persistentVolumeClaim:
+        claimName: maven-repo-pvc
+    - configMap:
+        name: custom-maven-settings
+      name: maven-settings
+    - name: shared-workspace
+      persistentVolumeClaim:
+        claimName: source-workspace-pvc
