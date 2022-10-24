@@ -4,9 +4,12 @@ metadata:
   name: ${project.artifactId}-route
 spec:
   port:
-    targetPort: 8090
+    targetPort: http
   to:
     kind: Service
     name: ${project.artifactId}-svc
     weight: 100
   wildcardPolicy: None
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Allow
