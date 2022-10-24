@@ -12,7 +12,9 @@ spec:
   steps:
   - name: fix-repo-permission
     image: registry.redhat.io/ubi8/ubi-minimal
+    workingDir: /workspace
     script: | 
-      # ensure the Arbitrary User used by tekton/openshift pipelines will be able write into the repo
+      echo "ensure the Arbitrary User used by tekton/openshift pipelines will be able write into the source and maven-repo dirs..."
       chgrp -R 0 source/ maven-repo/
       chmod -R g+rwX source/ maven-repo/
+      ls -la /source
