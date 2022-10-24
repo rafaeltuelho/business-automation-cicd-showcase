@@ -27,3 +27,4 @@ business-application-service/notes.txt
 **/TODO.txt
 **/*.ignore
 decisions-service/.factorypath
+business-application-service/.factorypath
